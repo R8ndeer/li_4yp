@@ -71,7 +71,7 @@ def split_lab(df: pd.DataFrame, column_name: str = "Corrected LAB") -> None:
     if column_name not in df.columns:
         raise ValueError(f"[split_lab] Column '{column_name}' does not exist in the DataFrame.")
     
-    df.loc[:, ['L', 'a', 'b']] = df[column_name].apply(lambda x: pd.Series(str(x).split(',')))
+    df.loc[:, ['L', 'a', 'b']] = df[column_name].apply(lambda x: pd.Series(str(x).split(','))).values
     df.drop(columns=[column_name], inplace=True)
     df.drop(columns=['Dominant LAB'], inplace=True, errors='ignore')
 
