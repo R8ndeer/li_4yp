@@ -87,7 +87,6 @@ def preprocess_lab_data(df: pd.DataFrame) -> pd.DataFrame:
     """
     split_shade(df)
     split_lab(df)
-    df.replace(0, None, inplace=True)
     return df
 
 
@@ -103,5 +102,23 @@ def preprocess_formula_data(df: pd.DataFrame) -> pd.DataFrame:
     columns = [f'AA0{i}' for i in range(1, 8)] + ['shade']
     df = df.loc[:, columns]
     split_shade(df, column_name='shade')
-    df.replace(0, None, inplace=True)
     return df
+
+
+def merge_on_shade(lab_df: pd.DataFrame, formula_df: pd.DataFrame) -> pd.DataFrame:
+    """Merge two DataFrames on shade columns.
+    
+    Args:
+        lab_df (pd.DataFrame): The DataFrame containing Lab data.
+        formula_df (pd.DataFrame): The DataFrame containing formula data.
+
+    Returns:
+        pd.DataFrame: The merged DataFrame containing both Lab and formula data.
+    """
+    return pd.merge(
+        lab_df,
+        formula_df,
+        on=['Base', 'Primary', 'Secondary', 'Tertiary'],
+        how='inner',
+        suffixes=['_lab', '_formula']
+    )
