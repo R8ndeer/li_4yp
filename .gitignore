@@ -18,3 +18,12 @@ env/
 # VS Code
 .vscode/
 *.code-workspace
+
+# data files
+*.png
+*.csv
+*.zip
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
