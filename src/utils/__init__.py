@@ -4,3 +4,4 @@ from .preprocessing import (
     preprocess_formula_data,
     merge_on_shade,
 )
+from .hair_swatch_dataset import HairSwatchDataset
