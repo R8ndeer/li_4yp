@@ -20,10 +20,27 @@ env/
 *.code-workspace
 
 # data files
+# images
 *.png
+*.jpg
+*.jpeg
+*.gif
+# metadata
 *.csv
 *.zip
 
 # Jupyter Notebook
 .ipynb_checkpoints
 *.ipynb
+
+# Blender
+*.blend
+*.blend1
+*.exr
+
+# PyTorch
+*.pt
+*.pth
+
+# Archive files
+*/archive/*

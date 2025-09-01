@@ -6,6 +6,8 @@ import shutil
 from collections import defaultdict
 from pathlib import Path
 
+VERSION = "v01"  # Directory version
+
 def parse_shade_from_filename(fname):
     """Extract shade code from filename (e.g., '6.1', '7.23', '10.444')"""
     # Match shade codes like "1.4", "1.34", "10.444" - only one dot with 1-3 digits after
@@ -19,7 +21,7 @@ def reorganize_files():
     """Reorganize files into the new directory structure"""
     root_dir = Path(__file__).resolve().parent.parent.parent / "data"
     source_dir = root_dir / "ColourCorrectedImages"
-    output_dir = root_dir / "real"  # New output directory
+    output_dir = root_dir / f"demi_{VERSION}"  # New output directory
 
     print(f"Number of files in source directory: {len(list(source_dir.iterdir()))}")
     

@@ -25,26 +25,26 @@ from get_stats import get_channel_stats
 # =============================================================================
 
 # Paths
-DATA_DIR = Path("data").resolve() / "demi_v1"
-OUTPUT_CSV = DATA_DIR / "demi_v1.csv"
+DATA_DIR = Path("data").resolve() / "demi_v01"
+OUTPUT_CSV = DATA_DIR / "demi_v01.csv"
 
 # CSV Headers
 HEADER = [
-    "render_id",                # 6.123_001 | ... (representative sample ID)
+    "image_id",                # 6.123_001 | ... (representative sample ID)
     "full_shade",               # 6.1 | 7.23 | ...
     "level",                    # 1 | 2 | 3 | ... | 10
     "tone",                     # .66 | .123 | ...
     "shade_family",             # X | XX | XY | XXX | ...
     "lab_illuminant",           # D65 | ...
-    "lab_l",                    # range: 0-100 (averaged)
-    "lab_a",                    # range: -128-127 (averaged)
-    "lab_b",                    # range: -128-127 (averaged)
-    "sRGB_r",                   # range: 0-255 (averaged)
-    "sRGB_g",                   # range: 0-255 (averaged)
-    "sRGB_b",                   # range: 0-255 (averaged)
-    "linear_r",                 # range: 0-1 (averaged)
-    "linear_g",                 # range: 0-1 (averaged)
-    "linear_b",                 # range: 0-1 (averaged)
+    "lab_l",                    # range: 0-100
+    "lab_a",                    # range: -128-127
+    "lab_b",                    # range: -128-127
+    "sRGB_r",                   # range: 0-1, normalized
+    "sRGB_g",                   # range: 0-1, normalized
+    "sRGB_b",                   # range: 0-1, normalized
+    "linear_r",                 # range: 0-1
+    "linear_g",                 # range: 0-1
+    "linear_b",                 # range: 0-1
 ]
 
 # =============================================================================
@@ -112,12 +112,12 @@ def main():
                 tone,
                 shade_family,
                 "D65",  # lab_illuminant
-                round(mode_l, 2),
-                round(mode_a, 2),
-                round(mode_b_lab, 2),
-                int(round(mode_r)),
-                int(round(mode_g)),
-                int(round(mode_b)),
+                round(mode_l, 3),
+                round(mode_a, 3),
+                round(mode_b_lab, 3),
+                round(mode_r / 255.0, 3),  # Normalized to 0-1 range
+                round(mode_g / 255.0, 3),
+                round(mode_b / 255.0, 3),
                 round(linear_r, 3),
                 round(linear_g, 3),
                 round(linear_b, 3)
