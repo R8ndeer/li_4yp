@@ -9,7 +9,7 @@ dataset:
   shade_format: 2                       # 1 for X.X, 2 for X.XX, 3 for X.XXX
   color_space: RGB                      # Options: RGB, LAB
 
-training:
+parameters:
   loss_type: cross_entropy
   batch_size: 32
   num_epochs: 10
