@@ -5,3 +5,4 @@ from .preprocessing import (
     merge_on_shade,
 )
 from .hair_swatch_dataset import HairSwatchDataset
+from .plot import *
