@@ -23,6 +23,7 @@ class HairSwatchDataset(Dataset):
         df = pd.read_csv(self.__ds_path / self.__config['dataset']['label_file'])
         self.__img_paths = [self.__ds_path / fname for fname in df['filename']]
         self.__labels = df[['Base', 'Primary', 'Secondary', 'Tertiary']].to_numpy(dtype='int64')
+        self.__labels = torch.from_numpy(self.__labels)
 
         if transform is None:
             print("No transform provided, using default ToTensor() transform.")
@@ -38,5 +39,5 @@ class HairSwatchDataset(Dataset):
     def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
         img = Image.open(self.__img_paths[idx]).convert('RGB')
         img = self.__transform(img)
-        label = torch.from_numpy(self.__labels[idx])
+        label = self.__labels[idx]
         return img, label
