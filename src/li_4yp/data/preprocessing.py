@@ -3,7 +3,7 @@ from typing import Any, Tuple
 from pathlib import Path
 
 
-data_path = Path(__file__).resolve().parent.parent.parent / "data"
+data_path = Path(__file__).resolve().parent.parent.parent.parent / "data"
 if not data_path.exists():
     raise FileNotFoundError(f"The data directory {data_path} does not exist.")
 
