@@ -12,6 +12,7 @@ class CustomMetricPlotter:
             subplot_size[1],
             figsize=(subplot_size[0] * 5, subplot_size[1] * 5))
         plt.tight_layout(pad=3.0)
+        plt.close(self.fig)  # Prevent initial empty plot display
 
     def __plot_all(self, history: dict, clear_output=True) -> None:
         epochs = range(1, len(history['train_loss']) + 1)
