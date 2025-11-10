@@ -176,7 +176,7 @@ class ShadeEvaluator:
             base_correct = base_correct.cpu().numpy()
 
         scores[base_correct] = 1.0
-        for i, w in zip((1, 2, 3), self.weights):
+        for i, w in zip(np.arange(1, len(self.weights) + 1), self.weights):
             scores[preds[:, i] != labels[:, i]] -= w
 
         return np.clip(scores.mean().item(), 0, 1)
@@ -221,12 +221,17 @@ class ShadeEvaluator:
             "base_acc": per_digit_acc[0].item(),
             f"tol_base_acc (±1 for <={self.tol_base})": np.mean(self.tol_base_acc).item(),
             "primary_acc": per_digit_acc[1].item(),
-            "secondary_acc": per_digit_acc[2].item(),
-            "tertiary_acc": per_digit_acc[3].item(),
-            "Hierarchical Score": np.mean(self.hierarchical_scores).item(),
-            "Exact Match": np.mean(self.exact_match).item(),
-            "Base-Primary Exact Match": np.mean(self.base_prim_exact_match).item(),
+            "secondary_acc": per_digit_acc[2].item(), 
         }
+        if len(self.weights) == 3:
+            summary["tertiary_acc"] = per_digit_acc[3].item()
+        summary.update(
+            {
+                "Hierarchical Score": np.mean(self.hierarchical_scores).item(),
+                "Exact Match": np.mean(self.exact_match).item(),
+                "Base-Primary Exact Match": np.mean(self.base_prim_exact_match).item(),
+            }
+        )
         return summary
 
 

@@ -20,11 +20,17 @@ env/
 *.code-workspace
 
 # data files
+/data/
 # images
 *.png
 *.jpg
 *.jpeg
 *.gif
+
+# feature files
+*.npy
+*.npz
+
 # metadata
 *.csv
 *.zip
@@ -38,9 +44,14 @@ env/
 *.blend1
 *.exr
 
-# PyTorch
+# Models (sklearn and PyTorch)
+*.joblib
+*.pkl
 *.pt
 *.pth
+
+# Experiment directories
+/experiments/
 
 # Archive files
 */archive/*

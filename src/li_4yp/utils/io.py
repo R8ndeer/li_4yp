@@ -1,3 +1,5 @@
+"""Utilities for image I/O and processing using OpenCV. Only use OpenCV images."""
+
 import cv2
 import numpy as np
 
@@ -10,6 +12,15 @@ def imread_rgb(path: str) -> np.ndarray:
 
 def rgb2lab(img: np.ndarray) -> np.ndarray:
     return cv2.cvtColor(img.copy(), cv2.COLOR_RGB2Lab)
+
+
+def cv2lab_to_lab(img: np.ndarray) -> np.ndarray:
+    """Convert OpenCV Lab image to standard Lab image with L in [0, 100], a and b in [-128, 127]."""
+    lab_img = img.copy().astype(np.float64)
+    lab_img[:, :, 0] = lab_img[:, :, 0] * (100.0 / 255.0)          # L channel
+    lab_img[:, :, 1] = lab_img[:, :, 1] - 128.0                    # a channel
+    lab_img[:, :, 2] = lab_img[:, :, 2] - 128.0                    # b channel
+    return lab_img
 
 
 def lab2rgb(img: np.ndarray) -> np.ndarray:

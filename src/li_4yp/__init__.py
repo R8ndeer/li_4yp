@@ -2,15 +2,21 @@
 
 from .models import CNNRNNModel, MultiOutputCNN
 from .data import HairSwatchDataset
-from .training import compute_loss, ShadeEvaluator
+from .training import compute_loss, multitask_loss, ShadeEvaluator
+from .experiments import Experiment, ExperimentConfig, ExperimentLogger, ModelRegistry
 
 __version__ = "0.1.0"
 __author__ = "Boting Li"
 
 __all__ = [
     "CNNRNNModel",
-    "MultiOutputCNN", 
+    "MultiOutputCNN",
     "HairSwatchDataset",
     "compute_loss",
-    "ShadeEvaluator"
+    "multitask_loss",
+    "ShadeEvaluator",
+    "Experiment",
+    "ExperimentConfig",
+    "ExperimentLogger",
+    "ModelRegistry"
 ]
