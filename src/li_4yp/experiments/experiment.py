@@ -71,11 +71,11 @@ class Experiment:
     
     def setup_data(
         self,
-        dataset_class: type,
+        dataset_class: Optional[type] = None,
         transform: Optional[Any] = None,
         **dataset_kwargs
     ) -> None:
-        """Setup data loaders.
+        """Setup data. For PyTorch models, create data loaders; for sklearn models, extract from csv.
         
         Args:
             dataset_class: Dataset class to use
@@ -84,29 +84,30 @@ class Experiment:
         """
         self.logger.info("Setting up data loaders...")
         
-        # Create dataset
-        dataset = dataset_class(
-            data_dir=self.config.data_dir,
-            csv_file=self.config.csv_file,
-            transform=transform,
-            **dataset_kwargs
-        )
-        
-        # Log dataset info
-        data_info = {
-            "dataset_class": dataset_class.__name__,
-            "total_samples": len(dataset),
-            "data_dir": self.config.data_dir,
-            "csv_file": self.config.csv_file
-        }
-        
-        if hasattr(dataset, 'get_info'):
-            data_info.update(dataset.get_info())
-        
-        self.logger.log_data_info(data_info)
-        
         # For PyTorch models, create data loaders
         if self.config.model_type == "pytorch":
+            # Create dataset
+            dataset = dataset_class(
+                data_dir=self.config.data_dir,
+                csv_file=self.config.csv_file,
+                transform=transform,
+                **dataset_kwargs
+            )
+            
+            # Log dataset info
+            data_info = {
+                "dataset_class": dataset_class.__name__,
+                "total_samples": len(dataset),
+                "data_dir": self.config.data_dir,
+                "csv_file": self.config.csv_file
+            }
+            
+            if hasattr(dataset, 'get_info'):
+                data_info.update(dataset.get_info())
+            
+            self.logger.log_data_info(data_info)
+        
+
             # Split dataset
             train_size = int(self.config.train_split * len(dataset))
             val_size = len(dataset) - train_size
@@ -137,22 +138,12 @@ class Experiment:
         # For sklearn models, prepare data
         elif self.config.model_type == "sklearn":
             # Extract features and labels
+            import pandas as pd
             from sklearn.model_selection import train_test_split
             
-            X = []
-            y = []
-            for i in range(len(dataset)):
-                features, labels = dataset[i]
-                # Handle different data formats
-                if isinstance(features, torch.Tensor):
-                    features = features.numpy()
-                if isinstance(labels, torch.Tensor):
-                    labels = labels.numpy()
-                X.append(features.flatten())  # Flatten image if needed
-                y.append(labels)
-            
-            X = np.array(X)
-            y = np.array(y)
+            df = pd.read_csv(Path(self.config.data_dir) / self.config.csv_file)
+            X = df[self.config.feature_cols].values
+            y = df[self.config.label_cols].values
             
             # Split data
             self.X_train, self.X_val, self.y_train, self.y_val = train_test_split(
@@ -161,6 +152,13 @@ class Experiment:
                 random_state=self.config.random_seed
             )
             
+            data_info = {
+                "total_samples": len(X),
+                "data_dir": self.config.data_dir,
+                "csv_file": self.config.csv_file
+            }
+            self.logger.log_data_info(data_info)
+
             self.logger.info(f"Train samples: {len(self.X_train)}")
             self.logger.info(f"Val samples: {len(self.X_val)}")
             self.logger.info(f"Feature shape: {self.X_train.shape}")
@@ -406,7 +404,7 @@ class Experiment:
     
     def run(
         self,
-        dataset_class: type,
+        dataset_class: Optional[type] = None,
         transform: Optional[Any] = None,
         **dataset_kwargs
     ) -> Dict[str, Any]:
@@ -421,12 +419,12 @@ class Experiment:
             Dictionary with final metrics
         """
         # Setup
-        self.setup_data(dataset_class, transform, **dataset_kwargs)
         self.setup_model()
         self.setup_evaluator()
         
         # Train
         if self.config.model_type == "pytorch":
+            self.setup_data(dataset_class, transform, **dataset_kwargs)
             self.setup_optimizer()
             self.train_pytorch()
             
@@ -435,6 +433,7 @@ class Experiment:
             self.logger.log_metrics("final_val", val_metrics)
             
         elif self.config.model_type == "sklearn":
+            self.setup_data(**dataset_kwargs)
             self.train_sklearn()
             val_metrics = self.evaluator.summary()
         

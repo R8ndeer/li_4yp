@@ -26,6 +26,12 @@ class ExperimentConfig:
     dataset_name: str = "masterlist_v6"
     data_dir: str = "data/masterlist_v6"
     csv_file: str = "masterlist_v6_full_features.csv"
+    feature_cols: list[str] = field(default_factory=lambda: [
+        "mean_l", "mean_a", "mean_b"
+    ])
+    label_cols: list[str] = field(default_factory=lambda: [
+        "Base", "Primary", "Secondary"
+    ])
     train_split: float = 0.8
     random_seed: int = 42
     
@@ -68,6 +74,13 @@ class ExperimentConfig:
     # Reproducibility
     device: str = "auto"  # "auto", "cpu", "cuda"
     num_workers: int = 0
+
+    # Config dump
+    _PYTORCH_FIELDS = {
+        "batch_size", "num_epochs", "learning_rate", "optimizer",
+        "optimizer_params", "scheduler", "scheduler_params", "early_stopping_patience"
+    }
+    _SKLEARN_FIELDS = {"feature_cols", "labels_cols"}
     
     def __post_init__(self):
         """Validate configuration after initialization."""
@@ -98,8 +111,15 @@ class ExperimentConfig:
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert config to dictionary."""
-        return asdict(self)
-    
+        config_dict = asdict(self)
+        if self.model_type == "pytorch":
+            for field in self._SKLEARN_FIELDS:
+                config_dict.pop(field, None)
+        elif self.model_type == "sklearn":
+            for field in self._PYTORCH_FIELDS:
+                config_dict.pop(field, None)
+        return config_dict
+
     def to_yaml(self, yaml_path: str | Path) -> None:
         """Save config to YAML file."""
         Path(yaml_path).parent.mkdir(parents=True, exist_ok=True)

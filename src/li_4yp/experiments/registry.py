@@ -145,7 +145,7 @@ def register_sklearn_models():
     
     # Random Forest
     ModelRegistry.register(
-        name="random_forest",
+        name="multi_output_random_forest",
         constructor=lambda **kwargs: MultiOutputClassifier(
             RandomForestClassifier(
                 n_estimators=kwargs.get('n_estimators', 200),
@@ -160,7 +160,7 @@ def register_sklearn_models():
     
     # Extra Trees
     ModelRegistry.register(
-        name="extra_trees",
+        name="multi_output_extra_trees",
         constructor=lambda **kwargs: MultiOutputClassifier(
             ExtraTreesClassifier(
                 n_estimators=kwargs.get('n_estimators', 200),
@@ -175,7 +175,7 @@ def register_sklearn_models():
     
     # MLP
     ModelRegistry.register(
-        name="mlp",
+        name="multi_output_mlp",
         constructor=lambda **kwargs: MultiOutputClassifier(
             MLPClassifier(
                 hidden_layer_sizes=kwargs.get('hidden_layer_sizes', (256, 128)),
