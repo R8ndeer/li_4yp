@@ -112,7 +112,7 @@ class ModelRegistry:
 
 def register_pytorch_models():
     """Register built-in PyTorch models."""
-    from li_4yp.models import CNNRNNModel, MultiOutputCNN
+    from li_4yp.models import CNNRNNModel, MultiOutputCNN, ShadeCNN
     
     # CNN-RNN Model
     ModelRegistry.register(
@@ -134,6 +134,15 @@ def register_pytorch_models():
             vocab_size=kwargs.get('vocab_size', 12)
         ),
         description="Multi-output CNN for parallel shade component prediction"
+    )
+
+    # ShadeCNN
+    ModelRegistry.register(
+        name="shade_cnn",
+        constructor=lambda **kwargs: ShadeCNN(
+            num_classes=kwargs.get('num_classes', [12, 11, 11])
+        ),
+        description="A simple CNN for multi-task hair color classification"
     )
 
 

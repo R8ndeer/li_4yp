@@ -425,6 +425,17 @@ class Experiment:
         # Train
         if self.config.model_type == "pytorch":
             self.setup_data(dataset_class, transform, **dataset_kwargs)
+            self.logger.info("Using transform:")
+            s = transform.__repr__()
+            lines = [ln.strip() for ln in s.splitlines()]
+            if lines and lines[0].startswith("Compose"):
+                lines = lines[1:]
+            if lines and lines[-1] == ")":
+                lines = lines[:-1]
+            for ln in lines:
+                if ln:
+                    self.logger.info(f"  {ln}")
+            
             self.setup_optimizer()
             self.train_pytorch()
             

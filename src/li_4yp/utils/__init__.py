@@ -13,6 +13,13 @@ from .io import (
     get_masked_image
 )
 from .reproducibility import seed_all, get_device
+from .transforms import (
+    build_transform,
+    get_imagenet_transform,
+    get_basic_transform,
+    get_transform_from_preset,
+    TRANSFORM_PRESETS
+)
 
 __all__ = [
     "CustomMetricPlotter",
@@ -26,5 +33,10 @@ __all__ = [
     "mask_specular_and_shadow",
     "get_masked_image",
     "seed_all",
-    "get_device"
+    "get_device",
+    "build_transform",
+    "get_imagenet_transform",
+    "get_basic_transform",
+    "get_transform_from_preset",
+    "TRANSFORM_PRESETS"
 ]

@@ -71,6 +71,15 @@ class ExperimentConfig:
     save_predictions: bool = True
     save_history: bool = True
     
+    # Data augmentation & transforms (PyTorch)
+    use_transform_preset: bool = True
+    transform_preset: str = "imagenet"
+    image_size: tuple = (224, 224)
+    normalize: bool = True
+    normalize_mean: tuple = (0.485, 0.456, 0.406)  # ImageNet defaults
+    normalize_std: tuple = (0.229, 0.224, 0.225)
+    augmentation: Dict[str, Any] = field(default_factory=dict)  # e.g., {"random_flip": True}
+    
     # Reproducibility
     device: str = "auto"  # "auto", "cpu", "cuda"
     num_workers: int = 0
