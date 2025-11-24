@@ -1,0 +1,132 @@
+import torch
+import torch.nn as nn
+
+class PixelStatNet(nn.Module):
+    """
+    A 'Deep Random Forest' style network (Geometric Deep Learning).
+    Uses 1x1 convolutions to learn a color space per-pixel (permutation invariant), 
+    then uses statistical pooling (Mean + Std) to capture global texture/variation.
+    """
+    def __init__(self, num_classes=[12, 11, 11], dropout_rate=0.2):
+        super().__init__()
+        
+        # 1. Pixel-wise Feature Extraction (The "Color Space" Learner)
+        # 1x1 Convs acting as a Shared MLP on every pixel.
+        self.pixel_mlp = nn.Sequential(
+            nn.Conv2d(3, 32, kernel_size=1), 
+            nn.BatchNorm2d(32),
+            nn.ReLU(),
+            nn.Conv2d(32, 64, kernel_size=1),
+            nn.BatchNorm2d(64),
+            nn.ReLU(),
+            nn.Conv2d(64, 128, kernel_size=1),
+            nn.BatchNorm2d(128),
+            nn.ReLU()
+        )
+        
+        # 2. The Heads
+        # Input dim = 128 features * 2 stats (Mean + Std) = 256
+        input_dim = 256
+        
+        self.base_head = nn.Sequential(
+            nn.Linear(input_dim, 128),
+            nn.ReLU(),
+            nn.Dropout(dropout_rate),
+            nn.Linear(128, num_classes[0])
+        )
+        
+        self.primary_head = nn.Sequential(
+            nn.Linear(input_dim, 128),
+            nn.ReLU(),
+            nn.Dropout(dropout_rate),
+            nn.Linear(128, num_classes[1])
+        )
+        
+        self.secondary_head = nn.Sequential(
+            nn.Linear(input_dim, 128),
+            nn.ReLU(),
+            nn.Dropout(dropout_rate),
+            nn.Linear(128, num_classes[2])
+        )
+
+    def forward(self, x):
+        # x: [Batch, 3, 224, 224]
+        
+        # 1. Extract Color Features per pixel
+        x = self.pixel_mlp(x) # -> [Batch, 128, 224, 224]
+        
+        # 2. Statistical Pooling 
+        # Global Mean: Average color presence
+        global_mean = torch.mean(x, dim=[2, 3]) # -> [Batch, 128]
+        
+        # Global Std: Color variance (captures shine/texture)
+        global_std = torch.std(x, dim=[2, 3])   # -> [Batch, 128]
+        
+        # Concatenate: [Batch, 256]
+        stats = torch.cat([global_mean, global_std], dim=1) 
+        
+        return {
+            'base': self.base_head(stats),
+            'primary': self.primary_head(stats),
+            'secondary': self.secondary_head(stats)
+        }
+
+
+class PixelMoreStatNet(PixelStatNet):
+    def __init__(self, num_classes=[12, 11, 11], dropout_rate=0.2):
+        super().__init__(num_classes, dropout_rate)
+
+        self.pool = nn.AdaptiveAvgPool2d((56, 56))  # Downsample for efficiency
+                                                    # size must divide 224 for mps compatibility
+
+        input_dim = 128 * 5  # Mean + Std + 3 Quantiles
+
+        self.base_head = nn.Sequential(
+            nn.Linear(input_dim, 128),
+            nn.ReLU(),
+            nn.Dropout(dropout_rate),
+            nn.Linear(128, num_classes[0])
+        )
+        
+        self.primary_head = nn.Sequential(
+            nn.Linear(input_dim, 128),
+            nn.ReLU(),
+            nn.Dropout(dropout_rate),
+            nn.Linear(128, num_classes[1])
+        )
+        
+        self.secondary_head = nn.Sequential(
+            nn.Linear(input_dim, 128),
+            nn.ReLU(),
+            nn.Dropout(dropout_rate),
+            nn.Linear(128, num_classes[2])
+        )
+
+    def forward(self, x):
+        # x: [Batch, 3, 224, 224]
+        
+        # 1. Extract Color Features per pixel
+        x = self.pixel_mlp(x) # -> [Batch, 128, 224, 224]
+        x = self.pool(x)     # -> [Batch, 128, 56, 56]
+        
+        # 2. Statistical Pooling 
+        # Global Mean: Average color presence
+        mean = torch.mean(x, dim=[2, 3]) # -> [Batch, 128]
+        # Global Std: Color variance (captures shine/texture)
+        std = torch.std(x, dim=[2, 3])   # -> [Batch, 128]
+        # Global Quantiles
+        quantiles = torch.quantile(
+            x.view(x.size(0), x.size(1), -1),  # [Batch, 128, 224*224]
+            q=torch.tensor([0.25, 0.5, 0.75], device=x.device), 
+            dim=2
+        )  # -> [3, Batch, 128]
+        p25, p50, p75 = quantiles[0], quantiles[1], quantiles[2]
+        
+        # Concatenate: [Batch, 512]
+        stats = torch.cat([mean, std, p25, p50, p75], dim=1) 
+        
+        return {
+            'base': self.base_head(stats),
+            'primary': self.primary_head(stats),
+            'secondary': self.secondary_head(stats)
+        }

@@ -29,16 +29,39 @@ def build_transform(
     transform_list = []
     augmentation = augmentation or {}
     
-    # Resize
-    transform_list.append(v2.Resize(image_size))
-    
+    # Resize only if not using random resized crop
+    if not augmentation.get("random_resized_crop", False):
+        transform_list.append(v2.Resize(image_size))
+
     # Training augmentations
     if is_training:
+
+        if augmentation.get("random_crop", False):
+            crop_size = augmentation.get("crop_size", image_size)
+            transform_list.append(v2.RandomCrop(crop_size))
+            transform_list.append(v2.Resize(image_size))  # Resize back
+
+        if augmentation.get("random_resized_crop", False):
+            transform_list.append(
+                v2.RandomResizedCrop(
+                    size=image_size,
+                    scale=augmentation.get("resized_crop_scale", (0.8, 1.0)),
+                    ratio=augmentation.get("resized_crop_ratio", (0.9, 1.1)),
+                    interpolation=v2.InterpolationMode.BICUBIC,
+                    antialias=True
+                )
+            )
+
         if augmentation.get("random_horizontal_flip", False):
             transform_list.append(
                 v2.RandomHorizontalFlip(p=augmentation.get("flip_prob", 0.5))
             )
-        
+
+        if augmentation.get("random_vertical_flip", False):
+            transform_list.append(
+                v2.RandomVerticalFlip(p=augmentation.get("flip_prob", 0.5))
+            )
+
         if augmentation.get("random_rotation", False):
             degrees = augmentation.get("rotation_degrees", 10)
             transform_list.append(v2.RandomRotation(degrees))
@@ -52,12 +75,15 @@ def build_transform(
                     hue=augmentation.get("hue", 0.1)
                 )
             )
-        
-        if augmentation.get("random_crop", False):
-            crop_size = augmentation.get("crop_size", image_size)
-            transform_list.append(v2.RandomCrop(crop_size))
-            transform_list.append(v2.Resize(image_size))  # Resize back
-    
+
+        if augmentation.get("gaussian_blur", False):
+            transform_list.append(
+                v2.GaussianBlur(
+                    kernel_size=augmentation.get("blur_kernel_size", 5),
+                    sigma=augmentation.get("blur_sigma", (0.1, 2.0))
+                )
+            )
+
     # Convert to tensor
     transform_list.append(v2.ToImage())
     transform_list.append(v2.ToDtype(torch.float32, scale=True))

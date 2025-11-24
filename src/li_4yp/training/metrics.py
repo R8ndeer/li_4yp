@@ -28,6 +28,7 @@ class ShadeEvaluator:
         self.hierarchical_scores = []
         self.exact_match = []
         self.base_prim_exact_match = []
+        self.prim_sec_exact_match = []
         self.tol_base_acc = []
 
     @staticmethod
@@ -135,6 +136,33 @@ class ShadeEvaluator:
         return mask.float().mean().item() \
             if isinstance(preds, torch.Tensor) \
             else mask.mean().item()
+    
+    def _prim_sec_exact_match(
+            self,
+            preds: torch.Tensor | np.ndarray,
+            labels: torch.Tensor | np.ndarray,
+            return_mask: bool = False
+        ) -> float | Optional[torch.Tensor | np.ndarray]:
+        """Compute exact match accuracy for primary and secondary digits.
+
+        Args:
+            preds (torch.Tensor | np.ndarray): (batch_size, 4) predicted shade codes
+            labels (torch.Tensor | np.ndarray): (batch_size, 4) true shade codes
+        
+        Returns:
+            accuracy (float): exact match accuracy for primary and secondary digits
+        """
+        if isinstance(preds, torch.Tensor):
+            mask = (preds[:, 1:3] == labels[:, 1:3]).all(dim=1)
+        else:
+            mask = (preds[:, 1:3] == labels[:, 1:3]).all(axis=1)
+        
+        if return_mask:
+            return mask
+
+        return mask.float().mean().item() \
+            if isinstance(preds, torch.Tensor) \
+            else mask.mean().item()
 
     def _exact_match(
             self, 
@@ -209,6 +237,7 @@ class ShadeEvaluator:
         self.hierarchical_scores.append(self._hierarchical_score(preds, labels))
         self.exact_match.append(self._exact_match(preds, labels))
         self.base_prim_exact_match.append(self._base_prim_exact_match(preds, labels))
+        self.prim_sec_exact_match.append(self._prim_sec_exact_match(preds, labels))
 
     def summary(self) -> dict:
         """Compute summary of all metrics.
@@ -230,6 +259,7 @@ class ShadeEvaluator:
                 "Hierarchical Score": np.mean(self.hierarchical_scores).item(),
                 "Exact Match": np.mean(self.exact_match).item(),
                 "Base-Primary Exact Match": np.mean(self.base_prim_exact_match).item(),
+                "Primary-Secondary Exact Match": np.mean(self.prim_sec_exact_match).item(),
             }
         )
         return summary

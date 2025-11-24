@@ -4,6 +4,8 @@ from typing import Any, Callable, Dict, Optional
 import torch
 import torch.nn as nn
 
+from li_4yp.models import *
+
 
 class ModelRegistry:
     """Registry for managing model constructors."""
@@ -112,7 +114,6 @@ class ModelRegistry:
 
 def register_pytorch_models():
     """Register built-in PyTorch models."""
-    from li_4yp.models import CNNRNNModel, MultiOutputCNN, ShadeCNN
     
     # CNN-RNN Model
     ModelRegistry.register(
@@ -143,6 +144,50 @@ def register_pytorch_models():
             num_classes=kwargs.get('num_classes', [12, 11, 11])
         ),
         description="A simple CNN for multi-task hair color classification"
+    )
+
+    # DeeperShadeCNN
+    ModelRegistry.register(
+        name="deeper_shade_cnn",
+        constructor=lambda **kwargs: DeeperShadeCNN(
+            num_classes=kwargs.get('num_classes', [12, 11, 11])
+        ),
+        description="A deeper CNN for multi-task hair color classification"
+    )
+
+    ModelRegistry.register(
+        name="mbnet_shade_cnn",
+        constructor=lambda **kwargs: MbNetShadeCNN(
+            feat_dim=kwargs.get('feat_dim', 256),
+            num_classes=kwargs.get('num_classes', [12, 11, 11])
+        ),
+        description="MobileNetV3-based CNN for multi-task hair color classification"
+    )
+
+    ModelRegistry.register(
+        name="shade_efficientnet",
+        constructor=lambda **kwargs: ShadeEfficientNet(
+            num_classes=kwargs.get('num_classes', [12, 11, 11])
+        ),
+        description="EfficientNet-based CNN for multi-task hair color classification"
+    )
+
+    ModelRegistry.register(
+        name="pixel_stat_net",
+        constructor=lambda **kwargs: PixelStatNet(
+            num_classes=kwargs.get('num_classes', [12, 11, 11]),
+            dropout_rate=kwargs.get('dropout_rate', 0.2)
+        ),
+        description="PixelStatNet: A Deep Random Forest style network using statistical pooling"
+    )
+
+    ModelRegistry.register(
+        name="pixel_more_stat_net",
+        constructor=lambda **kwargs: PixelMoreStatNet(
+            num_classes=kwargs.get('num_classes', [12, 11, 11]),
+            dropout_rate=kwargs.get('dropout_rate', 0.2)
+        ),
+        description="PixelMoreStatNet: An enhanced version of PixelStatNet with additional statistics"
     )
 
 

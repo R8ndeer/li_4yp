@@ -11,9 +11,10 @@ import time
 
 from .config import ExperimentConfig
 from .logger import ExperimentLogger
-from .registry import ModelRegistry
+from .model_registry import ModelRegistry
+from .loss_registry import LossRegistry
 from li_4yp.training import ShadeEvaluator
-from li_4yp.utils import seed_all
+from li_4yp.utils import seed_all, get_device
 
 
 class Experiment:
@@ -46,6 +47,7 @@ class Experiment:
         # Initialize components
         self.model = None
         self.optimizer = None
+        self.loss_fn = None
         self.scheduler = None
         self.train_loader = None
         self.val_loader = None
@@ -64,7 +66,7 @@ class Experiment:
     def _get_device(self) -> torch.device:
         """Get compute device."""
         if self.config.device == "auto":
-            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            device = get_device()
         else:
             device = torch.device(self.config.device)
         return device
@@ -86,6 +88,9 @@ class Experiment:
         
         # For PyTorch models, create data loaders
         if self.config.model_type == "pytorch":
+            if dataset_class is None:
+                raise ValueError("dataset_class must be provided for PyTorch models.")
+            
             # Create dataset
             dataset = dataset_class(
                 data_dir=self.config.data_dir,
@@ -217,6 +222,18 @@ class Experiment:
                 **self.config.scheduler_params
             )
             self.logger.info(f"Using scheduler: {self.config.scheduler}")
+
+    def setup_loss_fn(self) -> None:
+        """Setup loss function for PyTorch models."""
+        if self.config.model_type != "pytorch":
+            return
+        
+        self.logger.info("Setting up loss function...")
+        
+        self.loss_fn = LossRegistry.get(
+            self.config.loss_name,
+            **self.config.loss_params
+        )
     
     def setup_evaluator(self) -> None:
         """Setup evaluator."""
@@ -242,7 +259,9 @@ class Experiment:
             outputs = self.model(images)
             
             # Compute loss (customize based on model output format)
-            if isinstance(outputs, dict):
+            if self.loss_fn is not None:
+                loss = self.loss_fn(outputs, labels)
+            elif isinstance(outputs, dict):
                 from li_4yp.training import multitask_loss
                 loss = multitask_loss(outputs, labels, self.config.loss_weights)
             else:
@@ -257,14 +276,19 @@ class Experiment:
         avg_loss = total_loss / len(self.train_loader.dataset)
         return avg_loss
     
-    def evaluate_pytorch(self, data_loader: DataLoader) -> Tuple[float, Dict[str, float]]:
+    def evaluate_pytorch(
+            self,
+            data_loader: DataLoader,
+            return_preds: bool = False
+        ) -> Tuple[float, Dict[str, float]] | Tuple[torch.Tensor, torch.Tensor]:
         """Evaluate PyTorch model.
         
         Args:
             data_loader: Data loader to evaluate on
-            
+            return_preds: Whether to return predictions and labels
+
         Returns:
-            Tuple of (average loss, metrics dictionary)
+            Tuple of (average loss, metrics dictionary) or (all_preds, all_labels) if return_preds is True
         """
         self.model.eval()
         total_loss = 0.0
@@ -308,10 +332,13 @@ class Experiment:
         self.evaluator.reset()
         self.evaluator.update(all_preds, all_labels)
         metrics = self.evaluator.summary()
-        
+
         # Remove None values
         metrics = {k: v for k, v in metrics.items() if v is not None}
         
+        if return_preds:
+            return all_preds, all_labels
+
         return avg_loss, metrics
     
     def train_sklearn(self) -> None:
@@ -401,6 +428,11 @@ class Experiment:
             if model_path.exists():
                 self.model.load_state_dict(torch.load(model_path))
                 self.logger.info("Loaded best model for final evaluation")
+
+        # Save predictions
+        if self.config.save_predictions:
+            all_preds, all_labels = self.evaluate_pytorch(self.val_loader, return_preds=True)
+            self.logger.save_predictions(all_preds, all_labels, phase="val")
     
     def run(
         self,
@@ -437,6 +469,8 @@ class Experiment:
                     self.logger.info(f"  {ln}")
             
             self.setup_optimizer()
+            if self.config.loss_name:
+                self.setup_loss_fn()
             self.train_pytorch()
             
             # Final evaluation

@@ -48,6 +48,8 @@ class ExperimentConfig:
     # Loss configuration
     loss_function: str = "CrossEntropyLoss"
     loss_weights: tuple = (1.0, 1.0, 1.0)  # for multi-task losses
+    loss_name: str = ""
+    loss_params: Dict[str, Any] = field(default_factory=dict)
     
     # Evaluation configuration
     eval_metrics: list[str] = field(default_factory=lambda: [
@@ -57,7 +59,8 @@ class ExperimentConfig:
         "secondary_acc",
         "Hierarchical Score",
         "Exact Match",
-        "Base-Primary Exact Match"
+        "Base-Primary Exact Match",
+        "Primary-Secondary Exact Match"
     ])
     evaluator_params: Dict[str, Any] = field(default_factory=lambda: {
         "eos_token": -1,
