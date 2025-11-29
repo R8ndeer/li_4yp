@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 import torch
 import torch.nn as nn
-from torch.utils.data import DataLoader, random_split
+from torch.utils.data import Subset, DataLoader, random_split
 import numpy as np
 import pickle
 import time
@@ -14,7 +14,9 @@ from .logger import ExperimentLogger
 from .model_registry import ModelRegistry
 from .loss_registry import LossRegistry
 from li_4yp.training import ShadeEvaluator
-from li_4yp.utils import seed_all, get_device
+from li_4yp.utils import (
+    seed_all, get_device, build_transform, get_transform_from_preset
+)
 
 
 class Experiment:
@@ -74,7 +76,6 @@ class Experiment:
     def setup_data(
         self,
         dataset_class: Optional[type] = None,
-        transform: Optional[Any] = None,
         **dataset_kwargs
     ) -> None:
         """Setup data. For PyTorch models, create data loaders; for sklearn models, extract from csv.
@@ -91,36 +92,77 @@ class Experiment:
             if dataset_class is None:
                 raise ValueError("dataset_class must be provided for PyTorch models.")
             
+            # Configure transform
+            if self.config.use_transform_preset:
+                if self.config.augmentation:
+                    msg = "Cannot use both transform preset and custom augmentations."
+                    msg += " Set 'use_transform_preset' to false EXPLICITLY to use custom augmentations."
+                    raise ValueError(msg)
+                
+                self.train_transform = get_transform_from_preset(self.config.transform_preset)
+            else:
+                self.train_transform = build_transform(
+                    image_size=self.config.image_size,
+                    normalize=self.config.normalize,
+                    normalize_mean=self.config.normalize_mean,
+                    normalize_std=self.config.normalize_std,
+                    augmentation=self.config.augmentation,
+                    is_training=True
+                )
+            
+            self.val_transform = build_transform(
+                image_size=self.config.image_size,
+                normalize=self.config.normalize,
+                normalize_mean=self.config.normalize_mean,
+                normalize_std=self.config.normalize_std,
+                is_training=False
+            )
+            
             # Create dataset
-            dataset = dataset_class(
+            full_dataset = dataset_class(
                 data_dir=self.config.data_dir,
                 csv_file=self.config.csv_file,
-                transform=transform,
                 **dataset_kwargs
             )
             
             # Log dataset info
             data_info = {
                 "dataset_class": dataset_class.__name__,
-                "total_samples": len(dataset),
+                "total_samples": len(full_dataset),
                 "data_dir": self.config.data_dir,
                 "csv_file": self.config.csv_file
             }
             
-            if hasattr(dataset, 'get_info'):
-                data_info.update(dataset.get_info())
+            if hasattr(full_dataset, 'get_info'):
+                data_info.update(full_dataset.get_info())
             
             self.logger.log_data_info(data_info)
         
 
             # Split dataset
-            train_size = int(self.config.train_split * len(dataset))
-            val_size = len(dataset) - train_size
-            train_dataset, val_dataset = random_split(
-                dataset,
+            train_size = int(self.config.train_split * len(full_dataset))
+            val_size = len(full_dataset) - train_size
+            train_indices, val_indices = random_split(
+                range(train_size + val_size),
                 [train_size, val_size],
                 generator=torch.Generator().manual_seed(self.config.random_seed)
             )
+
+            train_dataset_full = dataset_class(
+                data_dir=self.config.data_dir,
+                csv_file=self.config.csv_file,
+                transform=self.train_transform,  # Augmentations
+                **dataset_kwargs
+            )
+            train_dataset = Subset(train_dataset_full, train_indices.indices)
+
+            val_dataset_full = dataset_class(
+                data_dir=self.config.data_dir,
+                csv_file=self.config.csv_file,
+                transform=self.val_transform,  # Deterministic
+                **dataset_kwargs
+            )
+            val_dataset = Subset(val_dataset_full, val_indices.indices)
             
             # Create data loaders
             self.train_loader = DataLoader(
@@ -249,14 +291,21 @@ class Experiment:
         self.model.train()
         total_loss = 0.0
         
-        for images, labels in self.train_loader:
-            images = images.to(self.device)
-            labels = labels.to(self.device)
-            
+        for batch in self.train_loader:
             self.optimizer.zero_grad()
-            
-            # Forward pass
-            outputs = self.model(images)
+
+            if len(batch) == 3:
+                images, features, labels = batch
+                images = images.to(self.device)
+                features = features.to(self.device)
+                labels = labels.to(self.device)
+                outputs = self.model(images, features)
+            else:
+                images, labels = batch
+                images = images.to(self.device)
+                labels = labels.to(self.device)
+                outputs = self.model(images)
+
             
             # Compute loss (customize based on model output format)
             if self.loss_fn is not None:
@@ -296,11 +345,20 @@ class Experiment:
         all_labels = []
         
         with torch.no_grad():
-            for images, labels in data_loader:
-                images = images.to(self.device)
-                labels = labels.to(self.device)
-                
-                outputs = self.model(images)
+            for batch in data_loader:
+                if len(batch) == 3:
+                    images, features, labels = batch
+                    images = images.to(self.device)
+                    features = features.to(self.device)
+                    labels = labels.to(self.device)
+
+                    outputs = self.model(images, features)
+                else:
+                    images, labels = batch
+                    images = images.to(self.device)
+                    labels = labels.to(self.device)
+                    
+                    outputs = self.model(images)
                 
                 # Compute loss
                 if isinstance(outputs, dict):
@@ -434,10 +492,22 @@ class Experiment:
             all_preds, all_labels = self.evaluate_pytorch(self.val_loader, return_preds=True)
             self.logger.save_predictions(all_preds, all_labels, phase="val")
     
+    @staticmethod
+    def print_transform(transform, logger):
+        """Print transform details."""
+        s = transform.__repr__()
+        lines = [ln.strip() for ln in s.splitlines()]
+        if lines and lines[0].startswith("Compose"):
+            lines = lines[1:]
+        if lines and lines[-1] == ")":
+            lines = lines[:-1]
+        for ln in lines:
+            if ln:
+                logger.info(f"  {ln}")
+
     def run(
         self,
         dataset_class: Optional[type] = None,
-        transform: Optional[Any] = None,
         **dataset_kwargs
     ) -> Dict[str, Any]:
         """Run the complete experiment.
@@ -456,17 +526,12 @@ class Experiment:
         
         # Train
         if self.config.model_type == "pytorch":
-            self.setup_data(dataset_class, transform, **dataset_kwargs)
-            self.logger.info("Using transform:")
-            s = transform.__repr__()
-            lines = [ln.strip() for ln in s.splitlines()]
-            if lines and lines[0].startswith("Compose"):
-                lines = lines[1:]
-            if lines and lines[-1] == ")":
-                lines = lines[:-1]
-            for ln in lines:
-                if ln:
-                    self.logger.info(f"  {ln}")
+            self.setup_data(dataset_class, **dataset_kwargs)
+
+            self.logger.info("Using train transform:")
+            Experiment.print_transform(self.train_transform, self.logger)
+            self.logger.info("Using val transform:")
+            Experiment.print_transform(self.val_transform, self.logger)
             
             self.setup_optimizer()
             if self.config.loss_name:

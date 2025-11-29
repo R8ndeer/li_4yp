@@ -1,7 +1,7 @@
 """Data handling module for hair swatch datasets."""
 
 from .augment import augment_masked_features
-from .datasets import HairSwatchDataset, DigitalSwatchDataset
+from .datasets import HairSwatchDataset, DigitalSwatchDataset, HybridSwatchDataset
 from .preprocessing import (
     load_data, 
     parse_shade, 

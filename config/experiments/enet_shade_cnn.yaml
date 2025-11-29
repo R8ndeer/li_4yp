@@ -1,0 +1,77 @@
+name: "shade_efficientnet_cnn_test"
+description: "Test current ShadeEfficientNet model on masterlist_v6 dataset w/ augmentations"
+tags:
+  - "pytorch"
+  - "shade_efficientnet"
+  - "augmented"
+  - "test"
+
+model_type: "pytorch"
+model_name: "shade_efficientnet"
+model_params:
+  num_classes: [12, 11, 11]
+
+dataset_name: "masterlist_v6"
+data_dir: "data/masterlist_v6"
+csv_file: "masterlist_v6_full_features.csv"
+train_split: 0.8
+random_seed: 42
+
+use_transform_preset: false
+# transform_preset: "imagenet"
+image_size: [224, 224]
+normalize: true
+normalize_mean: [0.485, 0.456, 0.406]
+normalize_std: [0.229, 0.224, 0.225]
+augmentation:
+  random_horizontal_flip: true
+  random_vertical_flip: true
+  random_rotation: true
+  rotation_degrees: 90
+  random_crop: false
+  random_resized_crop: true
+  scale: [0.8, 1.0]
+  ratio: [0.9, 1.1]
+  gaussian_blur: true
+  blur_kernel_size: 5
+  blur_sigma: [0.1, 2.0]
+
+batch_size: 32
+num_epochs: 500
+learning_rate: 0.001
+optimizer: "Adam"
+optimizer_params: {
+  weight_decay: 0.0001
+}
+scheduler: "ReduceLROnPlateau"
+scheduler_params: {
+  mode: "min",
+  factor: 0.1,
+  patience: 5,
+  min_lr: 0.000001
+}
+early_stopping_patience: 10
+
+loss_name: "HierarchicalShadeLoss"
+loss_params: {
+  class_weights_dict: 
+  {
+  'Base': [7.9271, 7.9271, 4.8782, 0.6342, 0.6098, 0.6098, 0.6157, 0.6217, 0.6217, 0.6406, 7.0463, 7.0463],
+  'Primary': [0.6466,  0.8437,  0.8541,  0.9224,  0.8437,  0.8437,  0.9103,  0.8648, 0.8335, 69.1818,  5.7652],
+  'Secondary': [1.2354,  0.9349,  0.9103,  0.9103,  0.8985,  0.9349,  1.0026,  0.8869, 0.9349, 34.5909,  0.6589]
+  },
+  task_weights: [1.0, 1.0, 1.0]
+}
+
+evaluator_params:
+  eos_token: -1
+  weights: [0.5, 0.3]
+  tol_base: 4
+
+save_dir: "experiments"
+save_model: true
+save_predictions: true
+save_history: true
+
+device: "auto"
+num_workers: 0

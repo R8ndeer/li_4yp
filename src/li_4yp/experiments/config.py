@@ -23,6 +23,8 @@ class ExperimentConfig:
     model_params: Dict[str, Any] = field(default_factory=dict)
     
     # Data configuration
+    dataset_class: str = "DigitalSwatchDataset"
+    dataset_params: Dict[str, Any] = field(default_factory=dict)
     dataset_name: str = "masterlist_v6"
     data_dir: str = "data/masterlist_v6"
     csv_file: str = "masterlist_v6_full_features.csv"

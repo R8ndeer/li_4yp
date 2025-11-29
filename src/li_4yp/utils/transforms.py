@@ -30,7 +30,7 @@ def build_transform(
     augmentation = augmentation or {}
     
     # Resize only if not using random resized crop
-    if not augmentation.get("random_resized_crop", False):
+    if not is_training or not augmentation.get("random_resized_crop", False):
         transform_list.append(v2.Resize(image_size))
 
     # Training augmentations

@@ -3,7 +3,7 @@ from .multi_output_cnn import MultiOutputCNN
 from .cnn import *
 from .mbnet import MbNetShadeCNN
 from .efficientnet import ShadeEfficientNet
-from .statnet import PixelStatNet, PixelMoreStatNet
+from .statnet import PixelStatNet, PixelMoreStatNet, HybridPixelStatNet
 
 # __all__ = [
 #     "CNNRNNModel",

@@ -206,3 +206,47 @@ class DigitalSwatchDataset(Dataset):
             'label_columns': ['Base', 'Primary', 'Secondary'],
             'sample_filename': self.df['filename'].iloc[0] if not self.df.empty else None
         }
+
+
+class HybridSwatchDataset(DigitalSwatchDataset):
+    def __init__(
+        self, 
+        data_dir: str | Path,
+        csv_file: str | Path,
+        transform: Optional[transforms.Compose] = None,
+        feature_cols: Optional[list] = None,
+    ):
+        """Initialize the hybrid dataset (Digital Swatch + LAB features).
+        
+        Args:
+            data_dir: Directory containing images and CSV file
+            csv_file: Name of CSV file with labels
+            transform: Image transforms to apply
+        """
+        super().__init__(data_dir, csv_file, transform)
+
+        if feature_cols is None:
+            raise ValueError("feature_cols must be provided for HybridSwatchDataset.")
+        self.feature_cols = feature_cols
+
+        missing = [c for c in self.feature_cols if c not in self.df.columns]
+        if missing:
+            raise ValueError(f"Missing feature columns in CSV: {missing}")
+        
+        self.dense_features = torch.tensor(
+            self.df[self.feature_cols].values, dtype=torch.float32
+        )
+    
+    def __getitem__(self, idx: int):
+        """Get image, dense features, and label by index."""
+        image, label = super().__getitem__(idx)
+
+        features = self.dense_features[idx]
+
+        return image, features, label
+    
+    def get_info(self) -> dict:
+        """Get dataset information as a dictionary."""
+        info = super().get_info()
+        info['feature_columns'] = self.feature_cols
+        return info

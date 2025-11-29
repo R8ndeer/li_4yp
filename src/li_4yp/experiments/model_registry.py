@@ -190,6 +190,16 @@ def register_pytorch_models():
         description="PixelMoreStatNet: An enhanced version of PixelStatNet with additional statistics"
     )
 
+    ModelRegistry.register(
+        name="hybrid_pixel_stat_net",
+        constructor=lambda **kwargs: HybridPixelStatNet(
+            num_classes=kwargs.get('num_classes', [12, 11, 11]),
+            dropout_rate=kwargs.get('dropout_rate', 0.2),
+            csv_feature_dim=kwargs.get('csv_feature_dim', 16)
+        ),
+        description="HybridPixelStatNet: Combines PixelStatNet with classical CSV features"
+    )
+
 
 def register_sklearn_models():
     """Register scikit-learn models."""

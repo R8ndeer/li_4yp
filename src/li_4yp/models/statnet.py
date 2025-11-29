@@ -130,3 +130,83 @@ class PixelMoreStatNet(PixelStatNet):
             'primary': self.primary_head(stats),
             'secondary': self.secondary_head(stats)
         }
+    
+
+class HybridPixelStatNet(nn.Module):
+    """
+    Hybrid Model: Combines PixelStatNet (Image) with Classical Features (CSV).
+    
+    Image Branch: 1x1 Conv -> Downsample -> Mean + Std (Texture/Color Variance)
+    CSV Branch: Raw dense features (Mean LAB, Chroma, etc.)
+    """
+    def __init__(self, num_classes=[12, 11, 11], dropout_rate=0.2, csv_feature_dim=16):
+        super().__init__()
+        
+        # 1. Image Branch (PixelStatNet - Reduced Capacity)
+        # Reduced channels (32->64) because CSV features do the heavy lifting for color.
+        self.pixel_mlp = nn.Sequential(
+            nn.Conv2d(3, 32, kernel_size=1), 
+            nn.BatchNorm2d(32),
+            nn.ReLU(),
+            nn.Conv2d(32, 64, kernel_size=1),
+            nn.BatchNorm2d(64),
+            nn.ReLU()
+        )
+        
+        # self.downsampler = nn.AdaptiveAvgPool2d((28, 28))
+        
+        # 2. Input Dimension Calculation
+        # Image Stats: 64 channels * 2 stats (Mean, Std) = 128 features
+        # CSV Stats: e.g., 4 features (L, a, b, C)
+        combined_dim = 128 + csv_feature_dim 
+        
+        # 3. Heads
+        self.base_head = nn.Sequential(
+            nn.Linear(combined_dim, 128),
+            nn.ReLU(),
+            nn.Dropout(dropout_rate),
+            nn.Linear(128, num_classes[0])
+        )
+        
+        self.primary_head = nn.Sequential(
+            nn.Linear(combined_dim, 128),
+            nn.ReLU(),
+            nn.Dropout(dropout_rate),
+            nn.Linear(128, num_classes[1])
+        )
+        
+        self.secondary_head = nn.Sequential(
+            nn.Linear(combined_dim, 128),
+            nn.ReLU(),
+            nn.Dropout(dropout_rate),
+            nn.Linear(128, num_classes[2])
+        )
+
+    def forward(self, x, csv_features):
+        # x: [Batch, 3, 224, 224]
+        # csv_features: [Batch, csv_feature_dim]
+        
+        # --- Image Branch ---
+        x = self.pixel_mlp(x) 
+        # x = self.downsampler(x) # Downsample to 28x28
+        
+        # Flatten spatial dims
+        x_flat = x.flatten(2) 
+        
+        # Calculate Only the Winning Stats
+        mean = torch.mean(x_flat, dim=2)
+        std = torch.std(x_flat, dim=2)
+        
+        # [Batch, 128]
+        image_stats = torch.cat([mean, std], dim=1)
+        
+        # --- Hybrid Fusion ---
+        # Concatenate Image Stats with CSV Features
+        # [Batch, 128 + csv_dim]
+        combined = torch.cat([image_stats, csv_features], dim=1)
+        
+        return {
+            'base': self.base_head(combined),
+            'primary': self.primary_head(combined),
+            'secondary': self.secondary_head(combined)
+        }

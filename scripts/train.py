@@ -1,7 +1,7 @@
 import argparse
 from pathlib import Path
 
-from li_4yp.data import DigitalSwatchDataset
+from li_4yp.data import DigitalSwatchDataset, HybridSwatchDataset
 from li_4yp.experiments import Experiment, ExperimentConfig, ModelRegistry
 from li_4yp.utils import build_transform, get_transform_from_preset
 
@@ -40,24 +40,12 @@ def main():
         if not path.exists():
             raise FileNotFoundError(f"Required path '{name}' does not exist: {path}")
 
-    # build transforms based on config
-    transform = None
-    if config.model_type == "pytorch":
-        if config.use_transform_preset:
-            transform = get_transform_from_preset(config.transform_preset)
-        else:
-            transform = build_transform(
-                image_size=config.image_size,
-                normalize=config.normalize,
-                normalize_mean=config.normalize_mean,
-                normalize_std=config.normalize_std,
-                augmentation=config.augmentation,
-                is_training=True
-            )
-
     # create and run experiment
     experiment = Experiment(config)
-    experiment.run(dataset_class=DigitalSwatchDataset, transform=transform)
+    if config.dataset_class.lower() == "HybridSwatchDataset".lower():
+        experiment.run(dataset_class=HybridSwatchDataset, **config.dataset_params)
+    else:
+        experiment.run(dataset_class=DigitalSwatchDataset, **config.dataset_params)
 
 
 if __name__ == "__main__":
