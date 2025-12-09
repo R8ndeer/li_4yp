@@ -200,6 +200,14 @@ def register_pytorch_models():
         description="HybridPixelStatNet: Combines PixelStatNet with classical CSV features"
     )
 
+    ModelRegistry.register(
+        name="patch_stat_net",
+        constructor=lambda **kwargs: PatchStatNet(
+            num_classes=kwargs.get('num_classes', [12, 11, 11]),
+            dropout_rate=kwargs.get('dropout_rate', 0.2)
+        ),
+        description="PatchStatNet: A lightweight statistical pooling network for hair color classification"
+    )
 
 def register_sklearn_models():
     """Register scikit-learn models."""

@@ -26,23 +26,27 @@ def build_transform(
     Returns:
         Composed transform pipeline
     """
-    transform_list = []
     augmentation = augmentation or {}
     
-    # Resize only if not using random resized crop
-    if not is_training or not augmentation.get("random_resized_crop", False):
-        transform_list.append(v2.Resize(image_size))
+    # TRANSFORMS SHARED BY TRAIN AND VAL
+    post_process = [
+        v2.ToImage(),
+        v2.ToDtype(torch.float32, scale=True)
+    ]
+    if normalize:
+        post_process.append(v2.Normalize(mean=normalize_mean, std=normalize_std))
 
-    # Training augmentations
+    # TRAINING TRANSFORMS
+    p = augmentation.get("probability", 0.0)
+    if p < 0.0 or p > 1.0:
+        raise ValueError(f"Augmentation probability must be in [0.0, 1.0], got {p}")
+    orig_path = [v2.Resize(image_size), ]
+
     if is_training:
-
-        if augmentation.get("random_crop", False):
-            crop_size = augmentation.get("crop_size", image_size)
-            transform_list.append(v2.RandomCrop(crop_size))
-            transform_list.append(v2.Resize(image_size))  # Resize back
+        aug_path = []
 
         if augmentation.get("random_resized_crop", False):
-            transform_list.append(
+            aug_path.append(
                 v2.RandomResizedCrop(
                     size=image_size,
                     scale=augmentation.get("resized_crop_scale", (0.8, 1.0)),
@@ -51,50 +55,49 @@ def build_transform(
                     antialias=True
                 )
             )
-
+        
         if augmentation.get("random_horizontal_flip", False):
-            transform_list.append(
-                v2.RandomHorizontalFlip(p=augmentation.get("flip_prob", 0.5))
-            )
-
+            aug_path.append(v2.RandomHorizontalFlip(p=augmentation.get("flip_prob", 0.5)))
+            
         if augmentation.get("random_vertical_flip", False):
-            transform_list.append(
-                v2.RandomVerticalFlip(p=augmentation.get("flip_prob", 0.5))
-            )
-
+            aug_path.append(v2.RandomVerticalFlip(p=augmentation.get("flip_prob", 0.5)))
+            
         if augmentation.get("random_rotation", False):
-            degrees = augmentation.get("rotation_degrees", 10)
-            transform_list.append(v2.RandomRotation(degrees))
+            aug_path.append(v2.RandomRotation(augmentation.get("rotation_degrees", 10)))
         
         if augmentation.get("color_jitter", False):
-            transform_list.append(
+            aug_path.append(
                 v2.ColorJitter(
-                    brightness=augmentation.get("brightness", 0.2),
-                    contrast=augmentation.get("contrast", 0.2),
-                    saturation=augmentation.get("saturation", 0.2),
-                    hue=augmentation.get("hue", 0.1)
+                    brightness=augmentation.get("brightness", 0.1),
+                    contrast=augmentation.get("contrast", 0.1),
+                    saturation=augmentation.get("saturation", 0.1),
+                    hue=augmentation.get("hue", 0.0)
                 )
             )
-
+        
         if augmentation.get("gaussian_blur", False):
-            transform_list.append(
+            aug_path.append(
                 v2.GaussianBlur(
                     kernel_size=augmentation.get("blur_kernel_size", 5),
                     sigma=augmentation.get("blur_sigma", (0.1, 2.0))
                 )
             )
 
-    # Convert to tensor
-    transform_list.append(v2.ToImage())
-    transform_list.append(v2.ToDtype(torch.float32, scale=True))
-    
-    # Normalization
-    if normalize:
-        transform_list.append(
-            v2.Normalize(mean=normalize_mean, std=normalize_std)
+        # Combine
+        original_path = v2.Compose(orig_path)
+        augmented_path = v2.Compose(aug_path)
+        post_process = v2.Compose(post_process)
+
+        select_transform = v2.RandomChoice(
+            transforms=[original_path, augmented_path],
+            p=[p, 1 - p]
         )
+
+        return v2.Compose([select_transform, post_process])
     
-    return v2.Compose(transform_list)
+    # VALIDATION TRANSFORMS
+    else:
+        return v2.Compose(orig_path + post_process)
 
 
 def get_imagenet_transform(image_size: tuple = (224, 224)) -> v2.Compose:

@@ -210,3 +210,104 @@ class HybridPixelStatNet(nn.Module):
             'primary': self.primary_head(combined),
             'secondary': self.secondary_head(combined)
         }
+
+
+class PatchStatNet(nn.Module):
+    """
+    Lightweight PatchStatNet.
+    
+    Architectural Parity with PixelStatNet:
+    - Same depth (3 Convolutional Layers)
+    - Same feature progression (32 -> 64 -> 128)
+    
+    Difference:
+    - PixelStatNet: All Convs happen at 224x224, then Pool.
+    - This Model: Conv -> Pool -> Conv -> Pool. 
+      It forces the later layers to see "Patches" instead of "Pixels".
+    """
+    def __init__(self, num_classes=[12, 11, 11], dropout_rate=0.2):
+        super().__init__()
+        
+        # Layer 1: Pixel Analysis (Input: 224x224)
+        # Learns immediate color mappings (RGB -> Latent)
+        self.conv1 = nn.Sequential(
+            nn.Conv2d(3, 32, kernel_size=1),
+            nn.BatchNorm2d(32),
+            nn.ReLU()
+        )
+        # Downsample 1 (Mixes 2x2 pixels)
+        self.pool1 = nn.AvgPool2d(kernel_size=2, stride=2) # -> 112x112
+        
+        # Layer 2: Patch Analysis (Input: 112x112)
+        # Learns relationships between neighboring pixel colors
+        self.conv2 = nn.Sequential(
+            nn.Conv2d(32, 64, kernel_size=1),
+            nn.BatchNorm2d(64),
+            nn.ReLU()
+        )
+        # Downsample 2
+        self.pool2 = nn.AvgPool2d(kernel_size=2, stride=2) # -> 56x56
+        
+        # Layer 3: Region Analysis (Input: 56x56)
+        # Learns broader texture trends
+        self.conv3 = nn.Sequential(
+            nn.Conv2d(64, 128, kernel_size=1),
+            nn.BatchNorm2d(128),
+            nn.ReLU()
+        )
+        
+        # Final Downsample to fixed size for stats
+        # We ensure we have enough spatial samples (14x14=196) for stable Std Dev
+        self.final_pool = nn.AdaptiveAvgPool2d((14, 14))
+        
+        # Heads (Same as PixelStatNet)
+        combined_dim = 256 # 128 channels * 2 stats (Mean + Std)
+        
+        self.base_head = nn.Sequential(
+            nn.Linear(combined_dim, 128),
+            nn.ReLU(),
+            nn.Dropout(dropout_rate),
+            nn.Linear(128, num_classes[0])
+        )
+        
+        self.primary_head = nn.Sequential(
+            nn.Linear(combined_dim, 128),
+            nn.ReLU(),
+            nn.Dropout(dropout_rate),
+            nn.Linear(128, num_classes[1])
+        )
+        
+        self.secondary_head = nn.Sequential(
+            nn.Linear(combined_dim, 128),
+            nn.ReLU(),
+            nn.Dropout(dropout_rate),
+            nn.Linear(128, num_classes[2])
+        )
+
+    def forward(self, x):
+        # x: [B, 3, 224, 224]
+        
+        # Step 1
+        x = self.conv1(x) # [B, 32, 224, 224]
+        x = self.pool1(x) # [B, 32, 112, 112]
+        
+        # Step 2
+        x = self.conv2(x) # [B, 64, 112, 112]
+        x = self.pool2(x) # [B, 64, 56, 56]
+        
+        # Step 3
+        x = self.conv3(x) # [B, 128, 56, 56]
+        x = self.final_pool(x) # [B, 128, 14, 14]
+        
+        # Global Statistics
+        x_flat = x.flatten(2) # [B, 128, 196]
+        mean = torch.mean(x_flat, dim=2)
+        std = torch.std(x_flat, dim=2)
+        
+        stats = torch.cat([mean, std], dim=1) # [B, 256]
+        
+        return {
+            'base': self.base_head(stats),
+            'primary': self.primary_head(stats),
+            'secondary': self.secondary_head(stats)
+        }
