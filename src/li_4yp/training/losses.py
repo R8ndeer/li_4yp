@@ -73,10 +73,17 @@ def compute_class_weights(df, columns=['Base', 'Primary', 'Secondary']):
 
 
 class HierarchicalShadeLoss(nn.Module):
-    def __init__(self, class_weights_dict, task_weights=(1.0, 1.0, 1.0)):
+    def __init__(self, class_weights_dict=None, task_weights=(1.0, 1.0, 1.0)):
         super().__init__()
         self.task_weights = task_weights
         self.device = get_device()
+        
+        if class_weights_dict is None:
+            class_weights_dict = {
+                'Base': [1.0]*12,
+                'Primary': [1.0]*11,
+                'Secondary': [1.0]*11
+            }
         
         # Create a specific criterion for each head with its own class weights
         self.criterions = {
