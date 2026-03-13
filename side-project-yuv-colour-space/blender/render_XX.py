@@ -1,3 +1,7 @@
+"""
+Render shades with primary and secondary colors only.
+"""
+
 import bpy, csv, os
 from math import pow
 import numpy as np
@@ -9,11 +13,13 @@ def srgb_to_linear(c):
     else:
         return np.clip(((c + 0.055) / 1.055) ** 2.4, 0, 1)
 
+
 def convert_srgb_to_linear(r, g, b, a=1.0):
     r_lin = srgb_to_linear(r)
     g_lin = srgb_to_linear(g)
     b_lin = srgb_to_linear(b)
     return (r_lin, g_lin, b_lin)
+
 
 def apply_shader_data(red, green, blue):
     mat = bpy.data.materials.get("Hair Material")
@@ -23,6 +29,7 @@ def apply_shader_data(red, green, blue):
         if principled_hair_bsdf:
             principled_hair_bsdf.inputs['Color'].default_value = (red, green, blue, 1.0)
             
+            
 def apply_shader_data_hex(hex):
     mat = bpy.data.materials.get("Hair Material")
     if mat:
@@ -30,12 +37,11 @@ def apply_shader_data_hex(hex):
         principled_hair_bsdf = nodes.get("Principled Hair BSDF")
         if principled_hair_bsdf:
             principled_hair_bsdf.inputs['Color'].default_value = (hex)
+            
 
 # --- Load CSV ---
-csv_path = '/Users/boting/li_4yp/side-project-yuv-colour-space/data/renders/v01/pred_renders_srgb_v01.csv'
+csv_path = '/Users/boting/li_4yp/side-project-yuv-colour-space/data/renders/v01/pred_renders_lab_v01.csv'
 output_folder = '/Users/boting/li_4yp/side-project-yuv-colour-space/blender/output'
-
-testable_shades = ["10.01", "10.02", "10.002", "10.004", "10.009"]
 
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
@@ -46,11 +52,11 @@ with open(csv_path, newline='') as csvfile:
 
     row_cnt = 0
     for row in reader:
-        # render_id = row[0].strip()
-        render_id = row[0].strip().split("_")[0]
+        render_id = row[0].strip()
+        shade = row[0].strip().split("_")[0]
         
         # render testable shades
-        if render_id not in testable_shades:
+        if len(shade.split(".")[1]) > 2:
             continue
 
         # If the LAB values are all in one cell

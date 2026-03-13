@@ -62,7 +62,7 @@ def main():
     ROOT_DIR = Path(__file__).resolve().parent
     DATA_CSV = Path(args.dataset_csv).resolve() if args.dataset_csv else ROOT_DIR / f"data/demi_{VERSION}/demi_{VERSION}.csv"
     RECIPE_CSV = Path(args.recipe_csv).resolve() if args.recipe_csv else ROOT_DIR / f"data/recipes/recipes_{VERSION}.csv"
-    OUTPUT_CSV = Path(args.output_csv).resolve() if args.output_csv else ROOT_DIR / f"data/renders/{VERSION}/pred_renders_{color_space}_{VERSION}.csv"
+    OUTPUT_CSV = Path(args.output_csv).resolve() if args.output_csv else ROOT_DIR / f"data/renders/{VERSION}/pred_renders_{color_space}_{VERSION}_test.csv"
     print("Using")
     print(f"  dataset CSV: {DATA_CSV}\n  recipe CSV:  {RECIPE_CSV}\n  output CSV:  {OUTPUT_CSV}")
 
@@ -70,7 +70,7 @@ def main():
     # Load dataset and recipes
     ds_df = pd.read_csv(DATA_CSV, dtype={"full_shade": str, "level": str, "tone": str, "shade_family": str})
     recipe_df = pd.read_csv(RECIPE_CSV, dtype={"render_id": str, "full_shade": str, "level": str, "tone": str, "shade_family": str})
-    print(f"Loaded {len(ds_df)} dataset samples and {len(recipe_df)} recipes")
+    print(f"Loaded {len(ds_df)} dataset samples and {len(recipe_df)} recipes.")
 
     # Prepare output file
     OUTPUT_CSV.parent.mkdir(parents=True, exist_ok=True)
@@ -90,8 +90,12 @@ def main():
         ])
 
         # Filter to find renderable recipes
+        num_written = 0
         for _, recipe in tqdm.tqdm(list(recipe_df.iterrows())):
             if recipe["is_primary"]:
+                continue
+            
+            if len(recipe["shade_family"]) > 2:  # Secondary combinations only
                 continue
 
             parents = recipe["parents"].strip("[]").replace('"', "").replace("'", "").split(", ")
@@ -114,7 +118,7 @@ def main():
 
             # Calculate mixed color
             mix_ratios = [int(r) for r in recipe["mix_ratios"].split("-")]  # e.g., "50-50" -> [50, 50]
-            assert len(parent_colors) == len(mix_ratios), "Number of parents and mix ratios must match"
+            assert len(parent_colors) == len(mix_ratios), "Number of parents and mix ratios must match."
             predicted_color = np.average(parent_colors, axis=0, weights=mix_ratios)
 
             if color_space == "srgb":
@@ -134,6 +138,10 @@ def main():
                 np.round(predicted_color[1], 3),
                 np.round(predicted_color[2], 3)
             ])
+            num_written += 1
+
+        print(f"Found {num_written} renderable recipes and saved to output CSV.")
+
 
 if __name__ == "__main__":
     main()
