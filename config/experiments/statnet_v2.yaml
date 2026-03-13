@@ -1,38 +1,30 @@
-name: "hybridpixelstatnet_v1_test"
-description: "Testing HybridPixelStatNet (1x1 Conv + Classical LAB features) for texture-invariant learning. Apply train-time augmentations at a 0.5 probability."
+name: "statnet_v2_test"
+description: "Testing PixelStatNet with residual blocks."
 tags:
   - "pytorch"
-  - "hybridpixelstatnet"
-  - "inductive_bias_test"
+  - "statnet"
+  - "residual_blocks"
 
 model_type: "pytorch"
-model_name: "hybrid_pixel_stat_net"  # <--- The new model
+model_name: "pixel_stat_net"  # <--- The new model
 model_params:
   num_classes: [12, 11, 11]
   dropout_rate: 0.2
 
-dataset_class: "HybridSwatchDataset"
-dataset_params:
-  feature_cols: [
-    "mean_l", "mean_a", "mean_b", "mean_chroma",
-    "median_l", "median_a", "median_b", "median_chroma",
-    "percentile25_l", "percentile25_a", "percentile25_b", "percentile25_chroma",
-    "percentile75_l", "percentile75_a", "percentile75_b", "percentile75_chroma"
-  ]
-dataset_name: "masterlist_v6"
-data_dir: "data/masterlist_v6"
-csv_file: "masterlist_v6_full_features.csv"
+dataset_name: "masterlist_v7"
+data_dir: "data/masterlist_v7"
+csv_file: "masterlist_v7_mega_features.csv"
 train_split: 0.8
 random_seed: 42
 
-# Image transform config (used for training and validation)
+# Image config
 use_transform_preset: false
 image_size: [224, 224]
 normalize: true
 normalize_mean: [0.485, 0.456, 0.406]
 normalize_std: [0.229, 0.224, 0.225]
 
-# Augmentations (used for training only) - Kept simple to test color invariance
+# Augmentations - Kept simple to test color invariance
 augmentation:
   probability: 0.5  # Apply augmentations with 0.5 prob
   random_horizontal_flip: true
@@ -61,12 +53,11 @@ early_stopping_patience: 20
 
 loss_name: "HierarchicalShadeLoss"
 loss_params: {
-  # Copy your weights from the previous config here
   class_weights_dict: 
   {
   'Base': [7.9271, 7.9271, 4.8782, 0.6342, 0.6098, 0.6098, 0.6157, 0.6217, 0.6217, 0.6406, 7.0463, 7.0463],
-  'Primary': [0.6466,  0.8437,  0.8541,  0.9224,  0.8437,  0.8437,  0.9103,  0.8648, 0.8335, 69.1818,  5.7652],
-  'Secondary': [1.2354,  0.9349,  0.9103,  0.9103,  0.8985,  0.9349,  1.0026,  0.8869, 0.9349, 34.5909,  0.6589]
+  'Primary': [0.6466, 0.8437, 0.8541, 0.9224, 0.8437, 0.8437, 0.9103, 0.8648, 0.8335, 69.1818, 5.7652],
+  'Secondary': [1.2354, 0.9349, 0.9103, 0.9103, 0.8985, 0.9349, 1.0026, 0.8869, 0.9349, 34.5909, 0.6589]
   },
   task_weights: [1.0, 1.0, 1.0]
 }

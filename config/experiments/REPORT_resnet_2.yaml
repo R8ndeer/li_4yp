@@ -1,0 +1,54 @@
+name: "report_resnet_2"
+description: "ResNet18 baseline with ImageNet normalization and same augmentations as attentive StatNet."
+tags: ["pytorch", "resnet", "baseline", "report"]
+
+model_type: "pytorch"
+model_name: "shade_resnet"
+model_params:
+  num_classes: [12, 11, 11]
+  dropout_rate: 0.5
+  backbone: "resnet18"
+  pretrained: true
+
+dataset_name: "golden_dataset"
+data_dir: "data/masterlist_v7"
+csv_file: "golden_dataset_5fold.csv"
+
+# Image Config: MUST USE NORMALIZATION FOR RESNET
+use_transform_preset: false
+image_size: [224, 224]
+normalize: true  # ResNet requires this
+normalize_mean: [0.485, 0.456, 0.406]
+normalize_std: [0.229, 0.224, 0.225]
+
+augmentation:
+  probability: 0.5
+  random_horizontal_flip: true
+  random_vertical_flip: true
+  random_rotation: true
+  rotation_degrees: 180 # Full rotation to match attentive StatNet
+  random_resized_crop: true
+  scale: [0.8, 1.0]
+
+# Training
+batch_size: 32
+num_epochs: 200
+learning_rate: 0.0001
+optimizer: "Adam"
+optimizer_params: { weight_decay: 0.0001 }
+scheduler: "ReduceLROnPlateau"
+scheduler_params: { mode: "min", factor: 0.1, patience: 5 }
+early_stopping_patience: 20
+
+loss_name: "HierarchicalShadeLoss"
+loss_params: {
+  class_weights_dict: null,
+  task_weights: [1.0, 1.0, 1.0]
+}
+evaluator_params: { eos_token: -1, weights: [0.5, 0.3], tol_base: 4 }
+
+save_dir: "experiments"
+save_model: true
+save_predictions: true
+device: "auto"
+num_workers: 0

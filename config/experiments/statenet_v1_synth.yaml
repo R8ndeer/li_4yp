@@ -1,9 +1,9 @@
-name: "statnet_v1_test"
-description: "Testing PixelStatNet (1x1 Conv + StatPool) for texture-invariant learning. Apply train-time augmentations at a 0.5 probability."
+name: "statnet_v1_with_synthetic_swatches"
+description: "Testing PixelStatNet with 4-pattern synthetic swatches. Apply train-time augmentations at a 0.5 probability."
 tags:
   - "pytorch"
   - "statnet"
-  - "inductive_bias_test"
+  - "synthetic_swatches"
 
 model_type: "pytorch"
 model_name: "pixel_stat_net"  # <--- The new model
@@ -11,9 +11,9 @@ model_params:
   num_classes: [12, 11, 11]
   dropout_rate: 0.2
 
-dataset_name: "masterlist_v7"
-data_dir: "data/masterlist_v7"
-csv_file: "masterlist_v7_mega_features.csv"
+dataset_name: "MERGE4PATTERNS"
+data_dir: "data/MERGE4PATTERNS"
+csv_file: "MEGAMEGAFEATURES.csv"
 train_split: 0.8
 random_seed: 42
 
@@ -49,7 +49,7 @@ scheduler_params: {
   patience: 10,
   min_lr: 0.000001
 }
-early_stopping_patience: 20
+early_stopping_patience: 10
 
 loss_name: "HierarchicalShadeLoss"
 loss_params: {

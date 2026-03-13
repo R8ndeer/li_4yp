@@ -1,0 +1,59 @@
+# Experiment Configuration Examples
+
+# Example 1: PyTorch MobileNet V3
+name: "mobilenet_v3_baseline"
+description: "MobileNet V3 fine-tuned on masterlist_v6 dataset"
+tags:
+  - "pytorch"
+  - "mobilenet"
+  - "baseline"
+
+model_type: "pytorch"
+model_name: "mobilenet_v3"  # Register custom models first
+model_params:
+  num_classes: [12, 11, 11]  # Base, Primary, Secondary
+  pretrained: true
+
+dataset_name: "masterlist_v6"
+data_dir: "data/masterlist_v6"
+csv_file: "masterlist_v6_full_features.csv"
+train_split: 0.8
+random_seed: 42
+
+# Image transforms
+image_size: [224, 224]
+normalize: true
+normalize_mean: [0.485, 0.456, 0.406]  # ImageNet defaults
+normalize_std: [0.229, 0.224, 0.225]
+augmentation:
+  random_horizontal_flip: false
+  random_rotation: false
+  color_jitter: false
+
+batch_size: 32
+num_epochs: 500
+learning_rate: 0.001
+optimizer: "Adam"
+optimizer_params: {}
+scheduler: "ReduceLROnPlateau"
+scheduler_params:
+  mode: "min"
+  factor: 0.5
+  patience: 5
+early_stopping_patience: 10
+
+loss_function: "multitask_crossentropy"
+loss_weights: [1.0, 1.0, 1.0]
+
+evaluator_params:
+  eos_token: -1
+  weights: [0.3, 0.1]
+  tol_base: 4
+
+save_dir: "experiments"
+save_model: true
+save_predictions: true
+save_history: true
+
+device: "auto"
+num_workers: 0

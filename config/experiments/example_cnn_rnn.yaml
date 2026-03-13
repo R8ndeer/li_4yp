@@ -1,0 +1,46 @@
+# Example 3: CNN-RNN Model
+name: "cnn_rnn_v1"
+description: "CNN-RNN model for sequential shade prediction"
+tags:
+  - "pytorch"
+  - "cnn_rnn"
+  - "sequential"
+
+model_type: "pytorch"
+model_name: "cnn_rnn"
+model_params:
+  vocab_size: 12
+  embed_dim: 64
+  hidden_dim: 256
+  output_dim: 12
+  feat_dim: 128
+
+dataset_name: "masterlist_v4"
+data_dir: "data/masterlist_v4"
+csv_file: "masterlist_v4.csv"
+train_split: 0.8
+random_seed: 42
+
+batch_size: 32
+num_epochs: 100
+learning_rate: 0.001
+optimizer: "Adam"
+optimizer_params:
+  weight_decay: 0.0001
+early_stopping_patience: 10
+
+loss_function: "CrossEntropyLoss"
+loss_weights: [1.0]
+
+evaluator_params:
+  eos_token: -1
+  weights: [0.3, 0.1]
+  tol_base: 4
+
+save_dir: "experiments"
+save_model: true
+save_predictions: true
+save_history: true
+
+device: "auto"
+num_workers: 0

@@ -1,0 +1,51 @@
+name: "report_attentive_statnet"
+description: "PixelStatNet with attention mechanism for texture-invariant learning."
+tags: ["pytorch", "attentivestatnet", "texture_bias", "report"]
+
+model_type: "pytorch"
+model_name: "attentive_pixel_stat_net"
+model_params:
+  num_classes: [12, 11, 11]
+  dropout_rate: 0.2
+
+dataset_name: "golden_dataset"
+data_dir: "data/masterlist_v7"  # <--- CHECK YOUR PATH
+csv_file: "golden_dataset_5fold.csv"
+
+# Image Config: NO NORMALIZATION FOR STATNET
+use_transform_preset: false
+image_size: [224, 224]
+normalize: false   # <--- CRITICAL: Keep false to preserve color stats
+# normalize_mean: ... (Ignored)
+
+augmentation:
+  probability: 0.5
+  random_horizontal_flip: true
+  random_vertical_flip: true
+  random_rotation: true
+  rotation_degrees: 180 # Full rotation is fine for texture
+  random_resized_crop: true
+  scale: [0.8, 1.0]
+
+# Training
+batch_size: 32
+num_epochs: 200 # Needs more epochs as it trains from scratch
+learning_rate: 0.001
+optimizer: "Adam"
+optimizer_params: { weight_decay: 0.0001 }
+scheduler: "ReduceLROnPlateau"
+scheduler_params: { mode: "min", factor: 0.1, patience: 10 }
+early_stopping_patience: 20
+
+loss_name: "HierarchicalShadeLoss"
+loss_params: {
+  class_weights_dict: null,
+  task_weights: [1.0, 1.0, 1.0]
+}
+evaluator_params: { eos_token: -1, weights: [0.5, 0.3], tol_base: 4 }
+
+save_dir: "experiments"
+save_model: true
+save_predictions: true
+device: "auto"
+num_workers: 0
