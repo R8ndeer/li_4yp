@@ -209,6 +209,35 @@ def register_pytorch_models():
         description="PatchStatNet: A lightweight statistical pooling network for hair color classification"
     )
 
+    ModelRegistry.register(
+        name="shade_resnet",
+        constructor=lambda **kwargs: ShadeResNet(
+            num_classes=kwargs.get('num_classes', [12, 11, 11]),
+            dropout_rate=kwargs.get('dropout_rate', 0.2),
+            backbone=kwargs.get('backbone', 'resnet18'),
+            pretrained=kwargs.get('pretrained', True)
+        ),
+        description="Shade ResNet (Base/Primary/Secondary) initialized with ImageNet weights."
+    )
+
+    ModelRegistry.register(
+        name="attentive_pixel_stat_net",
+        constructor=lambda **kwargs: AttentivePixelStatNet(
+            num_classes=kwargs.get('num_classes', [12, 11, 11]),
+            dropout_rate=kwargs.get('dropout_rate', 0.2)
+        ),
+        description="AttentivePixelStatNet: An attention-based Deep Sets model for hair color classification."
+    )
+
+    ModelRegistry.register(
+        name="attentive_stat_net_one_moment",
+        constructor=lambda **kwargs: AttentiveStatNetOneMoment(
+            num_classes=kwargs.get('num_classes', [12, 11, 11]),
+            dropout_rate=kwargs.get('dropout_rate', 0.2)
+        ),
+        description="AttentiveStatNetOneMoment: Simplified attention-based model using only weighted mean."
+    )
+
 def register_sklearn_models():
     """Register scikit-learn models."""
     from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier

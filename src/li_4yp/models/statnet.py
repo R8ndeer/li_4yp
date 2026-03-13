@@ -23,6 +23,18 @@ class PixelStatNet(nn.Module):
             nn.BatchNorm2d(128),
             nn.ReLU()
         )
+
+        # self.pixel_mlp = nn.Sequential(
+        #     nn.Conv2d(3, 64, kernel_size=1),   # 1x1 Conv = Dense on pixels
+        #     nn.BatchNorm2d(64),
+        #     nn.ReLU(),
+        #     nn.Conv2d(64, 128, kernel_size=1),
+        #     nn.BatchNorm2d(128),
+        #     nn.ReLU(),
+        #     nn.Conv2d(128, 128, kernel_size=1),
+        #     nn.BatchNorm2d(128),
+        #     nn.ReLU()
+        # )
         
         # 2. The Heads
         # Input dim = 128 features * 2 stats (Mean + Std) = 256
@@ -30,6 +42,7 @@ class PixelStatNet(nn.Module):
         
         self.base_head = nn.Sequential(
             nn.Linear(input_dim, 128),
+            # nn.BatchNorm1d(128),
             nn.ReLU(),
             nn.Dropout(dropout_rate),
             nn.Linear(128, num_classes[0])
@@ -37,6 +50,7 @@ class PixelStatNet(nn.Module):
         
         self.primary_head = nn.Sequential(
             nn.Linear(input_dim, 128),
+            # nn.BatchNorm1d(128),
             nn.ReLU(),
             nn.Dropout(dropout_rate),
             nn.Linear(128, num_classes[1])
@@ -44,6 +58,7 @@ class PixelStatNet(nn.Module):
         
         self.secondary_head = nn.Sequential(
             nn.Linear(input_dim, 128),
+            # nn.BatchNorm1d(128),
             nn.ReLU(),
             nn.Dropout(dropout_rate),
             nn.Linear(128, num_classes[2])
@@ -65,11 +80,121 @@ class PixelStatNet(nn.Module):
         # Concatenate: [Batch, 256]
         stats = torch.cat([global_mean, global_std], dim=1) 
         
+        # global_mean = torch.mean(x, dim=[2, 3])                       # [B, 128]
+        # global_var  = torch.var(x, dim=[2, 3], correction=0)          # [B, 128]
+        # global_std  = torch.sqrt(global_var + 1e-6)                   # [B, 128]
+        # stats = torch.cat([global_mean, global_std], dim=1)           # [B, 256]
+
+
         return {
             'base': self.base_head(stats),
             'primary': self.primary_head(stats),
             'secondary': self.secondary_head(stats)
         }
+
+
+# from typing import Sequence, Dict
+
+
+# class Residual1x1Lite(nn.Module):
+#     """
+#     Lightweight 1x1 Conv Residual Block.
+#     Adds pixel-wise depth with minimal extra cost.
+#     """
+#     def __init__(self, channels: int):
+#         super().__init__()
+#         self.net = nn.Sequential(
+#             nn.Conv2d(channels, channels, kernel_size=1, bias=False),
+#             nn.BatchNorm2d(channels),
+#             nn.ReLU(inplace=True),
+#             nn.Conv2d(channels, channels, kernel_size=1, bias=False),
+#             nn.BatchNorm2d(channels),
+#         )
+#         self.relu = nn.ReLU(inplace=True)
+
+#     def forward(self, x: torch.Tensor) -> torch.Tensor:
+#         residual = x
+#         out = self.net(x)
+#         return self.relu(out + residual)
+
+
+# class PixelStatNet(nn.Module):
+#     """
+#     PixelStatNet v3: slightly deeper than v1 with a cheap residual block.
+
+#     - Shared 1x1 conv "MLP" over pixels
+#     - One lightweight residual block at 32 channels
+#     - Global mean + std pooling -> 3 parallel heads (Base / Primary / Secondary)
+#     """
+
+#     def __init__(
+#         self,
+#         num_classes: Sequence[int] = (12, 11, 11),
+#         dropout_rate: float = 0.2,
+#     ):
+#         super().__init__()
+
+#         # 1. Pixel-wise Feature Extraction
+#         self.pixel_mlp = nn.Sequential(
+#             # 3 -> 32
+#             nn.Conv2d(3, 32, kernel_size=1, bias=False),
+#             nn.BatchNorm2d(32),
+#             nn.ReLU(inplace=True),
+
+#             # Residual block at 32 channels (cheap, adds depth)
+#             Residual1x1Lite(32),
+
+#             # 32 -> 64
+#             nn.Conv2d(32, 64, kernel_size=1, bias=False),
+#             nn.BatchNorm2d(64),
+#             nn.ReLU(inplace=True),
+
+#             # 64 -> 128
+#             nn.Conv2d(64, 128, kernel_size=1, bias=False),
+#             nn.BatchNorm2d(128),
+#             nn.ReLU(inplace=True),
+#         )
+
+#         # 2. Heads
+#         # 128 features * 2 stats (mean + std) = 256
+#         feat_dim = 128 * 2
+
+#         self.base_head = self._make_head(feat_dim, num_classes[0], dropout_rate)
+#         self.primary_head = self._make_head(feat_dim, num_classes[1], dropout_rate)
+#         self.secondary_head = self._make_head(feat_dim, num_classes[2], dropout_rate)
+
+#     @staticmethod
+#     def _make_head(in_dim: int, out_dim: int, dropout: float) -> nn.Module:
+#         return nn.Sequential(
+#             nn.Linear(in_dim, 128),
+#             nn.ReLU(inplace=True),
+#             nn.Dropout(dropout),
+#             nn.Linear(128, out_dim),
+#         )
+
+#     def forward(self, x: torch.Tensor) -> Dict[str, torch.Tensor]:
+#         """
+#         Args:
+#             x: Tensor of shape [B, 3, H, W]
+
+#         Returns:
+#             dict with keys 'base', 'primary', 'secondary',
+#             each of shape [B, num_classes_k]
+#         """
+#         # Pixel-wise feature extraction
+#         x = self.pixel_mlp(x)             # [B, 128, H, W]
+
+#         # Global statistical pooling
+#         mean = x.mean(dim=(2, 3))         # [B, 128]
+#         std = x.std(dim=(2, 3))           # [B, 128]
+
+#         stats = torch.cat([mean, std], dim=1)  # [B, 256]
+
+#         return {
+#             "base": self.base_head(stats),
+#             "primary": self.primary_head(stats),
+#             "secondary": self.secondary_head(stats),
+#         }
 
 
 class PixelMoreStatNet(PixelStatNet):
@@ -228,40 +353,45 @@ class PatchStatNet(nn.Module):
     def __init__(self, num_classes=[12, 11, 11], dropout_rate=0.2):
         super().__init__()
         
-        # Layer 1: Pixel Analysis (Input: 224x224)
-        # Learns immediate color mappings (RGB -> Latent)
-        self.conv1 = nn.Sequential(
+        # Block 1: Raw Pixel Analysis (224x224)
+        self.block1 = nn.Sequential(
             nn.Conv2d(3, 32, kernel_size=1),
+            nn.BatchNorm2d(32),
+            nn.ReLU(),
+            nn.Conv2d(32, 32, kernel_size=1),
             nn.BatchNorm2d(32),
             nn.ReLU()
         )
-        # Downsample 1 (Mixes 2x2 pixels)
         self.pool1 = nn.AvgPool2d(kernel_size=2, stride=2) # -> 112x112
         
-        # Layer 2: Patch Analysis (Input: 112x112)
-        # Learns relationships between neighboring pixel colors
-        self.conv2 = nn.Sequential(
+        # Block 2: Patch Analysis (112x112)
+        self.block2 = nn.Sequential(
             nn.Conv2d(32, 64, kernel_size=1),
+            nn.BatchNorm2d(64),
+            nn.ReLU(),
+            nn.Conv2d(64, 64, kernel_size=1),
             nn.BatchNorm2d(64),
             nn.ReLU()
         )
-        # Downsample 2
         self.pool2 = nn.AvgPool2d(kernel_size=2, stride=2) # -> 56x56
         
-        # Layer 3: Region Analysis (Input: 56x56)
-        # Learns broader texture trends
-        self.conv3 = nn.Sequential(
+        # Block 3: Region Analysis (56x56)
+        self.block3 = nn.Sequential(
             nn.Conv2d(64, 128, kernel_size=1),
+            nn.BatchNorm2d(128),
+            nn.ReLU(),
+            nn.Conv2d(128, 128, kernel_size=1),
             nn.BatchNorm2d(128),
             nn.ReLU()
         )
         
-        # Final Downsample to fixed size for stats
-        # We ensure we have enough spatial samples (14x14=196) for stable Std Dev
+        # Final adaptive pool to get manageable size for stats
+        # 14x14 = 196 patches. Enough for a robust std deviation.
         self.final_pool = nn.AdaptiveAvgPool2d((14, 14))
         
-        # Heads (Same as PixelStatNet)
-        combined_dim = 256 # 128 channels * 2 stats (Mean + Std)
+        # Heads
+        # Input: 128 channels * 2 stats (Mean + Std) = 256
+        combined_dim = 256 
         
         self.base_head = nn.Sequential(
             nn.Linear(combined_dim, 128),
@@ -287,24 +417,22 @@ class PatchStatNet(nn.Module):
     def forward(self, x):
         # x: [B, 3, 224, 224]
         
-        # Step 1
-        x = self.conv1(x) # [B, 32, 224, 224]
-        x = self.pool1(x) # [B, 32, 112, 112]
+        # Hierarchy
+        x = self.block1(x)
+        x = self.pool1(x)
         
-        # Step 2
-        x = self.conv2(x) # [B, 64, 112, 112]
-        x = self.pool2(x) # [B, 64, 56, 56]
+        x = self.block2(x)
+        x = self.pool2(x)
         
-        # Step 3
-        x = self.conv3(x) # [B, 128, 56, 56]
-        x = self.final_pool(x) # [B, 128, 14, 14]
+        x = self.block3(x)
+        x = self.final_pool(x) # -> [B, 128, 14, 14]
         
-        # Global Statistics
-        x_flat = x.flatten(2) # [B, 128, 196]
+        # Global Statistical Pooling
+        x_flat = x.flatten(2) # -> [B, 128, 196]
         mean = torch.mean(x_flat, dim=2)
         std = torch.std(x_flat, dim=2)
         
-        stats = torch.cat([mean, std], dim=1) # [B, 256]
+        stats = torch.cat([mean, std], dim=1) # -> [B, 256]
         
         return {
             'base': self.base_head(stats),
