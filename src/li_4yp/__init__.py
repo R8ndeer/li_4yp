@@ -5,7 +5,8 @@ from .models import (
     DeeperShadeCNN, ShadeCNN,
     MbNetShadeCNN, ShadeEfficientNet,
     PixelStatNet, PixelMoreStatNet,
-    HybridPixelStatNet, PatchStatNet
+    HybridPixelStatNet, PatchStatNet,
+    AttentivePixelStatNet, AttentiveStatNetOneMoment
 )
 from .data import HairSwatchDataset, DigitalSwatchDataset, HybridSwatchDataset
 from .training import compute_loss, multitask_loss, compute_class_weights, HierarchicalShadeLoss, ShadeEvaluator
@@ -21,6 +22,8 @@ __all__ = [
     "ShadeCNN",
     "MbNetShadeCNN",
     "ShadeEfficientNet",
+    "AttentivePixelStatNet",
+    "AttentiveStatNetOneMoment",
     "PixelStatNet",
     "PixelMoreStatNet",
     "HybridPixelStatNet",
