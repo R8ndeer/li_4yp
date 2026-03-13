@@ -72,19 +72,13 @@ class Experiment:
         else:
             device = torch.device(self.config.device)
         return device
-    
+
     def setup_data(
-        self,
-        dataset_class: Optional[type] = None,
+        self, 
+        dataset_class: Optional[type] = None, 
         **dataset_kwargs
     ) -> None:
-        """Setup data. For PyTorch models, create data loaders; for sklearn models, extract from csv.
-        
-        Args:
-            dataset_class: Dataset class to use
-            transform: Optional transform to apply
-            **dataset_kwargs: Additional arguments for dataset
-        """
+        """Setup data. Supports both random split and fixed-fold split."""
         self.logger.info("Setting up data loaders...")
         
         # For PyTorch models, create data loaders
@@ -92,7 +86,7 @@ class Experiment:
             if dataset_class is None:
                 raise ValueError("dataset_class must be provided for PyTorch models.")
             
-            # Configure transform
+            # [TRANSFORM SETUP CODE - SAME AS BEFORE]
             if self.config.use_transform_preset:
                 if self.config.augmentation:
                     msg = "Cannot use both transform preset and custom augmentations."
@@ -118,7 +112,7 @@ class Experiment:
                 is_training=False
             )
             
-            # Create dataset
+            # Create full dataset instance to access metadata/dataframe
             full_dataset = dataset_class(
                 data_dir=self.config.data_dir,
                 csv_file=self.config.csv_file,
@@ -132,38 +126,64 @@ class Experiment:
                 "data_dir": self.config.data_dir,
                 "csv_file": self.config.csv_file
             }
-            
             if hasattr(full_dataset, 'get_info'):
                 data_info.update(full_dataset.get_info())
-            
             self.logger.log_data_info(data_info)
         
+            # --- NEW SPLITTING LOGIC START ---
+            
+            # Check if config has a specific fold index for validation
+            val_fold_idx = getattr(self.config, 'val_fold_idx', None)
 
-            # Split dataset
-            train_size = int(self.config.train_split * len(full_dataset))
-            val_size = len(full_dataset) - train_size
-            train_indices, val_indices = random_split(
-                range(train_size + val_size),
-                [train_size, val_size],
-                generator=torch.Generator().manual_seed(self.config.random_seed)
-            )
+            if val_fold_idx is not None:
+                self.logger.info(f"Using fixed split: Fold {val_fold_idx} as validation.")
+                
+                # Access the dataframe directly from the dataset
+                if not hasattr(full_dataset, 'df'):
+                    raise AttributeError("Dataset must have a .df attribute to use fixed folds.")
+                
+                if 'fold' not in full_dataset.df.columns:
+                    raise ValueError("CSV must contain a 'fold' column to use val_fold_idx.")
 
+                # Get indices based on the 'fold' column
+                # Assuming folds in CSV are 1-based (1,2,3,4,5) or 0-based. Adjust logic if needed.
+                val_indices = full_dataset.df.index[full_dataset.df['fold'] == val_fold_idx].tolist()
+                train_indices = full_dataset.df.index[full_dataset.df['fold'] != val_fold_idx].tolist()
+
+                if len(val_indices) == 0:
+                     raise ValueError(f"No samples found for fold {val_fold_idx}. Check your CSV values.")
+            
+            else:
+                self.logger.info("Using random split (no 'val_fold_idx' in config).")
+                train_size = int(self.config.train_split * len(full_dataset))
+                val_size = len(full_dataset) - train_size
+                train_subset, val_subset = random_split(
+                    range(train_size + val_size),
+                    [train_size, val_size],
+                    generator=torch.Generator().manual_seed(self.config.random_seed)
+                )
+                train_indices = train_subset.indices
+                val_indices = val_subset.indices
+
+            # Create Subsets using the indices
             train_dataset_full = dataset_class(
                 data_dir=self.config.data_dir,
                 csv_file=self.config.csv_file,
-                transform=self.train_transform,  # Augmentations
+                transform=self.train_transform,
                 **dataset_kwargs
             )
-            train_dataset = Subset(train_dataset_full, train_indices.indices)
+            train_dataset = Subset(train_dataset_full, train_indices)
 
             val_dataset_full = dataset_class(
                 data_dir=self.config.data_dir,
                 csv_file=self.config.csv_file,
-                transform=self.val_transform,  # Deterministic
+                transform=self.val_transform,
                 **dataset_kwargs
             )
-            val_dataset = Subset(val_dataset_full, val_indices.indices)
+            val_dataset = Subset(val_dataset_full, val_indices)
             
+            # --- NEW SPLITTING LOGIC END ---
+
             # Create data loaders
             self.train_loader = DataLoader(
                 train_dataset,
@@ -179,8 +199,8 @@ class Experiment:
                 num_workers=self.config.num_workers
             )
             
-            self.logger.info(f"Train samples: {train_size}")
-            self.logger.info(f"Val samples: {val_size}")
+            self.logger.info(f"Train samples: {len(train_dataset)}")
+            self.logger.info(f"Val samples: {len(val_dataset)}")
         
         # For sklearn models, prepare data
         elif self.config.model_type == "sklearn":

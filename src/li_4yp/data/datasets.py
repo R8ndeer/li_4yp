@@ -113,6 +113,7 @@ class DigitalSwatchDataset(Dataset):
         data_dir: str | Path,
         csv_file: str | Path,
         transform: Optional[transforms.Compose] = None,
+        color_space: str = "RGB"
     ):
         """Initialize the dataset.
         
@@ -214,6 +215,7 @@ class HybridSwatchDataset(DigitalSwatchDataset):
         data_dir: str | Path,
         csv_file: str | Path,
         transform: Optional[transforms.Compose] = None,
+        color_space: str = "RGB",
         feature_cols: Optional[list] = None,
     ):
         """Initialize the hybrid dataset (Digital Swatch + LAB features).

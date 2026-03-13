@@ -35,6 +35,7 @@ class ExperimentConfig:
         "Base", "Primary", "Secondary"
     ])
     train_split: float = 0.8
+    val_fold_idx: Optional[int] = None  # For fixed-fold CV
     random_seed: int = 42
     
     # Training configuration (PyTorch)
