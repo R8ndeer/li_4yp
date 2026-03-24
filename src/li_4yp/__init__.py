@@ -1,16 +1,6 @@
 """Li 4YP Hair Swatch Prediction Package"""
 
 from .models import (
-    CNNRNNModel,
-    MultiOutputCNN,
-    DeeperShadeCNN,
-    ShadeCNN,
-    MbNetShadeCNN,
-    ShadeEfficientNet,
-    PixelStatNet,
-    PixelMoreStatNet,
-    HybridPixelStatNet,
-    PatchStatNet,
     AttentivePixelStatNet,
     AttentiveStatNetOneMoment,
 )
@@ -28,18 +18,8 @@ __version__ = "0.1.0"
 __author__ = "Boting Li"
 
 __all__ = [
-    "CNNRNNModel",
-    "MultiOutputCNN",
-    "DeeperShadeCNN",
-    "ShadeCNN",
-    "MbNetShadeCNN",
-    "ShadeEfficientNet",
     "AttentivePixelStatNet",
     "AttentiveStatNetOneMoment",
-    "PixelStatNet",
-    "PixelMoreStatNet",
-    "HybridPixelStatNet",
-    "PatchStatNet",
     "HairSwatchDataset",
     "DigitalSwatchDataset",
     "HybridSwatchDataset",

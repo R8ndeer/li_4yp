@@ -153,7 +153,8 @@ class ExperimentLogger:
         self.metrics_history.append(metric_data)
 
         # Log summary
-        self.info(f"\n{phase.upper()} Metrics:")
+        self.info("")
+        self.info(f"{phase.upper()} Metrics:")
         for key, value in metrics.items():
             if isinstance(value, (int, float)):
                 self.info(f"  {key}: {value:.4f}")
@@ -218,7 +219,6 @@ class ExperimentLogger:
             targets: Ground truth targets
             phase: Phase name (train, val, test)
         """
-        import numpy as np
 
         # Convert to numpy if needed
         if hasattr(predictions, "cpu"):
@@ -251,7 +251,8 @@ class ExperimentLogger:
         self.info(f"Ended at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
         if final_metrics:
-            self.info("\nFinal Test Metrics:")
+            self.info("")
+            self.info("Final Test Metrics:")
             for key, value in final_metrics.items():
                 if isinstance(value, (int, float)):
                     self.info(f"  {key}: {value:.4f}")

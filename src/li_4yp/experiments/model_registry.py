@@ -129,6 +129,65 @@ def register_pytorch_models():
     )
 
 
+def register_sklearn_models():
+    """Register the scikit-learn models supported by the original repo."""
+
+    from sklearn.ensemble import ExtraTreesClassifier, RandomForestClassifier
+    from sklearn.multioutput import MultiOutputClassifier
+    from sklearn.neural_network import MLPClassifier
+
+    ModelRegistry.register(
+        name="multi_output_random_forest",
+        constructor=lambda **kwargs: MultiOutputClassifier(
+            RandomForestClassifier(
+                n_estimators=kwargs.get("n_estimators", 200),
+                random_state=kwargs.get("random_state", 42),
+                n_jobs=kwargs.get("n_jobs", -1),
+                **{
+                    k: v
+                    for k, v in kwargs.items()
+                    if k not in ["n_estimators", "random_state", "n_jobs"]
+                },
+            )
+        ),
+        description="Random Forest multi-output classifier",
+    )
+
+    ModelRegistry.register(
+        name="multi_output_extra_trees",
+        constructor=lambda **kwargs: MultiOutputClassifier(
+            ExtraTreesClassifier(
+                n_estimators=kwargs.get("n_estimators", 200),
+                random_state=kwargs.get("random_state", 42),
+                n_jobs=kwargs.get("n_jobs", -1),
+                **{
+                    k: v
+                    for k, v in kwargs.items()
+                    if k not in ["n_estimators", "random_state", "n_jobs"]
+                },
+            )
+        ),
+        description="Extra Trees multi-output classifier",
+    )
+
+    ModelRegistry.register(
+        name="multi_output_mlp",
+        constructor=lambda **kwargs: MultiOutputClassifier(
+            MLPClassifier(
+                hidden_layer_sizes=kwargs.get("hidden_layer_sizes", (256, 128)),
+                max_iter=kwargs.get("max_iter", 500),
+                random_state=kwargs.get("random_state", 42),
+                **{
+                    k: v
+                    for k, v in kwargs.items()
+                    if k not in ["hidden_layer_sizes", "max_iter", "random_state"]
+                },
+            )
+        ),
+        description="Multi-layer Perceptron multi-output classifier",
+    )
+
+
 def register_custom_model(
     name: str,
     model_class: type,
@@ -167,3 +226,4 @@ def register_custom_model(
 
 # Auto-register built-in models
 register_pytorch_models()
+register_sklearn_models()
