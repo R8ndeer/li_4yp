@@ -6,7 +6,7 @@ from .transforms import (
     get_imagenet_transform,
     get_basic_transform,
     get_transform_from_preset,
-    TRANSFORM_PRESETS
+    TRANSFORM_PRESETS,
 )
 
 __all__ = [
@@ -16,5 +16,5 @@ __all__ = [
     "get_imagenet_transform",
     "get_basic_transform",
     "get_transform_from_preset",
-    "TRANSFORM_PRESETS"
+    "TRANSFORM_PRESETS",
 ]

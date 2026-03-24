@@ -3,14 +3,17 @@ from pathlib import Path
 
 from li_4yp.data import DigitalSwatchDataset, HybridSwatchDataset
 from li_4yp.experiments import Experiment, ExperimentConfig, ModelRegistry
-from li_4yp.utils import build_transform, get_transform_from_preset
-
 
 
 def main():
     """Main training script."""
     ap = argparse.ArgumentParser()
-    ap.add_argument("--config_path", type=str, required=True, help="Path to experiment config JSON/YAML file")
+    ap.add_argument(
+        "--config_path",
+        type=str,
+        required=True,
+        help="Path to experiment config JSON/YAML file",
+    )
     args = ap.parse_args()
 
     # load experiment config and validate
@@ -23,17 +26,21 @@ def main():
     elif config_path.suffix == ".json":
         config = ExperimentConfig.from_json(config_path)
     else:
-        raise ValueError("Unsupported config file format: config file must be JSON or YAML format.")
+        raise ValueError(
+            "Unsupported config file format: config file must be JSON or YAML format."
+        )
 
     # verify model
     if not ModelRegistry.is_registered(config.model_name):
-        raise ValueError(f"Model '{config.model_name}' is not registered in ModelRegistry.")
+        raise ValueError(
+            f"Model '{config.model_name}' is not registered in ModelRegistry."
+        )
 
     # check paths
     paths = {
         "data_dir": Path(config.data_dir),
         "csv_file": Path(config.data_dir) / config.csv_file,
-        "save_dir": Path(config.save_dir)
+        "save_dir": Path(config.save_dir),
     }
 
     for name, path in paths.items():

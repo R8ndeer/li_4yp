@@ -7,7 +7,7 @@ import torch
 
 def seed_all(seed: int = 42):
     """Set seeds for all random number generators for reproducible results.
-    
+
     Args:
         seed (int): Random seed value
     """
@@ -22,7 +22,7 @@ def seed_all(seed: int = 42):
 
 def get_device():
     """Get the best available device for computation.
-    
+
     Returns:
         torch.device: CUDA, MPS, or CPU device
     """
