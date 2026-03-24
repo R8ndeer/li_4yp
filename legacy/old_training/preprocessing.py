@@ -2,7 +2,6 @@ import pandas as pd
 from typing import Any, Tuple
 from pathlib import Path
 
-
 data_path = Path(__file__).resolve().parent.parent.parent.parent / "data"
 if not data_path.exists():
     raise FileNotFoundError(f"The data directory {data_path} does not exist.")
@@ -15,15 +14,17 @@ def load_data(file_name: str) -> pd.DataFrame:
         print(f"Loaded data from {file_path}")
         return pd.read_csv(file_path)
     else:
-        raise FileNotFoundError(f"The file {file_name} does not exist in the data directory.")
-    
+        raise FileNotFoundError(
+            f"The file {file_name} does not exist in the data directory."
+        )
+
 
 def parse_shade(code: Any) -> Tuple[int, int, int, int]:
     """Split shade into Base, Primary, Secondary, and Tertiary."""
-    parts = str(code).split('.', maxsplit=1)
+    parts = str(code).split(".", maxsplit=1)
     if len(parts) > 2:
         raise ValueError(f"Invalid shade code format: {code}")
-    
+
     # Skip non-integer base value (e.g. "10 (1/4)")
     try:
         base = int(parts[0]) if parts[0] else 0
@@ -45,43 +46,51 @@ def parse_shade(code: Any) -> Tuple[int, int, int, int]:
 
 def split_shade(df: pd.DataFrame, column_name: str = "Shade") -> None:
     """Apply the parse_shade() function to all columns of a DataFrame.
-    
+
     Args:
         df (pd.DataFrame): The DataFrame to preprocess, usually loaded from a CSV file using load_data().
         column_name (str): The name of the column containing shade codes. Defaults to "Shade".
     """
     if column_name not in df.columns:
-        raise ValueError(f"[split_shade] Column '{column_name}' does not exist in the DataFrame.")
-    
-    base, p1, p2, p3 = zip(*df[column_name].apply(parse_shade))  # unpack series of tuples
-    df['Base'] = base
-    df['Primary'] = p1
-    df['Secondary'] = p2
-    df['Tertiary'] = p3
+        raise ValueError(
+            f"[split_shade] Column '{column_name}' does not exist in the DataFrame."
+        )
+
+    base, p1, p2, p3 = zip(
+        *df[column_name].apply(parse_shade)
+    )  # unpack series of tuples
+    df["Base"] = base
+    df["Primary"] = p1
+    df["Secondary"] = p2
+    df["Tertiary"] = p3
     df.drop(columns=[column_name], inplace=True)
 
 
 def split_lab(df: pd.DataFrame, column_name: str = "Corrected LAB") -> None:
     """Split the Lab values into L, a, b components.
-    
+
     Args:
         df (pd.DataFrame): The DataFrame to preprocess, usually loaded from a CSV file using load_data().
         column_name (str): The name of the column containing Lab values. Defaults to "Corrected LAB".
     """
     if column_name not in df.columns:
-        raise ValueError(f"[split_lab] Column '{column_name}' does not exist in the DataFrame.")
-    
-    df.loc[:, ['L', 'a', 'b']] = df[column_name].apply(lambda x: pd.Series(str(x).split(','))).values
+        raise ValueError(
+            f"[split_lab] Column '{column_name}' does not exist in the DataFrame."
+        )
+
+    df.loc[:, ["L", "a", "b"]] = (
+        df[column_name].apply(lambda x: pd.Series(str(x).split(","))).values
+    )
     df.drop(columns=[column_name], inplace=True)
-    df.drop(columns=['Dominant LAB'], inplace=True, errors='ignore')
+    df.drop(columns=["Dominant LAB"], inplace=True, errors="ignore")
 
 
 def preprocess_lab_data(df: pd.DataFrame) -> pd.DataFrame:
     """Preprocess the DataFrame by splitting shade codes and Lab values.
-    
+
     Args:
         df (pd.DataFrame): The DataFrame to preprocess, usually loaded from a CSV file using load_data().
-        
+
     Returns:
         pd.DataFrame: The preprocessed DataFrame with shade codes and Lab values split into separate columns.
     """
@@ -92,22 +101,22 @@ def preprocess_lab_data(df: pd.DataFrame) -> pd.DataFrame:
 
 def preprocess_formula_data(df: pd.DataFrame) -> pd.DataFrame:
     """Preprocess the DataFrame by splitting shade codes and Lab values.
-    
+
     Args:
         df (pd.DataFrame): The DataFrame to preprocess, usually loaded from a CSV file using load_data().
-        
+
     Returns:
         pd.DataFrame: The preprocessed DataFrame with formula and shade.
     """
-    columns = [f'AA0{i}' for i in range(1, 8)] + ['shade']
+    columns = [f"AA0{i}" for i in range(1, 8)] + ["shade"]
     df = df.loc[:, columns]
-    split_shade(df, column_name='shade')
+    split_shade(df, column_name="shade")
     return df
 
 
 def merge_on_shade(lab_df: pd.DataFrame, formula_df: pd.DataFrame) -> pd.DataFrame:
     """Merge two DataFrames on shade columns.
-    
+
     Args:
         lab_df (pd.DataFrame): The DataFrame containing Lab data.
         formula_df (pd.DataFrame): The DataFrame containing formula data.
@@ -118,7 +127,7 @@ def merge_on_shade(lab_df: pd.DataFrame, formula_df: pd.DataFrame) -> pd.DataFra
     return pd.merge(
         lab_df,
         formula_df,
-        on=['Base', 'Primary', 'Secondary', 'Tertiary'],
-        how='inner',
-        suffixes=['_lab', '_formula']
+        on=["Base", "Primary", "Secondary", "Tertiary"],
+        how="inner",
+        suffixes=["_lab", "_formula"],
     )

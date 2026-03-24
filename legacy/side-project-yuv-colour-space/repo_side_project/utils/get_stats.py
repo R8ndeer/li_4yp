@@ -1,11 +1,12 @@
 from fit_stats import *
 
+
 def __get_mode(image_data: np.ndarray) -> tuple:
     """Get the mode of 3 colour channels from image data using skew normal distribution.
-    
+
     Args:
         image_data (np.ndarray): Image data in shape (height, width, 3).
-        
+
     Returns:
         tuple: Modes of the 3 colour channels.
     """

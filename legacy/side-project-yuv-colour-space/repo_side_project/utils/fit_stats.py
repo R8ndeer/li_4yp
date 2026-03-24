@@ -3,17 +3,17 @@
 import numpy as np
 from scipy.stats import skewnorm
 
-
 # =============================================================================
 # SKEW NORMAL DISTRIBUTION FITTING
 # =============================================================================
 
+
 def fit_skewnorm(image_data: np.ndarray) -> tuple:
     """Fit skew normal distribution to the channels of an image (channel-agnostic).
-    
+
     Args:
         image_data (np.ndarray): Image data in shape (height, width, 3).
-        
+
     Returns:
         tuple: Parameters of the fitted skew normal distributions for 3 channels.
                Order: (R, G, B) for RGB, (L, a, b) for LAB.
@@ -29,7 +29,7 @@ def fit_skewnorm(image_data: np.ndarray) -> tuple:
 
 def skewnorm_mode(a, loc, scale) -> float:
     """Calculate the mode of a skew normal distribution.
-    
+
     Args:
         a (float): Skewness parameter.
         loc (float): Location parameter.

@@ -1,15 +1,18 @@
 import torch.nn as nn
 from torchvision import models
 
+
 class MbNetV3Encoder(nn.Module):
     def __init__(self, feat_dim=256):
         super().__init__()
-        mbnet = models.mobilenet_v3_large(weights=models.MobileNet_V3_Large_Weights.IMAGENET1K_V2)
+        mbnet = models.mobilenet_v3_large(
+            weights=models.MobileNet_V3_Large_Weights.IMAGENET1K_V2
+        )
         for param in mbnet.parameters():
             param.requires_grad = False
         for param in mbnet.features[-2:].parameters():
             param.requires_grad = True
-        
+
         self.features = mbnet.features
         self.pool = nn.AdaptiveAvgPool2d((1, 1))
         in_features = mbnet.classifier[0].in_features
@@ -36,7 +39,7 @@ class MbNetShadeCNN(nn.Module):
         features = self.encoder(images)
 
         return {
-            'base': self.base_head(features),
-            'primary': self.primary_head(features),
-            'secondary': self.secondary_head(features)
+            "base": self.base_head(features),
+            "primary": self.primary_head(features),
+            "secondary": self.secondary_head(features),
         }
