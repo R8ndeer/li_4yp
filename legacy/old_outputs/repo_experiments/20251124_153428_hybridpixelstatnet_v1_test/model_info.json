@@ -1,0 +1,14 @@
+{
+  "model_name": "hybrid_pixel_stat_net",
+  "model_type": "pytorch",
+  "model_params": {
+    "num_classes": [
+      12,
+      11,
+      11
+    ],
+    "dropout_rate": 0.2
+  },
+  "total_parameters": 62498,
+  "trainable_parameters": 62498
+}

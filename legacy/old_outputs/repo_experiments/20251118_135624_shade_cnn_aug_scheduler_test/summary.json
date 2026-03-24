@@ -1,0 +1,15 @@
+{
+  "experiment_name": "shade_cnn_aug_scheduler_test",
+  "completed_at": "2025-11-18T14:15:59.217180",
+  "total_epochs": 59,
+  "final_metrics": {
+    "base_acc": 0.6993464052287581,
+    "tol_base_acc (\u00b11 for <=4)": 0.8562091588973999,
+    "primary_acc": 0.6209150326797386,
+    "secondary_acc": 0.21568627450980393,
+    "Hierarchical Score": 0.27450980392156865,
+    "Exact Match": 0.07189542800188065,
+    "Base-Primary Exact Match": 0.4313725531101227,
+    "Primary-Secondary Exact Match": 0.08496732264757156
+  }
+}

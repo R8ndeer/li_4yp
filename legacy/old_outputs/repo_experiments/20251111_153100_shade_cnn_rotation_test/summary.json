@@ -1,0 +1,14 @@
+{
+  "experiment_name": "shade_cnn_rotation_test",
+  "completed_at": "2025-11-11T15:44:59.514697",
+  "total_epochs": 42,
+  "final_metrics": {
+    "base_acc": 0.7908496732026143,
+    "tol_base_acc (\u00b11 for <=4)": 0.9215686321258545,
+    "primary_acc": 0.6666666666666666,
+    "secondary_acc": 0.23529411764705882,
+    "Hierarchical Score": 0.39477124183006534,
+    "Exact Match": 0.08496732264757156,
+    "Base-Primary Exact Match": 0.5555555820465088
+  }
+}

@@ -1,0 +1,29 @@
+dataset: masterlist_v6
+features: [
+    'mean_l', 'mean_a', 'mean_b', 'mean_chroma',
+    'median_l', 'median_a', 'median_b', 'median_chroma',
+    'percentile25_l', 'percentile25_a', 'percentile25_b', 'percentile25_chroma',
+    'percentile75_l', 'percentile75_a', 'percentile75_b', 'percentile75_chroma'
+]
+label format: B.PS
+seeding: li_4yp.utils.reproducibility.seed_all(42)
+models: {
+    # Tree-based
+    "ExtraTrees": MultiOutputClassifier(ExtraTreesClassifier(n_estimators=200, n_jobs=-1, random_state=42)),
+    "RandomForest": MultiOutputClassifier(RandomForestClassifier(n_estimators=200, n_jobs=-1, random_state=42)),
+    "AdaBoost": MultiOutputClassifier(AdaBoostClassifier(random_state=42)),
+    "GradBoost": MultiOutputClassifier(GradientBoostingClassifier(random_state=42)),
+    "HistGB": MultiOutputClassifier(HistGradientBoostingClassifier(random_state=42)),
+
+    # Linear / distance-based
+    "LogReg": MultiOutputClassifier(LogisticRegression(max_iter=500)),
+    "Ridge": MultiOutputClassifier(RidgeClassifier()),
+    "KNN": MultiOutputClassifier(KNeighborsClassifier(n_neighbors=5)),
+
+    # SVMs
+    "LinearSVC": MultiOutputClassifier(LinearSVC(max_iter=5000)),
+    "SVC_RBF": MultiOutputClassifier(SVC(kernel='rbf', gamma='scale')),
+
+    # Shallow Neural Net
+    "MLP": MultiOutputClassifier(MLPClassifier(hidden_layer_sizes=(256,128), max_iter=5000, random_state=42))
+}

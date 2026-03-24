@@ -1,0 +1,14 @@
+{
+  "experiment_name": "shade_cnn_cropped_test",
+  "completed_at": "2025-11-11T15:18:08.370319",
+  "total_epochs": 23,
+  "final_metrics": {
+    "base_acc": 0.6928104575163399,
+    "tol_base_acc (\u00b11 for <=4)": 0.8888888955116272,
+    "primary_acc": 0.5882352941176471,
+    "secondary_acc": 0.1830065359477124,
+    "Hierarchical Score": 0.24183006535947713,
+    "Exact Match": 0.05882352963089943,
+    "Base-Primary Exact Match": 0.4313725531101227
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "experiment_name": "hybridpixelstatnet_v1_test",
+  "completed_at": "2025-11-24T15:56:21.302513",
+  "total_epochs": 79,
+  "final_metrics": {
+    "base_acc": 0.7320261437908496,
+    "tol_base_acc (\u00b11 for <=4)": 0.9019607901573181,
+    "primary_acc": 0.6274509803921569,
+    "secondary_acc": 0.1895424836601307,
+    "Hierarchical Score": 0.3026143790849673,
+    "Exact Match": 0.09150326997041702,
+    "Base-Primary Exact Match": 0.49673202633857727,
+    "Primary-Secondary Exact Match": 0.1111111119389534
+  }
+}

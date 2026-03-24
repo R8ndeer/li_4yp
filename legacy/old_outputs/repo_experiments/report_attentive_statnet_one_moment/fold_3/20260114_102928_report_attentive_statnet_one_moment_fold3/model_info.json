@@ -1,0 +1,14 @@
+{
+  "model_name": "attentive_stat_net_one_moment",
+  "model_type": "pytorch",
+  "model_params": {
+    "dropout_rate": 0.2,
+    "num_classes": [
+      12,
+      11,
+      11
+    ]
+  },
+  "total_parameters": 88739,
+  "trainable_parameters": 88739
+}

@@ -1,0 +1,13 @@
+{
+  "model_name": "shade_efficientnet",
+  "model_type": "pytorch",
+  "model_params": {
+    "num_classes": [
+      12,
+      11,
+      11
+    ]
+  },
+  "total_parameters": 4051102,
+  "trainable_parameters": 3199294
+}

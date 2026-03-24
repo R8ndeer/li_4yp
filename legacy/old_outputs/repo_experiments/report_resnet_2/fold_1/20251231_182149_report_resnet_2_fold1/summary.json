@@ -1,0 +1,15 @@
+{
+  "experiment_name": "report_resnet_2_fold1",
+  "completed_at": "2025-12-31T18:30:52.663988",
+  "total_epochs": 42,
+  "final_metrics": {
+    "base_acc": 0.775,
+    "tol_base_acc (\u00b11 for <=4)": 0.8583333492279053,
+    "primary_acc": 0.7916666666666666,
+    "secondary_acc": 0.225,
+    "Hierarchical Score": 0.4383333333333334,
+    "Exact Match": 0.06666667014360428,
+    "Base-Primary Exact Match": 0.6166666746139526,
+    "Primary-Secondary Exact Match": 0.15000000596046448
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "experiment_name": "shade_efficientnet_cnn_test",
+  "completed_at": "2025-11-23T22:30:24.836799",
+  "total_epochs": 43,
+  "final_metrics": {
+    "base_acc": 0.7450980392156863,
+    "tol_base_acc (\u00b11 for <=4)": 0.8366013169288635,
+    "primary_acc": 0.673202614379085,
+    "secondary_acc": 0.19607843137254902,
+    "Hierarchical Score": 0.3405228758169935,
+    "Exact Match": 0.05228758230805397,
+    "Base-Primary Exact Match": 0.48366013169288635,
+    "Primary-Secondary Exact Match": 0.08496732264757156
+  }
+}

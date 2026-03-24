@@ -1,10 +1,8 @@
-"""Model registry for easy model instantiation."""
+"""Model registry for the presentation training slice."""
 
 from typing import Any, Callable, Dict, Optional
-import torch
-import torch.nn as nn
 
-from li_4yp.models import *
+from li_4yp.models import AttentivePixelStatNet, AttentiveStatNetOneMoment
 
 
 class ModelRegistry:
@@ -113,112 +111,7 @@ class ModelRegistry:
 
 
 def register_pytorch_models():
-    """Register built-in PyTorch models."""
-    
-    # CNN-RNN Model
-    ModelRegistry.register(
-        name="cnn_rnn",
-        constructor=lambda **kwargs: CNNRNNModel(
-            vocab_size=kwargs.get('vocab_size', 12),
-            embed_dim=kwargs.get('embed_dim', 64),
-            hidden_dim=kwargs.get('hidden_dim', 256),
-            output_dim=kwargs.get('output_dim', 12),
-            feat_dim=kwargs.get('feat_dim', 128)
-        ),
-        description="CNN-RNN model for sequential shade prediction"
-    )
-    
-    # Multi-Output CNN
-    ModelRegistry.register(
-        name="multi_output_cnn",
-        constructor=lambda **kwargs: MultiOutputCNN(
-            vocab_size=kwargs.get('vocab_size', 12)
-        ),
-        description="Multi-output CNN for parallel shade component prediction"
-    )
-
-    # ShadeCNN
-    ModelRegistry.register(
-        name="shade_cnn",
-        constructor=lambda **kwargs: ShadeCNN(
-            num_classes=kwargs.get('num_classes', [12, 11, 11])
-        ),
-        description="A simple CNN for multi-task hair color classification"
-    )
-
-    # DeeperShadeCNN
-    ModelRegistry.register(
-        name="deeper_shade_cnn",
-        constructor=lambda **kwargs: DeeperShadeCNN(
-            num_classes=kwargs.get('num_classes', [12, 11, 11])
-        ),
-        description="A deeper CNN for multi-task hair color classification"
-    )
-
-    ModelRegistry.register(
-        name="mbnet_shade_cnn",
-        constructor=lambda **kwargs: MbNetShadeCNN(
-            feat_dim=kwargs.get('feat_dim', 256),
-            num_classes=kwargs.get('num_classes', [12, 11, 11])
-        ),
-        description="MobileNetV3-based CNN for multi-task hair color classification"
-    )
-
-    ModelRegistry.register(
-        name="shade_efficientnet",
-        constructor=lambda **kwargs: ShadeEfficientNet(
-            num_classes=kwargs.get('num_classes', [12, 11, 11])
-        ),
-        description="EfficientNet-based CNN for multi-task hair color classification"
-    )
-
-    ModelRegistry.register(
-        name="pixel_stat_net",
-        constructor=lambda **kwargs: PixelStatNet(
-            num_classes=kwargs.get('num_classes', [12, 11, 11]),
-            dropout_rate=kwargs.get('dropout_rate', 0.2)
-        ),
-        description="PixelStatNet: A Deep Random Forest style network using statistical pooling"
-    )
-
-    ModelRegistry.register(
-        name="pixel_more_stat_net",
-        constructor=lambda **kwargs: PixelMoreStatNet(
-            num_classes=kwargs.get('num_classes', [12, 11, 11]),
-            dropout_rate=kwargs.get('dropout_rate', 0.2)
-        ),
-        description="PixelMoreStatNet: An enhanced version of PixelStatNet with additional statistics"
-    )
-
-    ModelRegistry.register(
-        name="hybrid_pixel_stat_net",
-        constructor=lambda **kwargs: HybridPixelStatNet(
-            num_classes=kwargs.get('num_classes', [12, 11, 11]),
-            dropout_rate=kwargs.get('dropout_rate', 0.2),
-            csv_feature_dim=kwargs.get('csv_feature_dim', 16)
-        ),
-        description="HybridPixelStatNet: Combines PixelStatNet with classical CSV features"
-    )
-
-    ModelRegistry.register(
-        name="patch_stat_net",
-        constructor=lambda **kwargs: PatchStatNet(
-            num_classes=kwargs.get('num_classes', [12, 11, 11]),
-            dropout_rate=kwargs.get('dropout_rate', 0.2)
-        ),
-        description="PatchStatNet: A lightweight statistical pooling network for hair color classification"
-    )
-
-    ModelRegistry.register(
-        name="shade_resnet",
-        constructor=lambda **kwargs: ShadeResNet(
-            num_classes=kwargs.get('num_classes', [12, 11, 11]),
-            dropout_rate=kwargs.get('dropout_rate', 0.2),
-            backbone=kwargs.get('backbone', 'resnet18'),
-            pretrained=kwargs.get('pretrained', True)
-        ),
-        description="Shade ResNet (Base/Primary/Secondary) initialized with ImageNet weights."
-    )
+    """Register the PyTorch models kept in the presentation slice."""
 
     ModelRegistry.register(
         name="attentive_pixel_stat_net",
@@ -236,57 +129,6 @@ def register_pytorch_models():
             dropout_rate=kwargs.get('dropout_rate', 0.2)
         ),
         description="AttentiveStatNetOneMoment: Simplified attention-based model using only weighted mean."
-    )
-
-def register_sklearn_models():
-    """Register scikit-learn models."""
-    from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier
-    from sklearn.neural_network import MLPClassifier
-    from sklearn.multioutput import MultiOutputClassifier
-    
-    # Random Forest
-    ModelRegistry.register(
-        name="multi_output_random_forest",
-        constructor=lambda **kwargs: MultiOutputClassifier(
-            RandomForestClassifier(
-                n_estimators=kwargs.get('n_estimators', 200),
-                random_state=kwargs.get('random_state', 42),
-                n_jobs=kwargs.get('n_jobs', -1),
-                **{k: v for k, v in kwargs.items() 
-                   if k not in ['n_estimators', 'random_state', 'n_jobs']}
-            )
-        ),
-        description="Random Forest multi-output classifier"
-    )
-    
-    # Extra Trees
-    ModelRegistry.register(
-        name="multi_output_extra_trees",
-        constructor=lambda **kwargs: MultiOutputClassifier(
-            ExtraTreesClassifier(
-                n_estimators=kwargs.get('n_estimators', 200),
-                random_state=kwargs.get('random_state', 42),
-                n_jobs=kwargs.get('n_jobs', -1),
-                **{k: v for k, v in kwargs.items() 
-                   if k not in ['n_estimators', 'random_state', 'n_jobs']}
-            )
-        ),
-        description="Extra Trees multi-output classifier"
-    )
-    
-    # MLP
-    ModelRegistry.register(
-        name="multi_output_mlp",
-        constructor=lambda **kwargs: MultiOutputClassifier(
-            MLPClassifier(
-                hidden_layer_sizes=kwargs.get('hidden_layer_sizes', (256, 128)),
-                max_iter=kwargs.get('max_iter', 500),
-                random_state=kwargs.get('random_state', 42),
-                **{k: v for k, v in kwargs.items() 
-                   if k not in ['hidden_layer_sizes', 'max_iter', 'random_state']}
-            )
-        ),
-        description="Multi-layer Perceptron multi-output classifier"
     )
 
 
@@ -328,4 +170,3 @@ def register_custom_model(
 
 # Auto-register built-in models
 register_pytorch_models()
-register_sklearn_models()

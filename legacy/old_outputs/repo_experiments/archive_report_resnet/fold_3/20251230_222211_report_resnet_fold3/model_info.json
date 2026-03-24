@@ -1,0 +1,16 @@
+{
+  "model_name": "shade_resnet",
+  "model_type": "pytorch",
+  "model_params": {
+    "backbone": "resnet18",
+    "dropout_rate": 0.5,
+    "num_classes": [
+      12,
+      11,
+      11
+    ],
+    "pretrained": true
+  },
+  "total_parameters": 11981922,
+  "trainable_parameters": 11981922
+}

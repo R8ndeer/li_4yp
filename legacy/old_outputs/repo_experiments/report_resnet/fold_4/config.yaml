@@ -1,0 +1,73 @@
+augmentation:
+  probability: 0.5
+  random_horizontal_flip: true
+  random_resized_crop: true
+  random_rotation: true
+  rotation_degrees: 15
+  scale:
+  - 0.9
+  - 1.0
+batch_size: 32
+csv_file: golden_dataset_5fold.csv
+data_dir: data/masterlist_v7
+dataset_name: golden_dataset
+description: ResNet18 baseline with ImageNet normalization.
+device: auto
+early_stopping_patience: 20
+evaluator_params:
+  eos_token: -1
+  tol_base: 4
+  weights:
+  - 0.5
+  - 0.3
+image_size:
+- 224
+- 224
+learning_rate: 0.0001
+loss_name: HierarchicalShadeLoss
+loss_params:
+  class_weights_dict: null
+  task_weights:
+  - 1.0
+  - 1.0
+  - 1.0
+model_name: shade_resnet
+model_params:
+  backbone: resnet18
+  dropout_rate: 0.5
+  num_classes:
+  - 12
+  - 11
+  - 11
+  pretrained: true
+model_type: pytorch
+name: report_resnet_fold4
+normalize: true
+normalize_mean:
+- 0.485
+- 0.456
+- 0.406
+normalize_std:
+- 0.229
+- 0.224
+- 0.225
+num_epochs: 200
+num_workers: 0
+optimizer: Adam
+optimizer_params:
+  weight_decay: 0.0001
+save_dir: experiments/report_resnet/fold_4
+save_model: true
+save_predictions: true
+scheduler: ReduceLROnPlateau
+scheduler_params:
+  factor: 0.1
+  mode: min
+  patience: 5
+tags:
+- pytorch
+- resnet
+- baseline
+- report
+use_transform_preset: false
+val_fold_idx: 4

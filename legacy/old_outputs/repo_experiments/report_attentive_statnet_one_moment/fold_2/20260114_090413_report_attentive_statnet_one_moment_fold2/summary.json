@@ -1,0 +1,15 @@
+{
+  "experiment_name": "report_attentive_statnet_one_moment_fold2",
+  "completed_at": "2026-01-14T10:29:23.647529",
+  "total_epochs": 93,
+  "final_metrics": {
+    "base_acc": 0.8,
+    "tol_base_acc (\u00b11 for <=4)": 0.8999999761581421,
+    "primary_acc": 0.6916666666666667,
+    "secondary_acc": 0.24166666666666667,
+    "Hierarchical Score": 0.4183333333333334,
+    "Exact Match": 0.09166666865348816,
+    "Base-Primary Exact Match": 0.550000011920929,
+    "Primary-Secondary Exact Match": 0.1666666716337204
+  }
+}

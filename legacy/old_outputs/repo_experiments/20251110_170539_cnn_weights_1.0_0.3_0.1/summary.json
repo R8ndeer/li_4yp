@@ -1,0 +1,14 @@
+{
+  "experiment_name": "cnn_weights_1.0_0.3_0.1",
+  "completed_at": "2025-11-11T03:52:09.360272",
+  "total_epochs": 79,
+  "final_metrics": {
+    "base_acc": 0.7254901960784313,
+    "tol_base_acc (\u00b11 for <=4)": 0.8823529481887817,
+    "primary_acc": 0.6405228758169934,
+    "secondary_acc": 0.1895424836601307,
+    "Hierarchical Score": 0.5366013071895426,
+    "Exact Match": 0.07189542800188065,
+    "Base-Primary Exact Match": 0.49673202633857727
+  }
+}

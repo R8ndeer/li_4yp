@@ -1,0 +1,14 @@
+{
+  "experiment_name": "rf_test",
+  "completed_at": "2025-11-10T10:16:01.721852",
+  "total_epochs": 0,
+  "final_metrics": {
+    "base_acc": 0.869281045751634,
+    "tol_base_acc (\u00b11 for <=4)": 0.934640522875817,
+    "primary_acc": 0.7516339869281046,
+    "secondary_acc": 0.22875816993464052,
+    "Hierarchical Score": 0.7176470588235295,
+    "Exact Match": 0.1111111111111111,
+    "Base-Primary Exact Match": 0.6601307189542484
+  }
+}

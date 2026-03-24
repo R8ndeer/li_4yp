@@ -1,0 +1,103 @@
+[2025-11-10 10:16:22] [INFO] Experiment: simplecnn_test
+[2025-11-10 10:16:22] [INFO] Started at: 2025-11-10 10:16:22
+[2025-11-10 10:16:22] [INFO] --------------------------------------------------------------------------------
+[2025-11-10 10:16:22] [INFO] Experiment Configuration:
+[2025-11-10 10:16:22] [INFO]   name: simplecnn_test
+[2025-11-10 10:16:22] [INFO]   description: Simple CNN with multi-task learning
+[2025-11-10 10:16:22] [INFO]   tags: ['pytorch', 'cnn', 'test']
+[2025-11-10 10:16:22] [INFO]   model_type: pytorch
+[2025-11-10 10:16:22] [INFO]   model_name: simple_cnn
+[2025-11-10 10:16:22] [INFO]   model_params: {'num_classes': [12, 11, 11]}
+[2025-11-10 10:16:22] [INFO]   dataset_name: masterlist_v6
+[2025-11-10 10:16:22] [INFO]   data_dir: ../data/masterlist_v6
+[2025-11-10 10:16:22] [INFO]   csv_file: masterlist_v6_full_features.csv
+[2025-11-10 10:16:22] [INFO]   train_split: 0.8
+[2025-11-10 10:16:22] [INFO]   random_seed: 42
+[2025-11-10 10:16:22] [INFO]   batch_size: 32
+[2025-11-10 10:16:22] [INFO]   num_epochs: 10
+[2025-11-10 10:16:22] [INFO]   learning_rate: 0.001
+[2025-11-10 10:16:22] [INFO]   optimizer: Adam
+[2025-11-10 10:16:22] [INFO]   optimizer_params: {}
+[2025-11-10 10:16:22] [INFO]   scheduler: None
+[2025-11-10 10:16:22] [INFO]   scheduler_params: {}
+[2025-11-10 10:16:22] [INFO]   early_stopping_patience: 5
+[2025-11-10 10:16:22] [INFO]   loss_function: CrossEntropyLoss
+[2025-11-10 10:16:22] [INFO]   loss_weights: (1.0, 1.0, 1.0)
+[2025-11-10 10:16:22] [INFO]   eval_metrics: ['base_acc', 'tol_base_acc', 'primary_acc', 'secondary_acc', 'Hierarchical Score', 'Exact Match', 'Base-Primary Exact Match']
+[2025-11-10 10:16:22] [INFO]   evaluator_params: {'eos_token': -1, 'weights': (0.3, 0.1), 'tol_base': 4}
+[2025-11-10 10:16:22] [INFO]   save_dir: ../experiments
+[2025-11-10 10:16:22] [INFO]   save_model: True
+[2025-11-10 10:16:22] [INFO]   save_predictions: True
+[2025-11-10 10:16:22] [INFO]   save_history: True
+[2025-11-10 10:16:22] [INFO]   device: auto
+[2025-11-10 10:16:22] [INFO]   num_workers: 0
+[2025-11-10 10:16:22] [INFO] --------------------------------------------------------------------------------
+[2025-11-10 10:16:22] [INFO] Experiment directory: ../experiments/20251110_101622_simplecnn_test
+[2025-11-10 10:16:22] [INFO] Device: cpu
+[2025-11-10 10:16:22] [INFO] Setting up data loaders...
+[2025-11-10 10:16:22] [INFO] Dataset Information:
+[2025-11-10 10:16:22] [INFO]   dataset_class: DigitalSwatchDataset
+[2025-11-10 10:16:22] [INFO]   total_samples: 761
+[2025-11-10 10:16:22] [INFO]   data_dir: /Users/boting/li_4yp/data/masterlist_v6
+[2025-11-10 10:16:22] [INFO]   csv_file: masterlist_v6_full_features.csv
+[2025-11-10 10:16:22] [INFO]   num_samples: 761
+[2025-11-10 10:16:22] [INFO]   label_columns: ['Base', 'Primary', 'Secondary']
+[2025-11-10 10:16:22] [INFO]   sample_filename: 6.088.jpg
+[2025-11-10 10:16:22] [INFO] --------------------------------------------------------------------------------
+[2025-11-10 10:16:22] [INFO] Train samples: 608
+[2025-11-10 10:16:22] [INFO] Val samples: 153
+[2025-11-10 10:16:22] [INFO] Setting up model...
+[2025-11-10 10:16:22] [INFO] Model Information:
+[2025-11-10 10:16:22] [INFO]   model_name: simple_cnn
+[2025-11-10 10:16:22] [INFO]   model_type: pytorch
+[2025-11-10 10:16:22] [INFO]   model_params: {'num_classes': [12, 11, 11]}
+[2025-11-10 10:16:22] [INFO]   total_parameters: 25704290
+[2025-11-10 10:16:22] [INFO]   trainable_parameters: 25704290
+[2025-11-10 10:16:22] [INFO] --------------------------------------------------------------------------------
+[2025-11-10 10:16:22] [INFO] Evaluator configured with params: {'eos_token': -1, 'weights': (0.3, 0.1), 'tol_base': 4}
+[2025-11-10 10:16:22] [INFO] Setting up optimizer...
+[2025-11-10 10:16:22] [INFO] Starting training for 10 epochs...
+[2025-11-10 10:16:40] [INFO] Epoch   1 | Train Loss: 37.6001 | Val Loss: 7.2773 | base_acc: 0.0261 | tol_base_acc (±1 for <=4): 0.0327 | primary_acc: 0.1373 | secondary_acc: 0.1046 | Hierarchical Score: 0.0000 | Exact Match: 0.0000 | Base-Primary Exact Match: 0.0065
+[2025-11-10 10:16:40] [INFO] Best model saved (val_loss: 7.2773)
+[2025-11-10 10:16:57] [INFO] Epoch   2 | Train Loss: 7.2887 | Val Loss: 7.2769 | base_acc: 0.1111 | tol_base_acc (±1 for <=4): 0.3007 | primary_acc: 0.1961 | secondary_acc: 0.0654 | Hierarchical Score: 0.0000 | Exact Match: 0.0000 | Base-Primary Exact Match: 0.0065
+[2025-11-10 10:16:57] [INFO] Best model saved (val_loss: 7.2769)
+[2025-11-10 10:17:16] [INFO] Epoch   3 | Train Loss: 7.2672 | Val Loss: 7.2603 | base_acc: 0.1111 | tol_base_acc (±1 for <=4): 0.3007 | primary_acc: 0.1111 | secondary_acc: 0.0654 | Hierarchical Score: 0.0000 | Exact Match: 0.0000 | Base-Primary Exact Match: 0.0131
+[2025-11-10 10:17:16] [INFO] Best model saved (val_loss: 7.2603)
+[2025-11-10 10:17:34] [INFO] Epoch   4 | Train Loss: 7.2496 | Val Loss: 7.2446 | base_acc: 0.1111 | tol_base_acc (±1 for <=4): 0.3007 | primary_acc: 0.1111 | secondary_acc: 0.1242 | Hierarchical Score: 0.0000 | Exact Match: 0.0065 | Base-Primary Exact Match: 0.0131
+[2025-11-10 10:17:34] [INFO] Best model saved (val_loss: 7.2446)
+[2025-11-10 10:17:51] [INFO] Epoch   5 | Train Loss: 7.2333 | Val Loss: 7.2295 | base_acc: 0.1111 | tol_base_acc (±1 for <=4): 0.3007 | primary_acc: 0.1111 | secondary_acc: 0.1242 | Hierarchical Score: 0.0000 | Exact Match: 0.0065 | Base-Primary Exact Match: 0.0131
+[2025-11-10 10:17:51] [INFO] Best model saved (val_loss: 7.2295)
+[2025-11-10 10:18:09] [INFO] Epoch   6 | Train Loss: 7.2172 | Val Loss: 7.2153 | base_acc: 0.1111 | tol_base_acc (±1 for <=4): 0.3007 | primary_acc: 0.1111 | secondary_acc: 0.1242 | Hierarchical Score: 0.0000 | Exact Match: 0.0065 | Base-Primary Exact Match: 0.0131
+[2025-11-10 10:18:09] [INFO] Best model saved (val_loss: 7.2153)
+[2025-11-10 10:18:26] [INFO] Epoch   7 | Train Loss: 7.2016 | Val Loss: 7.2010 | base_acc: 0.1111 | tol_base_acc (±1 for <=4): 0.3007 | primary_acc: 0.1111 | secondary_acc: 0.1242 | Hierarchical Score: 0.0000 | Exact Match: 0.0065 | Base-Primary Exact Match: 0.0131
+[2025-11-10 10:18:26] [INFO] Best model saved (val_loss: 7.2010)
+[2025-11-10 10:18:43] [INFO] Epoch   8 | Train Loss: 7.1866 | Val Loss: 7.1872 | base_acc: 0.1111 | tol_base_acc (±1 for <=4): 0.3007 | primary_acc: 0.1111 | secondary_acc: 0.1242 | Hierarchical Score: 0.0000 | Exact Match: 0.0065 | Base-Primary Exact Match: 0.0131
+[2025-11-10 10:18:43] [INFO] Best model saved (val_loss: 7.1872)
+[2025-11-10 10:19:00] [INFO] Epoch   9 | Train Loss: 7.1717 | Val Loss: 7.1740 | base_acc: 0.1111 | tol_base_acc (±1 for <=4): 0.3007 | primary_acc: 0.1373 | secondary_acc: 0.1242 | Hierarchical Score: 0.0000 | Exact Match: 0.0000 | Base-Primary Exact Match: 0.0327
+[2025-11-10 10:19:00] [INFO] Best model saved (val_loss: 7.1740)
+[2025-11-10 10:19:18] [INFO] Epoch  10 | Train Loss: 7.1594 | Val Loss: 7.1620 | base_acc: 0.1111 | tol_base_acc (±1 for <=4): 0.3007 | primary_acc: 0.1373 | secondary_acc: 0.1242 | Hierarchical Score: 0.0000 | Exact Match: 0.0000 | Base-Primary Exact Match: 0.0327
+[2025-11-10 10:19:18] [INFO] Best model saved (val_loss: 7.1620)
+[2025-11-10 10:19:18] [INFO] Loaded best model for final evaluation
+[2025-11-10 10:19:20] [INFO] 
+FINAL_VAL Metrics:
+[2025-11-10 10:19:20] [INFO]   base_acc: 0.1111
+[2025-11-10 10:19:20] [INFO]   tol_base_acc (±1 for <=4): 0.3007
+[2025-11-10 10:19:20] [INFO]   primary_acc: 0.1373
+[2025-11-10 10:19:20] [INFO]   secondary_acc: 0.1242
+[2025-11-10 10:19:20] [INFO]   Hierarchical Score: 0.0000
+[2025-11-10 10:19:20] [INFO]   Exact Match: 0.0000
+[2025-11-10 10:19:20] [INFO]   Base-Primary Exact Match: 0.0327
+[2025-11-10 10:19:20] [INFO] --------------------------------------------------------------------------------
+[2025-11-10 10:19:20] [INFO] ================================================================================
+[2025-11-10 10:19:20] [INFO] Experiment Completed
+[2025-11-10 10:19:20] [INFO] Ended at: 2025-11-10 10:19:20
+[2025-11-10 10:19:20] [INFO] 
+Final Test Metrics:
+[2025-11-10 10:19:20] [INFO]   base_acc: 0.1111
+[2025-11-10 10:19:20] [INFO]   tol_base_acc (±1 for <=4): 0.3007
+[2025-11-10 10:19:20] [INFO]   primary_acc: 0.1373
+[2025-11-10 10:19:20] [INFO]   secondary_acc: 0.1242
+[2025-11-10 10:19:20] [INFO]   Hierarchical Score: 0.0000
+[2025-11-10 10:19:20] [INFO]   Exact Match: 0.0000
+[2025-11-10 10:19:20] [INFO]   Base-Primary Exact Match: 0.0327
+[2025-11-10 10:19:20] [INFO] ================================================================================

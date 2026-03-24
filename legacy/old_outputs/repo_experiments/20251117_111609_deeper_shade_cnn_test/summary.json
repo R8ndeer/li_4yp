@@ -1,0 +1,14 @@
+{
+  "experiment_name": "deeper_shade_cnn_test",
+  "completed_at": "2025-11-17T11:28:51.568079",
+  "total_epochs": 35,
+  "final_metrics": {
+    "base_acc": 0.6405228758169934,
+    "tol_base_acc (\u00b11 for <=4)": 0.8300653696060181,
+    "primary_acc": 0.5686274509803921,
+    "secondary_acc": 0.24836601307189543,
+    "Hierarchical Score": 0.19934640522875818,
+    "Exact Match": 0.05882352963089943,
+    "Base-Primary Exact Match": 0.3333333432674408
+  }
+}

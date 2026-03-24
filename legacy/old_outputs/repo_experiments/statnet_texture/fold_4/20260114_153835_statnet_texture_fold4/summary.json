@@ -1,0 +1,15 @@
+{
+  "experiment_name": "statnet_texture_fold4",
+  "completed_at": "2026-01-14T15:57:12.341114",
+  "total_epochs": 51,
+  "final_metrics": {
+    "base_acc": 0.7478991596638656,
+    "tol_base_acc (\u00b11 for <=4)": 0.848739504814148,
+    "primary_acc": 0.6974789915966386,
+    "secondary_acc": 0.2184873949579832,
+    "Hierarchical Score": 0.36218487394958004,
+    "Exact Match": 0.06722689419984818,
+    "Base-Primary Exact Match": 0.5378151535987854,
+    "Primary-Secondary Exact Match": 0.15126051008701324
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "experiment_name": "shade_cnn_aug_test",
+  "completed_at": "2025-11-12T03:17:28.390395",
+  "total_epochs": 59,
+  "final_metrics": {
+    "base_acc": 0.6928104575163399,
+    "tol_base_acc (\u00b11 for <=4)": 0.8496732115745544,
+    "primary_acc": 0.6209150326797386,
+    "secondary_acc": 0.1895424836601307,
+    "Hierarchical Score": 0.26013071895424833,
+    "Exact Match": 0.0784313753247261,
+    "Base-Primary Exact Match": 0.4575163424015045
+  }
+}

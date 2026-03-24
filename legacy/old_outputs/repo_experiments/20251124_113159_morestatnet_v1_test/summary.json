@@ -1,0 +1,15 @@
+{
+  "experiment_name": "morestatnet_v1_test",
+  "completed_at": "2025-11-24T12:15:52.802946",
+  "total_epochs": 40,
+  "final_metrics": {
+    "base_acc": 0.6666666666666666,
+    "tol_base_acc (\u00b11 for <=4)": 0.8366013169288635,
+    "primary_acc": 0.6339869281045751,
+    "secondary_acc": 0.1830065359477124,
+    "Hierarchical Score": 0.238562091503268,
+    "Exact Match": 0.05882352963089943,
+    "Base-Primary Exact Match": 0.4444444477558136,
+    "Primary-Secondary Exact Match": 0.08496732264757156
+  }
+}

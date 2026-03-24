@@ -1,0 +1,15 @@
+{
+  "experiment_name": "statnet_v2_test",
+  "completed_at": "2025-12-29T01:06:06.709994",
+  "total_epochs": 90,
+  "final_metrics": {
+    "base_acc": 0.7416666666666667,
+    "tol_base_acc (\u00b11 for <=4)": 0.8666666746139526,
+    "primary_acc": 0.7416666666666667,
+    "secondary_acc": 0.16666666666666666,
+    "Hierarchical Score": 0.3625,
+    "Exact Match": 0.07500000298023224,
+    "Base-Primary Exact Match": 0.5666666626930237,
+    "Primary-Secondary Exact Match": 0.09166666865348816
+  }
+}

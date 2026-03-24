@@ -1,0 +1,8 @@
+{
+  "model_name": "random_forest",
+  "model_type": "sklearn",
+  "model_params": {
+    "n_estimators": 200,
+    "random_state": 42
+  }
+}

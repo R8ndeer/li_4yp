@@ -1,0 +1,23 @@
+dataset: masterlist_v4
+features: ['l_mean', 'a_mean', 'b_mean']
+label format: B.PST
+seeding: li_4yp.utils.reproducibility.seed_all(42)
+models: {
+    # Tree-based
+    "ExtraTrees": MultiOutputClassifier(ExtraTreesClassifier(n_estimators=200, n_jobs=-1, random_state=42)),
+    "RandomForest": MultiOutputClassifier(RandomForestClassifier(n_estimators=200, n_jobs=-1, random_state=42)),
+    "GradBoost": MultiOutputClassifier(GradientBoostingClassifier(random_state=42)),
+    "HistGB": MultiOutputClassifier(HistGradientBoostingClassifier(random_state=42)),
+
+    # Linear / distance-based
+    "LogReg": MultiOutputClassifier(LogisticRegression(max_iter=500)),
+    "Ridge": MultiOutputClassifier(RidgeClassifier()),
+    "KNN": MultiOutputClassifier(KNeighborsClassifier(n_neighbors=5)),
+
+    # SVMs
+    "LinearSVC": MultiOutputClassifier(LinearSVC(max_iter=5000)),
+    "SVC_RBF": MultiOutputClassifier(SVC(kernel='rbf', gamma='scale')),
+
+    # Shallow Neural Net
+    "MLP": MultiOutputClassifier(MLPClassifier(hidden_layer_sizes=(256,128), max_iter=5000))
+}

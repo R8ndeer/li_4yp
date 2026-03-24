@@ -1,0 +1,15 @@
+{
+  "experiment_name": "patchstatnet_v1_test",
+  "completed_at": "2025-12-09T19:40:25.253639",
+  "total_epochs": 68,
+  "final_metrics": {
+    "base_acc": 0.7254901960784313,
+    "tol_base_acc (\u00b11 for <=4)": 0.8627451062202454,
+    "primary_acc": 0.6797385620915033,
+    "secondary_acc": 0.19607843137254902,
+    "Hierarchical Score": 0.3241830065359477,
+    "Exact Match": 0.0784313753247261,
+    "Base-Primary Exact Match": 0.5032680034637451,
+    "Primary-Secondary Exact Match": 0.09803921729326248
+  }
+}

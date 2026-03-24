@@ -1,0 +1,64 @@
+augmentation:
+  probability: 0.5
+  random_horizontal_flip: true
+  random_resized_crop: true
+  random_rotation: true
+  random_vertical_flip: true
+  rotation_degrees: 180
+  scale:
+  - 0.8
+  - 1.0
+batch_size: 32
+csv_file: golden_dataset_5fold.csv
+data_dir: data/masterlist_v7
+dataset_name: golden_dataset
+description: PixelStatNet without normalization to learn raw color stats.
+device: auto
+early_stopping_patience: 20
+evaluator_params:
+  eos_token: -1
+  tol_base: 4
+  weights:
+  - 0.5
+  - 0.3
+image_size:
+- 224
+- 224
+learning_rate: 0.001
+loss_name: HierarchicalShadeLoss
+loss_params:
+  class_weights_dict: null
+  task_weights:
+  - 1.0
+  - 1.0
+  - 1.0
+model_name: pixel_stat_net
+model_params:
+  dropout_rate: 0.2
+  num_classes:
+  - 12
+  - 11
+  - 11
+model_type: pytorch
+name: statnet_texture_fold0
+normalize: false
+num_epochs: 200
+num_workers: 0
+optimizer: Adam
+optimizer_params:
+  weight_decay: 0.0001
+save_dir: experiments/statnet_texture/fold_0
+save_model: true
+save_predictions: true
+scheduler: ReduceLROnPlateau
+scheduler_params:
+  factor: 0.1
+  mode: min
+  patience: 10
+tags:
+- pytorch
+- statnet
+- texture_bias
+- report
+use_transform_preset: false
+val_fold_idx: 0

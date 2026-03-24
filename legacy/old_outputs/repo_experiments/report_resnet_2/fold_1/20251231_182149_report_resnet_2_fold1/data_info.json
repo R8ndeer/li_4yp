@@ -1,0 +1,13 @@
+{
+  "dataset_class": "DigitalSwatchDataset",
+  "total_samples": 598,
+  "data_dir": "/Users/boting/li_4yp/data/masterlist_v7",
+  "csv_file": "golden_dataset_5fold.csv",
+  "num_samples": 598,
+  "label_columns": [
+    "Base",
+    "Primary",
+    "Secondary"
+  ],
+  "sample_filename": "7.34.jpg"
+}

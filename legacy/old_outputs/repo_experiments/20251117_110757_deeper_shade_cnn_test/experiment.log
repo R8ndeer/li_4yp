@@ -1,0 +1,128 @@
+[2025-11-17 11:07:57] [INFO] Experiment: deeper_shade_cnn_test
+[2025-11-17 11:07:57] [INFO] Started at: 2025-11-17 11:07:57
+[2025-11-17 11:07:57] [INFO] --------------------------------------------------------------------------------
+[2025-11-17 11:07:57] [INFO] Experiment Configuration:
+[2025-11-17 11:07:57] [INFO]   name: deeper_shade_cnn_test
+[2025-11-17 11:07:57] [INFO]   description: Test current DeeperShadeCNN model on masterlist_v6 dataset w/ augmentations
+[2025-11-17 11:07:57] [INFO]   tags: ['pytorch', 'deeper_shade_cnn', 'augmented', 'test']
+[2025-11-17 11:07:57] [INFO]   model_type: pytorch
+[2025-11-17 11:07:57] [INFO]   model_name: deeper_shade_cnn
+[2025-11-17 11:07:57] [INFO]   model_params: {'num_classes': [12, 11, 11]}
+[2025-11-17 11:07:57] [INFO]   dataset_name: masterlist_v6
+[2025-11-17 11:07:57] [INFO]   data_dir: data/masterlist_v6
+[2025-11-17 11:07:57] [INFO]   csv_file: masterlist_v6_full_features.csv
+[2025-11-17 11:07:57] [INFO]   label_cols: ['Base', 'Primary', 'Secondary']
+[2025-11-17 11:07:57] [INFO]   train_split: 0.8
+[2025-11-17 11:07:57] [INFO]   random_seed: 42
+[2025-11-17 11:07:57] [INFO]   batch_size: 32
+[2025-11-17 11:07:57] [INFO]   num_epochs: 500
+[2025-11-17 11:07:57] [INFO]   learning_rate: 0.001
+[2025-11-17 11:07:57] [INFO]   optimizer: Adam
+[2025-11-17 11:07:57] [INFO]   optimizer_params: {}
+[2025-11-17 11:07:57] [INFO]   scheduler: None
+[2025-11-17 11:07:57] [INFO]   scheduler_params: {}
+[2025-11-17 11:07:57] [INFO]   early_stopping_patience: 10
+[2025-11-17 11:07:57] [INFO]   loss_function: multitask_crossentropy
+[2025-11-17 11:07:57] [INFO]   loss_weights: [1.0, 1.0, 1.0]
+[2025-11-17 11:07:57] [INFO]   eval_metrics: ['base_acc', 'tol_base_acc', 'primary_acc', 'secondary_acc', 'Hierarchical Score', 'Exact Match', 'Base-Primary Exact Match']
+[2025-11-17 11:07:57] [INFO]   evaluator_params: {'eos_token': -1, 'weights': [0.5, 0.3], 'tol_base': 4}
+[2025-11-17 11:07:57] [INFO]   save_dir: experiments
+[2025-11-17 11:07:57] [INFO]   save_model: True
+[2025-11-17 11:07:57] [INFO]   save_predictions: True
+[2025-11-17 11:07:57] [INFO]   save_history: True
+[2025-11-17 11:07:57] [INFO]   use_transform_preset: False
+[2025-11-17 11:07:57] [INFO]   transform_preset: imagenet
+[2025-11-17 11:07:57] [INFO]   image_size: [224, 224]
+[2025-11-17 11:07:57] [INFO]   normalize: True
+[2025-11-17 11:07:57] [INFO]   normalize_mean: [0.485, 0.456, 0.406]
+[2025-11-17 11:07:57] [INFO]   normalize_std: [0.229, 0.224, 0.225]
+[2025-11-17 11:07:57] [INFO]   augmentation: {'random_horizontal_flip': True, 'random_vertical_flip': True, 'random_rotation': True, 'rotation_degrees': 90, 'random_crop': False, 'random_resized_crop': True, 'scale': [0.8, 1.0], 'ratio': [0.9, 1.1], 'gaussian_blur': True, 'blur_kernel_size': 5, 'blur_sigma': [0.1, 2.0]}
+[2025-11-17 11:07:57] [INFO]   device: auto
+[2025-11-17 11:07:57] [INFO]   num_workers: 0
+[2025-11-17 11:07:57] [INFO] --------------------------------------------------------------------------------
+[2025-11-17 11:07:57] [INFO] Experiment directory: experiments/20251117_110757_deeper_shade_cnn_test
+[2025-11-17 11:07:57] [INFO] Device: cpu
+[2025-11-17 11:07:57] [INFO] Setting up model...
+[2025-11-17 11:07:57] [INFO] Model Information:
+[2025-11-17 11:07:57] [INFO]   model_name: deeper_shade_cnn
+[2025-11-17 11:07:57] [INFO]   model_type: pytorch
+[2025-11-17 11:07:57] [INFO]   model_params: {'num_classes': [12, 11, 11]}
+[2025-11-17 11:07:57] [INFO]   total_parameters: 299810
+[2025-11-17 11:07:57] [INFO]   trainable_parameters: 299810
+[2025-11-17 11:07:57] [INFO] --------------------------------------------------------------------------------
+[2025-11-17 11:07:57] [INFO] Evaluator configured with params: {'eos_token': -1, 'weights': [0.5, 0.3], 'tol_base': 4}
+[2025-11-17 11:07:57] [INFO] Setting up data loaders...
+[2025-11-17 11:07:57] [INFO] Dataset Information:
+[2025-11-17 11:07:57] [INFO]   dataset_class: DigitalSwatchDataset
+[2025-11-17 11:07:57] [INFO]   total_samples: 761
+[2025-11-17 11:07:57] [INFO]   data_dir: /Users/boting/li_4yp/data/masterlist_v6
+[2025-11-17 11:07:57] [INFO]   csv_file: masterlist_v6_full_features.csv
+[2025-11-17 11:07:57] [INFO]   num_samples: 761
+[2025-11-17 11:07:57] [INFO]   label_columns: ['Base', 'Primary', 'Secondary']
+[2025-11-17 11:07:57] [INFO]   sample_filename: 6.088.jpg
+[2025-11-17 11:07:57] [INFO] --------------------------------------------------------------------------------
+[2025-11-17 11:07:57] [INFO] Train samples: 608
+[2025-11-17 11:07:57] [INFO] Val samples: 153
+[2025-11-17 11:07:57] [INFO] Using transform:
+[2025-11-17 11:07:57] [INFO]   RandomResizedCrop(size=[224, 224], scale=(0.8, 1.0), ratio=(0.9, 1.1), interpolation=InterpolationMode.BICUBIC, antialias=True)
+[2025-11-17 11:07:57] [INFO]   RandomHorizontalFlip(p=0.5)
+[2025-11-17 11:07:57] [INFO]   RandomVerticalFlip(p=0.5)
+[2025-11-17 11:07:57] [INFO]   RandomRotation(degrees=[-90.0, 90.0], interpolation=InterpolationMode.NEAREST, expand=False, fill=0)
+[2025-11-17 11:07:57] [INFO]   GaussianBlur(kernel_size=(5, 5), sigma=[0.1, 2.0])
+[2025-11-17 11:07:57] [INFO]   ToImage()
+[2025-11-17 11:07:57] [INFO]   ToDtype(scale=True)
+[2025-11-17 11:07:57] [INFO]   Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], inplace=False)
+[2025-11-17 11:07:57] [INFO] Setting up optimizer...
+[2025-11-17 11:07:57] [INFO] Starting training for 500 epochs...
+[2025-11-17 11:08:21] [INFO] Epoch   1 | Train Loss: 6.7545 | Val Loss: 6.3509 | base_acc: 0.3137 | tol_base_acc (±1 for <=4): 0.4837 | primary_acc: 0.1961 | secondary_acc: 0.1307 | Hierarchical Score: 0.0000 | Exact Match: 0.0065 | Base-Primary Exact Match: 0.0654
+[2025-11-17 11:08:21] [INFO] Best model saved (val_loss: 6.3509)
+[2025-11-17 11:08:43] [INFO] Epoch   2 | Train Loss: 5.7286 | Val Loss: 5.3895 | base_acc: 0.5098 | tol_base_acc (±1 for <=4): 0.6601 | primary_acc: 0.3660 | secondary_acc: 0.1176 | Hierarchical Score: 0.0000 | Exact Match: 0.0196 | Base-Primary Exact Match: 0.1634
+[2025-11-17 11:08:43] [INFO] Best model saved (val_loss: 5.3895)
+[2025-11-17 11:09:05] [INFO] Epoch   3 | Train Loss: 5.2461 | Val Loss: 5.1860 | base_acc: 0.5098 | tol_base_acc (±1 for <=4): 0.7059 | primary_acc: 0.3072 | secondary_acc: 0.2092 | Hierarchical Score: 0.0000 | Exact Match: 0.0327 | Base-Primary Exact Match: 0.1438
+[2025-11-17 11:09:05] [INFO] Best model saved (val_loss: 5.1860)
+[2025-11-17 11:09:26] [INFO] Epoch   4 | Train Loss: 4.8871 | Val Loss: 4.7165 | base_acc: 0.5163 | tol_base_acc (±1 for <=4): 0.7190 | primary_acc: 0.4379 | secondary_acc: 0.2092 | Hierarchical Score: 0.0000 | Exact Match: 0.0458 | Base-Primary Exact Match: 0.2222
+[2025-11-17 11:09:26] [INFO] Best model saved (val_loss: 4.7165)
+[2025-11-17 11:09:49] [INFO] Epoch   5 | Train Loss: 4.8376 | Val Loss: 4.7012 | base_acc: 0.4837 | tol_base_acc (±1 for <=4): 0.6471 | primary_acc: 0.4379 | secondary_acc: 0.1895 | Hierarchical Score: 0.0000 | Exact Match: 0.0327 | Base-Primary Exact Match: 0.2157
+[2025-11-17 11:09:49] [INFO] Best model saved (val_loss: 4.7012)
+[2025-11-17 11:10:14] [INFO] Epoch   6 | Train Loss: 4.8064 | Val Loss: 4.5889 | base_acc: 0.6209 | tol_base_acc (±1 for <=4): 0.8105 | primary_acc: 0.4314 | secondary_acc: 0.1699 | Hierarchical Score: 0.0876 | Exact Match: 0.0327 | Base-Primary Exact Match: 0.2549
+[2025-11-17 11:10:14] [INFO] Best model saved (val_loss: 4.5889)
+[2025-11-17 11:10:36] [INFO] Epoch   7 | Train Loss: 4.5389 | Val Loss: 4.5027 | base_acc: 0.5294 | tol_base_acc (±1 for <=4): 0.7255 | primary_acc: 0.5033 | secondary_acc: 0.1961 | Hierarchical Score: 0.0399 | Exact Match: 0.0523 | Base-Primary Exact Match: 0.2418
+[2025-11-17 11:10:36] [INFO] Best model saved (val_loss: 4.5027)
+[2025-11-17 11:10:58] [INFO] Epoch   8 | Train Loss: 4.4256 | Val Loss: 4.2656 | base_acc: 0.6078 | tol_base_acc (±1 for <=4): 0.7974 | primary_acc: 0.4967 | secondary_acc: 0.2157 | Hierarchical Score: 0.1209 | Exact Match: 0.0392 | Base-Primary Exact Match: 0.2745
+[2025-11-17 11:10:58] [INFO] Best model saved (val_loss: 4.2656)
+[2025-11-17 11:11:19] [INFO] Epoch   9 | Train Loss: 4.4718 | Val Loss: 4.7415 | base_acc: 0.5490 | tol_base_acc (±1 for <=4): 0.7386 | primary_acc: 0.4248 | secondary_acc: 0.2222 | Hierarchical Score: 0.0281 | Exact Match: 0.0196 | Base-Primary Exact Match: 0.2092
+[2025-11-17 11:11:41] [INFO] Epoch  10 | Train Loss: 4.4329 | Val Loss: 4.6272 | base_acc: 0.5425 | tol_base_acc (±1 for <=4): 0.7386 | primary_acc: 0.4575 | secondary_acc: 0.2353 | Hierarchical Score: 0.0418 | Exact Match: 0.0588 | Base-Primary Exact Match: 0.2353
+[2025-11-17 11:12:04] [INFO] Epoch  11 | Train Loss: 4.3169 | Val Loss: 4.6675 | base_acc: 0.6013 | tol_base_acc (±1 for <=4): 0.7908 | primary_acc: 0.4837 | secondary_acc: 0.1895 | Hierarchical Score: 0.1000 | Exact Match: 0.0327 | Base-Primary Exact Match: 0.2614
+[2025-11-17 11:12:25] [INFO] Epoch  12 | Train Loss: 4.3370 | Val Loss: 4.3108 | base_acc: 0.6144 | tol_base_acc (±1 for <=4): 0.7516 | primary_acc: 0.6340 | secondary_acc: 0.2092 | Hierarchical Score: 0.1941 | Exact Match: 0.0654 | Base-Primary Exact Match: 0.3464
+[2025-11-17 11:12:47] [INFO] Epoch  13 | Train Loss: 4.4401 | Val Loss: 4.5186 | base_acc: 0.5948 | tol_base_acc (±1 for <=4): 0.7843 | primary_acc: 0.4967 | secondary_acc: 0.2026 | Hierarchical Score: 0.1039 | Exact Match: 0.0327 | Base-Primary Exact Match: 0.2810
+[2025-11-17 11:13:09] [INFO] Epoch  14 | Train Loss: 4.2199 | Val Loss: 4.3319 | base_acc: 0.6732 | tol_base_acc (±1 for <=4): 0.8235 | primary_acc: 0.4967 | secondary_acc: 0.2222 | Hierarchical Score: 0.1882 | Exact Match: 0.0654 | Base-Primary Exact Match: 0.3268
+[2025-11-17 11:13:31] [INFO] Epoch  15 | Train Loss: 4.1787 | Val Loss: 4.3467 | base_acc: 0.6340 | tol_base_acc (±1 for <=4): 0.7974 | primary_acc: 0.4902 | secondary_acc: 0.2484 | Hierarchical Score: 0.1536 | Exact Match: 0.0458 | Base-Primary Exact Match: 0.2745
+[2025-11-17 11:13:53] [INFO] Epoch  16 | Train Loss: 4.1326 | Val Loss: 4.4301 | base_acc: 0.6471 | tol_base_acc (±1 for <=4): 0.8301 | primary_acc: 0.4706 | secondary_acc: 0.2157 | Hierarchical Score: 0.1471 | Exact Match: 0.0719 | Base-Primary Exact Match: 0.3333
+[2025-11-17 11:14:14] [INFO] Epoch  17 | Train Loss: 4.1309 | Val Loss: 4.2775 | base_acc: 0.6209 | tol_base_acc (±1 for <=4): 0.7974 | primary_acc: 0.5882 | secondary_acc: 0.1699 | Hierarchical Score: 0.1660 | Exact Match: 0.0719 | Base-Primary Exact Match: 0.3464
+[2025-11-17 11:14:35] [INFO] Epoch  18 | Train Loss: 4.1058 | Val Loss: 4.2694 | base_acc: 0.5686 | tol_base_acc (±1 for <=4): 0.7778 | primary_acc: 0.5490 | secondary_acc: 0.2026 | Hierarchical Score: 0.1039 | Exact Match: 0.0327 | Base-Primary Exact Match: 0.3137
+[2025-11-17 11:14:35] [INFO] Early stopping triggered after 18 epochs
+[2025-11-17 11:14:35] [INFO] Loaded best model for final evaluation
+[2025-11-17 11:14:39] [INFO] Saved val predictions to experiments/20251117_110757_deeper_shade_cnn_test/val_predictions.csv
+[2025-11-17 11:14:42] [INFO] 
+FINAL_VAL Metrics:
+[2025-11-17 11:14:42] [INFO]   base_acc: 0.6275
+[2025-11-17 11:14:42] [INFO]   tol_base_acc (±1 for <=4): 0.8105
+[2025-11-17 11:14:42] [INFO]   primary_acc: 0.5098
+[2025-11-17 11:14:42] [INFO]   secondary_acc: 0.2092
+[2025-11-17 11:14:42] [INFO]   Hierarchical Score: 0.1451
+[2025-11-17 11:14:42] [INFO]   Exact Match: 0.0523
+[2025-11-17 11:14:42] [INFO]   Base-Primary Exact Match: 0.2941
+[2025-11-17 11:14:42] [INFO] --------------------------------------------------------------------------------
+[2025-11-17 11:14:42] [INFO] ================================================================================
+[2025-11-17 11:14:42] [INFO] Experiment Completed
+[2025-11-17 11:14:42] [INFO] Ended at: 2025-11-17 11:14:42
+[2025-11-17 11:14:42] [INFO] 
+Final Test Metrics:
+[2025-11-17 11:14:42] [INFO]   base_acc: 0.6275
+[2025-11-17 11:14:42] [INFO]   tol_base_acc (±1 for <=4): 0.8105
+[2025-11-17 11:14:42] [INFO]   primary_acc: 0.5098
+[2025-11-17 11:14:42] [INFO]   secondary_acc: 0.2092
+[2025-11-17 11:14:42] [INFO]   Hierarchical Score: 0.1451
+[2025-11-17 11:14:42] [INFO]   Exact Match: 0.0523
+[2025-11-17 11:14:42] [INFO]   Base-Primary Exact Match: 0.2941
+[2025-11-17 11:14:42] [INFO] ================================================================================

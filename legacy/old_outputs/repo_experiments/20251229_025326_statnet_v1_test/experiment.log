@@ -1,0 +1,270 @@
+[2025-12-29 02:53:26] [INFO] Experiment: statnet_v1_test
+[2025-12-29 02:53:26] [INFO] Started at: 2025-12-29 02:53:26
+[2025-12-29 02:53:26] [INFO] --------------------------------------------------------------------------------
+[2025-12-29 02:53:26] [INFO] Experiment Configuration:
+[2025-12-29 02:53:26] [INFO]   name: statnet_v1_test
+[2025-12-29 02:53:26] [INFO]   description: Testing PixelStatNet (1x1 Conv + StatPool) for texture-invariant learning. Apply train-time augmentations at a 0.5 probability.
+[2025-12-29 02:53:26] [INFO]   tags: ['pytorch', 'statnet', 'inductive_bias_test']
+[2025-12-29 02:53:26] [INFO]   model_type: pytorch
+[2025-12-29 02:53:26] [INFO]   model_name: pixel_stat_net
+[2025-12-29 02:53:26] [INFO]   model_params: {'num_classes': [12, 11, 11], 'dropout_rate': 0.2}
+[2025-12-29 02:53:26] [INFO]   dataset_class: DigitalSwatchDataset
+[2025-12-29 02:53:26] [INFO]   dataset_params: {}
+[2025-12-29 02:53:26] [INFO]   dataset_name: masterlist_v7
+[2025-12-29 02:53:26] [INFO]   data_dir: data/masterlist_v7
+[2025-12-29 02:53:26] [INFO]   csv_file: masterlist_v7_mega_features.csv
+[2025-12-29 02:53:26] [INFO]   label_cols: ['Base', 'Primary', 'Secondary']
+[2025-12-29 02:53:26] [INFO]   train_split: 0.8
+[2025-12-29 02:53:26] [INFO]   random_seed: 42
+[2025-12-29 02:53:26] [INFO]   batch_size: 32
+[2025-12-29 02:53:26] [INFO]   num_epochs: 200
+[2025-12-29 02:53:26] [INFO]   learning_rate: 0.001
+[2025-12-29 02:53:26] [INFO]   optimizer: Adam
+[2025-12-29 02:53:26] [INFO]   optimizer_params: {'weight_decay': 0.0001}
+[2025-12-29 02:53:26] [INFO]   scheduler: ReduceLROnPlateau
+[2025-12-29 02:53:26] [INFO]   scheduler_params: {'mode': 'min', 'factor': 0.1, 'patience': 10, 'min_lr': 1e-06}
+[2025-12-29 02:53:26] [INFO]   early_stopping_patience: 20
+[2025-12-29 02:53:26] [INFO]   loss_function: CrossEntropyLoss
+[2025-12-29 02:53:26] [INFO]   loss_weights: (1.0, 1.0, 1.0)
+[2025-12-29 02:53:26] [INFO]   loss_name: HierarchicalShadeLoss
+[2025-12-29 02:53:26] [INFO]   loss_params: {'class_weights_dict': {'Base': [7.9271, 7.9271, 4.8782, 0.6342, 0.6098, 0.6098, 0.6157, 0.6217, 0.6217, 0.6406, 7.0463, 7.0463], 'Primary': [0.6466, 0.8437, 0.8541, 0.9224, 0.8437, 0.8437, 0.9103, 0.8648, 0.8335, 69.1818, 5.7652], 'Secondary': [1.2354, 0.9349, 0.9103, 0.9103, 0.8985, 0.9349, 1.0026, 0.8869, 0.9349, 34.5909, 0.6589]}, 'task_weights': [1.0, 1.0, 1.0]}
+[2025-12-29 02:53:26] [INFO]   eval_metrics: ['base_acc', 'tol_base_acc', 'primary_acc', 'secondary_acc', 'Hierarchical Score', 'Exact Match', 'Base-Primary Exact Match', 'Primary-Secondary Exact Match']
+[2025-12-29 02:53:26] [INFO]   evaluator_params: {'eos_token': -1, 'weights': [0.5, 0.3], 'tol_base': 4}
+[2025-12-29 02:53:26] [INFO]   save_dir: experiments
+[2025-12-29 02:53:26] [INFO]   save_model: True
+[2025-12-29 02:53:26] [INFO]   save_predictions: True
+[2025-12-29 02:53:26] [INFO]   save_history: True
+[2025-12-29 02:53:26] [INFO]   use_transform_preset: False
+[2025-12-29 02:53:26] [INFO]   transform_preset: imagenet
+[2025-12-29 02:53:26] [INFO]   image_size: [224, 224]
+[2025-12-29 02:53:26] [INFO]   normalize: True
+[2025-12-29 02:53:26] [INFO]   normalize_mean: [0.485, 0.456, 0.406]
+[2025-12-29 02:53:26] [INFO]   normalize_std: [0.229, 0.224, 0.225]
+[2025-12-29 02:53:26] [INFO]   augmentation: {'probability': 0.5, 'random_horizontal_flip': True, 'random_vertical_flip': True, 'random_rotation': True, 'rotation_degrees': 180, 'random_resized_crop': True, 'scale': [0.8, 1.0]}
+[2025-12-29 02:53:26] [INFO]   device: auto
+[2025-12-29 02:53:26] [INFO]   num_workers: 0
+[2025-12-29 02:53:26] [INFO] --------------------------------------------------------------------------------
+[2025-12-29 02:53:26] [INFO] Experiment directory: experiments/20251229_025326_statnet_v1_test
+[2025-12-29 02:53:26] [INFO] Device: mps
+[2025-12-29 02:53:26] [INFO] Setting up model...
+[2025-12-29 02:53:26] [INFO] Model Information:
+[2025-12-29 02:53:26] [INFO]   model_name: pixel_stat_net
+[2025-12-29 02:53:26] [INFO]   model_type: pytorch
+[2025-12-29 02:53:26] [INFO]   model_params: {'num_classes': [12, 11, 11], 'dropout_rate': 0.2}
+[2025-12-29 02:53:26] [INFO]   total_parameters: 114082
+[2025-12-29 02:53:26] [INFO]   trainable_parameters: 114082
+[2025-12-29 02:53:26] [INFO] --------------------------------------------------------------------------------
+[2025-12-29 02:53:26] [INFO] Evaluator configured with params: {'eos_token': -1, 'weights': [0.5, 0.3], 'tol_base': 4}
+[2025-12-29 02:53:26] [INFO] Setting up data loaders...
+[2025-12-29 02:53:26] [INFO] Dataset Information:
+[2025-12-29 02:53:26] [INFO]   dataset_class: DigitalSwatchDataset
+[2025-12-29 02:53:26] [INFO]   total_samples: 598
+[2025-12-29 02:53:26] [INFO]   data_dir: /Users/boting/li_4yp/data/masterlist_v7
+[2025-12-29 02:53:26] [INFO]   csv_file: masterlist_v7_mega_features.csv
+[2025-12-29 02:53:26] [INFO]   num_samples: 598
+[2025-12-29 02:53:26] [INFO]   label_columns: ['Base', 'Primary', 'Secondary']
+[2025-12-29 02:53:26] [INFO]   sample_filename: 7.34.jpg
+[2025-12-29 02:53:26] [INFO] --------------------------------------------------------------------------------
+[2025-12-29 02:53:26] [INFO] Train samples: 478
+[2025-12-29 02:53:26] [INFO] Val samples: 120
+[2025-12-29 02:53:26] [INFO] Using train transform:
+[2025-12-29 02:53:26] [INFO]   Compose(
+[2025-12-29 02:53:26] [INFO]         RandomChoice(
+[2025-12-29 02:53:26] [INFO]       transforms=[Compose(    Resize(size=[224, 224], interpolation=InterpolationMode.BILINEAR, antialias=True)), Compose(
+[2025-12-29 02:53:26] [INFO]             RandomResizedCrop(size=[224, 224], scale=(0.8, 1.0), ratio=(0.9, 1.1), interpolation=InterpolationMode.BICUBIC, antialias=True)
+[2025-12-29 02:53:26] [INFO]             RandomHorizontalFlip(p=0.5)
+[2025-12-29 02:53:26] [INFO]             RandomVerticalFlip(p=0.5)
+[2025-12-29 02:53:26] [INFO]             RandomRotation(degrees=[-180.0, 180.0], interpolation=InterpolationMode.NEAREST, expand=False, fill=0)
+[2025-12-29 02:53:26] [INFO]       )], p=[0.5, 0.5]
+[2025-12-29 02:53:26] [INFO]     )
+[2025-12-29 02:53:26] [INFO]         Compose(
+[2025-12-29 02:53:26] [INFO]           ToImage()
+[2025-12-29 02:53:26] [INFO]           ToDtype(scale=True)
+[2025-12-29 02:53:26] [INFO]           Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], inplace=False)
+[2025-12-29 02:53:26] [INFO]     )
+[2025-12-29 02:53:26] [INFO]   )
+[2025-12-29 02:53:26] [INFO] Using val transform:
+[2025-12-29 02:53:26] [INFO]   Compose(
+[2025-12-29 02:53:26] [INFO]         Resize(size=[224, 224], interpolation=InterpolationMode.BILINEAR, antialias=True)
+[2025-12-29 02:53:26] [INFO]         ToImage()
+[2025-12-29 02:53:26] [INFO]         ToDtype(scale=True)
+[2025-12-29 02:53:26] [INFO]         Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], inplace=False)
+[2025-12-29 02:53:26] [INFO]   )
+[2025-12-29 02:53:26] [INFO] Setting up optimizer...
+[2025-12-29 02:53:26] [INFO] Using scheduler: ReduceLROnPlateau
+[2025-12-29 02:53:26] [INFO] Setting up loss function...
+[2025-12-29 02:53:26] [INFO] Starting training for 200 epochs...
+[2025-12-29 02:53:43] [INFO] Epoch   1 | Train Loss: 7.0015 | Val Loss: 7.0489 | base_acc: 0.3417 | tol_base_acc (±1 for <=4): 0.4917 | primary_acc: 0.1750 | secondary_acc: 0.0917 | Hierarchical Score: 0.0000 | Exact Match: 0.0083 | Base-Primary Exact Match: 0.0667 | Primary-Secondary Exact Match: 0.0250
+[2025-12-29 02:53:43] [INFO] Best model saved (val_loss: 7.0489)
+[2025-12-29 02:54:00] [INFO] Epoch   2 | Train Loss: 6.3033 | Val Loss: 6.2727 | base_acc: 0.4083 | tol_base_acc (±1 for <=4): 0.5417 | primary_acc: 0.3500 | secondary_acc: 0.1583 | Hierarchical Score: 0.0000 | Exact Match: 0.0083 | Base-Primary Exact Match: 0.1500 | Primary-Secondary Exact Match: 0.0250
+[2025-12-29 02:54:00] [INFO] Best model saved (val_loss: 6.2727)
+[2025-12-29 02:54:18] [INFO] Epoch   3 | Train Loss: 5.7221 | Val Loss: 5.3647 | base_acc: 0.5250 | tol_base_acc (±1 for <=4): 0.6500 | primary_acc: 0.5833 | secondary_acc: 0.1750 | Hierarchical Score: 0.0692 | Exact Match: 0.0333 | Base-Primary Exact Match: 0.2833 | Primary-Secondary Exact Match: 0.0583
+[2025-12-29 02:54:18] [INFO] Best model saved (val_loss: 5.3647)
+[2025-12-29 02:54:39] [INFO] Epoch   4 | Train Loss: 5.3054 | Val Loss: 4.9471 | base_acc: 0.4333 | tol_base_acc (±1 for <=4): 0.5750 | primary_acc: 0.5750 | secondary_acc: 0.1917 | Hierarchical Score: 0.0000 | Exact Match: 0.0500 | Base-Primary Exact Match: 0.2500 | Primary-Secondary Exact Match: 0.1000
+[2025-12-29 02:54:39] [INFO] Best model saved (val_loss: 4.9471)
+[2025-12-29 02:55:01] [INFO] Epoch   5 | Train Loss: 5.0126 | Val Loss: 4.5779 | base_acc: 0.4667 | tol_base_acc (±1 for <=4): 0.6667 | primary_acc: 0.6333 | secondary_acc: 0.2083 | Hierarchical Score: 0.0458 | Exact Match: 0.0333 | Base-Primary Exact Match: 0.2583 | Primary-Secondary Exact Match: 0.1000
+[2025-12-29 02:55:01] [INFO] Best model saved (val_loss: 4.5779)
+[2025-12-29 02:55:26] [INFO] Epoch   6 | Train Loss: 4.8941 | Val Loss: 4.4803 | base_acc: 0.5333 | tol_base_acc (±1 for <=4): 0.6917 | primary_acc: 0.6167 | secondary_acc: 0.2000 | Hierarchical Score: 0.1017 | Exact Match: 0.0500 | Base-Primary Exact Match: 0.3000 | Primary-Secondary Exact Match: 0.1167
+[2025-12-29 02:55:26] [INFO] Best model saved (val_loss: 4.4803)
+[2025-12-29 03:34:34] [INFO] Epoch   7 | Train Loss: 4.7153 | Val Loss: 4.2490 | base_acc: 0.5417 | tol_base_acc (±1 for <=4): 0.7000 | primary_acc: 0.6250 | secondary_acc: 0.1750 | Hierarchical Score: 0.1067 | Exact Match: 0.0250 | Base-Primary Exact Match: 0.3583 | Primary-Secondary Exact Match: 0.0833
+[2025-12-29 03:34:34] [INFO] Best model saved (val_loss: 4.2490)
+[2025-12-29 03:49:03] [INFO] Epoch   8 | Train Loss: 4.4991 | Val Loss: 4.3183 | base_acc: 0.4750 | tol_base_acc (±1 for <=4): 0.6333 | primary_acc: 0.6833 | secondary_acc: 0.1917 | Hierarchical Score: 0.0742 | Exact Match: 0.0500 | Base-Primary Exact Match: 0.3500 | Primary-Secondary Exact Match: 0.1000
+[2025-12-29 04:15:21] [INFO] Epoch   9 | Train Loss: 4.5252 | Val Loss: 4.2562 | base_acc: 0.5917 | tol_base_acc (±1 for <=4): 0.7417 | primary_acc: 0.6083 | secondary_acc: 0.1750 | Hierarchical Score: 0.1483 | Exact Match: 0.0250 | Base-Primary Exact Match: 0.3333 | Primary-Secondary Exact Match: 0.0750
+[2025-12-29 04:28:54] [INFO] Epoch  10 | Train Loss: 4.3733 | Val Loss: 4.0850 | base_acc: 0.6000 | tol_base_acc (±1 for <=4): 0.7833 | primary_acc: 0.7083 | secondary_acc: 0.2000 | Hierarchical Score: 0.2142 | Exact Match: 0.0500 | Base-Primary Exact Match: 0.3833 | Primary-Secondary Exact Match: 0.1167
+[2025-12-29 04:28:54] [INFO] Best model saved (val_loss: 4.0850)
+[2025-12-29 05:09:27] [INFO] Epoch  11 | Train Loss: 4.3871 | Val Loss: 4.1779 | base_acc: 0.5500 | tol_base_acc (±1 for <=4): 0.6583 | primary_acc: 0.6500 | secondary_acc: 0.1750 | Hierarchical Score: 0.1275 | Exact Match: 0.0250 | Base-Primary Exact Match: 0.3333 | Primary-Secondary Exact Match: 0.0917
+[2025-12-29 05:24:03] [INFO] Epoch  12 | Train Loss: 4.2698 | Val Loss: 4.0644 | base_acc: 0.5667 | tol_base_acc (±1 for <=4): 0.7167 | primary_acc: 0.6417 | secondary_acc: 0.2083 | Hierarchical Score: 0.1500 | Exact Match: 0.0333 | Base-Primary Exact Match: 0.3750 | Primary-Secondary Exact Match: 0.0917
+[2025-12-29 05:24:03] [INFO] Best model saved (val_loss: 4.0644)
+[2025-12-29 05:24:31] [INFO] Epoch  13 | Train Loss: 4.3273 | Val Loss: 4.0661 | base_acc: 0.5583 | tol_base_acc (±1 for <=4): 0.7083 | primary_acc: 0.6417 | secondary_acc: 0.2000 | Hierarchical Score: 0.1392 | Exact Match: 0.0333 | Base-Primary Exact Match: 0.3417 | Primary-Secondary Exact Match: 0.0833
+[2025-12-29 05:24:59] [INFO] Epoch  14 | Train Loss: 4.3152 | Val Loss: 3.9924 | base_acc: 0.6167 | tol_base_acc (±1 for <=4): 0.7500 | primary_acc: 0.6667 | secondary_acc: 0.1833 | Hierarchical Score: 0.2050 | Exact Match: 0.0667 | Base-Primary Exact Match: 0.4333 | Primary-Secondary Exact Match: 0.0833
+[2025-12-29 05:24:59] [INFO] Best model saved (val_loss: 3.9924)
+[2025-12-29 05:25:26] [INFO] Epoch  15 | Train Loss: 4.1587 | Val Loss: 4.0001 | base_acc: 0.6000 | tol_base_acc (±1 for <=4): 0.7833 | primary_acc: 0.6833 | secondary_acc: 0.2333 | Hierarchical Score: 0.2117 | Exact Match: 0.0583 | Base-Primary Exact Match: 0.3833 | Primary-Secondary Exact Match: 0.1167
+[2025-12-29 05:25:49] [INFO] Epoch  16 | Train Loss: 4.0773 | Val Loss: 4.0062 | base_acc: 0.6583 | tol_base_acc (±1 for <=4): 0.7750 | primary_acc: 0.6083 | secondary_acc: 0.1583 | Hierarchical Score: 0.2100 | Exact Match: 0.0417 | Base-Primary Exact Match: 0.4083 | Primary-Secondary Exact Match: 0.0667
+[2025-12-29 05:26:16] [INFO] Epoch  17 | Train Loss: 4.0626 | Val Loss: 3.8772 | base_acc: 0.6167 | tol_base_acc (±1 for <=4): 0.7667 | primary_acc: 0.6917 | secondary_acc: 0.1750 | Hierarchical Score: 0.2150 | Exact Match: 0.0333 | Base-Primary Exact Match: 0.4250 | Primary-Secondary Exact Match: 0.0750
+[2025-12-29 05:26:16] [INFO] Best model saved (val_loss: 3.8772)
+[2025-12-29 05:26:39] [INFO] Epoch  18 | Train Loss: 3.9561 | Val Loss: 3.8473 | base_acc: 0.5833 | tol_base_acc (±1 for <=4): 0.7500 | primary_acc: 0.6667 | secondary_acc: 0.1917 | Hierarchical Score: 0.1742 | Exact Match: 0.0250 | Base-Primary Exact Match: 0.3917 | Primary-Secondary Exact Match: 0.0750
+[2025-12-29 05:26:39] [INFO] Best model saved (val_loss: 3.8473)
+[2025-12-29 05:27:03] [INFO] Epoch  19 | Train Loss: 3.9504 | Val Loss: 3.8760 | base_acc: 0.6750 | tol_base_acc (±1 for <=4): 0.8167 | primary_acc: 0.7000 | secondary_acc: 0.1667 | Hierarchical Score: 0.2750 | Exact Match: 0.0583 | Base-Primary Exact Match: 0.4833 | Primary-Secondary Exact Match: 0.0917
+[2025-12-29 05:27:27] [INFO] Epoch  20 | Train Loss: 4.1205 | Val Loss: 3.8169 | base_acc: 0.6833 | tol_base_acc (±1 for <=4): 0.8083 | primary_acc: 0.6917 | secondary_acc: 0.1833 | Hierarchical Score: 0.2842 | Exact Match: 0.0583 | Base-Primary Exact Match: 0.4583 | Primary-Secondary Exact Match: 0.1083
+[2025-12-29 05:27:27] [INFO] Best model saved (val_loss: 3.8169)
+[2025-12-29 05:27:50] [INFO] Epoch  21 | Train Loss: 3.8799 | Val Loss: 3.7555 | base_acc: 0.7000 | tol_base_acc (±1 for <=4): 0.8583 | primary_acc: 0.7000 | secondary_acc: 0.1917 | Hierarchical Score: 0.3075 | Exact Match: 0.0500 | Base-Primary Exact Match: 0.4667 | Primary-Secondary Exact Match: 0.0917
+[2025-12-29 05:27:50] [INFO] Best model saved (val_loss: 3.7555)
+[2025-12-29 05:28:15] [INFO] Epoch  22 | Train Loss: 3.8755 | Val Loss: 3.8148 | base_acc: 0.6917 | tol_base_acc (±1 for <=4): 0.8000 | primary_acc: 0.7000 | secondary_acc: 0.2083 | Hierarchical Score: 0.3042 | Exact Match: 0.0833 | Base-Primary Exact Match: 0.4917 | Primary-Secondary Exact Match: 0.1250
+[2025-12-29 05:28:36] [INFO] Epoch  23 | Train Loss: 3.8259 | Val Loss: 3.7739 | base_acc: 0.6333 | tol_base_acc (±1 for <=4): 0.8000 | primary_acc: 0.7000 | secondary_acc: 0.2000 | Hierarchical Score: 0.2433 | Exact Match: 0.0667 | Base-Primary Exact Match: 0.4583 | Primary-Secondary Exact Match: 0.1000
+[2025-12-29 05:29:02] [INFO] Epoch  24 | Train Loss: 3.7659 | Val Loss: 3.7453 | base_acc: 0.7083 | tol_base_acc (±1 for <=4): 0.8250 | primary_acc: 0.7167 | secondary_acc: 0.1833 | Hierarchical Score: 0.3217 | Exact Match: 0.0583 | Base-Primary Exact Match: 0.5250 | Primary-Secondary Exact Match: 0.0917
+[2025-12-29 05:29:02] [INFO] Best model saved (val_loss: 3.7453)
+[2025-12-29 05:29:28] [INFO] Epoch  25 | Train Loss: 3.9615 | Val Loss: 3.7613 | base_acc: 0.6667 | tol_base_acc (±1 for <=4): 0.7917 | primary_acc: 0.6833 | secondary_acc: 0.2250 | Hierarchical Score: 0.2758 | Exact Match: 0.0750 | Base-Primary Exact Match: 0.4500 | Primary-Secondary Exact Match: 0.1167
+[2025-12-29 05:29:52] [INFO] Epoch  26 | Train Loss: 3.8899 | Val Loss: 3.7914 | base_acc: 0.6333 | tol_base_acc (±1 for <=4): 0.7917 | primary_acc: 0.7167 | secondary_acc: 0.1833 | Hierarchical Score: 0.2467 | Exact Match: 0.0583 | Base-Primary Exact Match: 0.4583 | Primary-Secondary Exact Match: 0.1083
+[2025-12-29 05:30:17] [INFO] Epoch  27 | Train Loss: 3.7523 | Val Loss: 3.8374 | base_acc: 0.6583 | tol_base_acc (±1 for <=4): 0.7833 | primary_acc: 0.6667 | secondary_acc: 0.1750 | Hierarchical Score: 0.2442 | Exact Match: 0.0750 | Base-Primary Exact Match: 0.4417 | Primary-Secondary Exact Match: 0.1083
+[2025-12-29 05:30:40] [INFO] Epoch  28 | Train Loss: 3.8416 | Val Loss: 3.7100 | base_acc: 0.7000 | tol_base_acc (±1 for <=4): 0.8083 | primary_acc: 0.6583 | secondary_acc: 0.1667 | Hierarchical Score: 0.2792 | Exact Match: 0.0417 | Base-Primary Exact Match: 0.4667 | Primary-Secondary Exact Match: 0.0833
+[2025-12-29 05:30:41] [INFO] Best model saved (val_loss: 3.7100)
+[2025-12-29 05:31:05] [INFO] Epoch  29 | Train Loss: 3.7682 | Val Loss: 3.7242 | base_acc: 0.7000 | tol_base_acc (±1 for <=4): 0.8083 | primary_acc: 0.6833 | secondary_acc: 0.2000 | Hierarchical Score: 0.3017 | Exact Match: 0.0750 | Base-Primary Exact Match: 0.4833 | Primary-Secondary Exact Match: 0.1000
+[2025-12-29 05:31:29] [INFO] Epoch  30 | Train Loss: 3.6487 | Val Loss: 3.7253 | base_acc: 0.7000 | tol_base_acc (±1 for <=4): 0.8167 | primary_acc: 0.7000 | secondary_acc: 0.1750 | Hierarchical Score: 0.3025 | Exact Match: 0.0667 | Base-Primary Exact Match: 0.4833 | Primary-Secondary Exact Match: 0.1000
+[2025-12-29 05:32:00] [INFO] Epoch  31 | Train Loss: 3.7737 | Val Loss: 3.7520 | base_acc: 0.6333 | tol_base_acc (±1 for <=4): 0.7500 | primary_acc: 0.7083 | secondary_acc: 0.2083 | Hierarchical Score: 0.2500 | Exact Match: 0.0750 | Base-Primary Exact Match: 0.4583 | Primary-Secondary Exact Match: 0.1167
+[2025-12-29 05:32:26] [INFO] Epoch  32 | Train Loss: 3.7745 | Val Loss: 3.9016 | base_acc: 0.6000 | tol_base_acc (±1 for <=4): 0.7833 | primary_acc: 0.6750 | secondary_acc: 0.1833 | Hierarchical Score: 0.1925 | Exact Match: 0.0500 | Base-Primary Exact Match: 0.4083 | Primary-Secondary Exact Match: 0.1083
+[2025-12-29 05:32:48] [INFO] Epoch  33 | Train Loss: 3.7806 | Val Loss: 3.7348 | base_acc: 0.7250 | tol_base_acc (±1 for <=4): 0.8083 | primary_acc: 0.7000 | secondary_acc: 0.1667 | Hierarchical Score: 0.3250 | Exact Match: 0.0500 | Base-Primary Exact Match: 0.4917 | Primary-Secondary Exact Match: 0.0833
+[2025-12-29 05:33:13] [INFO] Epoch  34 | Train Loss: 3.7950 | Val Loss: 3.7760 | base_acc: 0.6250 | tol_base_acc (±1 for <=4): 0.7500 | primary_acc: 0.6750 | secondary_acc: 0.1917 | Hierarchical Score: 0.2200 | Exact Match: 0.0500 | Base-Primary Exact Match: 0.4083 | Primary-Secondary Exact Match: 0.0917
+[2025-12-29 05:33:35] [INFO] Epoch  35 | Train Loss: 3.6333 | Val Loss: 3.6877 | base_acc: 0.6833 | tol_base_acc (±1 for <=4): 0.8167 | primary_acc: 0.7250 | secondary_acc: 0.1833 | Hierarchical Score: 0.3008 | Exact Match: 0.0500 | Base-Primary Exact Match: 0.5083 | Primary-Secondary Exact Match: 0.1083
+[2025-12-29 05:33:35] [INFO] Best model saved (val_loss: 3.6877)
+[2025-12-29 05:34:00] [INFO] Epoch  36 | Train Loss: 3.8033 | Val Loss: 3.8743 | base_acc: 0.6500 | tol_base_acc (±1 for <=4): 0.7833 | primary_acc: 0.6917 | secondary_acc: 0.2000 | Hierarchical Score: 0.2558 | Exact Match: 0.0667 | Base-Primary Exact Match: 0.4667 | Primary-Secondary Exact Match: 0.1250
+[2025-12-29 05:34:22] [INFO] Epoch  37 | Train Loss: 3.7949 | Val Loss: 3.7358 | base_acc: 0.7167 | tol_base_acc (±1 for <=4): 0.8333 | primary_acc: 0.6750 | secondary_acc: 0.1667 | Hierarchical Score: 0.3042 | Exact Match: 0.0333 | Base-Primary Exact Match: 0.4750 | Primary-Secondary Exact Match: 0.0833
+[2025-12-29 05:34:46] [INFO] Epoch  38 | Train Loss: 3.7247 | Val Loss: 3.7587 | base_acc: 0.6333 | tol_base_acc (±1 for <=4): 0.8250 | primary_acc: 0.6833 | secondary_acc: 0.2000 | Hierarchical Score: 0.2350 | Exact Match: 0.0667 | Base-Primary Exact Match: 0.4250 | Primary-Secondary Exact Match: 0.1083
+[2025-12-29 05:35:10] [INFO] Epoch  39 | Train Loss: 3.5323 | Val Loss: 3.6215 | base_acc: 0.7750 | tol_base_acc (±1 for <=4): 0.8667 | primary_acc: 0.7167 | secondary_acc: 0.2167 | Hierarchical Score: 0.3983 | Exact Match: 0.0833 | Base-Primary Exact Match: 0.5583 | Primary-Secondary Exact Match: 0.1250
+[2025-12-29 05:35:10] [INFO] Best model saved (val_loss: 3.6215)
+[2025-12-29 05:35:36] [INFO] Epoch  40 | Train Loss: 3.6597 | Val Loss: 3.7638 | base_acc: 0.7167 | tol_base_acc (±1 for <=4): 0.8500 | primary_acc: 0.7250 | secondary_acc: 0.1833 | Hierarchical Score: 0.3342 | Exact Match: 0.0750 | Base-Primary Exact Match: 0.5250 | Primary-Secondary Exact Match: 0.1083
+[2025-12-29 05:36:03] [INFO] Epoch  41 | Train Loss: 3.7855 | Val Loss: 3.7034 | base_acc: 0.7167 | tol_base_acc (±1 for <=4): 0.8333 | primary_acc: 0.6583 | secondary_acc: 0.2083 | Hierarchical Score: 0.3083 | Exact Match: 0.0667 | Base-Primary Exact Match: 0.4750 | Primary-Secondary Exact Match: 0.1083
+[2025-12-29 05:36:26] [INFO] Epoch  42 | Train Loss: 3.6720 | Val Loss: 3.7331 | base_acc: 0.6917 | tol_base_acc (±1 for <=4): 0.8250 | primary_acc: 0.7167 | secondary_acc: 0.2000 | Hierarchical Score: 0.3100 | Exact Match: 0.0917 | Base-Primary Exact Match: 0.5000 | Primary-Secondary Exact Match: 0.1167
+[2025-12-29 05:36:51] [INFO] Epoch  43 | Train Loss: 3.5848 | Val Loss: 3.7224 | base_acc: 0.7333 | tol_base_acc (±1 for <=4): 0.8250 | primary_acc: 0.7000 | secondary_acc: 0.2167 | Hierarchical Score: 0.3483 | Exact Match: 0.1083 | Base-Primary Exact Match: 0.5083 | Primary-Secondary Exact Match: 0.1417
+[2025-12-29 05:37:15] [INFO] Epoch  44 | Train Loss: 3.6357 | Val Loss: 3.5902 | base_acc: 0.7583 | tol_base_acc (±1 for <=4): 0.8333 | primary_acc: 0.7083 | secondary_acc: 0.2000 | Hierarchical Score: 0.3725 | Exact Match: 0.0917 | Base-Primary Exact Match: 0.5417 | Primary-Secondary Exact Match: 0.1333
+[2025-12-29 05:37:15] [INFO] Best model saved (val_loss: 3.5902)
+[2025-12-29 05:37:39] [INFO] Epoch  45 | Train Loss: 3.4670 | Val Loss: 3.6558 | base_acc: 0.7917 | tol_base_acc (±1 for <=4): 0.8917 | primary_acc: 0.6750 | secondary_acc: 0.2000 | Hierarchical Score: 0.3892 | Exact Match: 0.1000 | Base-Primary Exact Match: 0.5583 | Primary-Secondary Exact Match: 0.1167
+[2025-12-29 05:38:11] [INFO] Epoch  46 | Train Loss: 3.4272 | Val Loss: 3.7191 | base_acc: 0.6583 | tol_base_acc (±1 for <=4): 0.8167 | primary_acc: 0.7250 | secondary_acc: 0.2083 | Hierarchical Score: 0.2833 | Exact Match: 0.0833 | Base-Primary Exact Match: 0.4917 | Primary-Secondary Exact Match: 0.1250
+[2025-12-29 05:38:36] [INFO] Epoch  47 | Train Loss: 3.5433 | Val Loss: 3.6645 | base_acc: 0.6917 | tol_base_acc (±1 for <=4): 0.8250 | primary_acc: 0.7000 | secondary_acc: 0.2333 | Hierarchical Score: 0.3117 | Exact Match: 0.0917 | Base-Primary Exact Match: 0.4667 | Primary-Secondary Exact Match: 0.1583
+[2025-12-29 05:39:04] [INFO] Epoch  48 | Train Loss: 3.4852 | Val Loss: 3.6404 | base_acc: 0.7917 | tol_base_acc (±1 for <=4): 0.8833 | primary_acc: 0.6917 | secondary_acc: 0.2167 | Hierarchical Score: 0.4025 | Exact Match: 0.0750 | Base-Primary Exact Match: 0.5583 | Primary-Secondary Exact Match: 0.1000
+[2025-12-29 05:39:28] [INFO] Epoch  49 | Train Loss: 3.4631 | Val Loss: 3.6407 | base_acc: 0.7000 | tol_base_acc (±1 for <=4): 0.8417 | primary_acc: 0.7583 | secondary_acc: 0.2083 | Hierarchical Score: 0.3417 | Exact Match: 0.0917 | Base-Primary Exact Match: 0.5500 | Primary-Secondary Exact Match: 0.1167
+[2025-12-29 05:39:53] [INFO] Epoch  50 | Train Loss: 3.4662 | Val Loss: 3.5774 | base_acc: 0.7750 | tol_base_acc (±1 for <=4): 0.8750 | primary_acc: 0.7583 | secondary_acc: 0.2083 | Hierarchical Score: 0.4167 | Exact Match: 0.0917 | Base-Primary Exact Match: 0.5917 | Primary-Secondary Exact Match: 0.1250
+[2025-12-29 05:39:53] [INFO] Best model saved (val_loss: 3.5774)
+[2025-12-29 05:40:18] [INFO] Epoch  51 | Train Loss: 3.4612 | Val Loss: 3.6246 | base_acc: 0.7083 | tol_base_acc (±1 for <=4): 0.8333 | primary_acc: 0.7000 | secondary_acc: 0.2000 | Hierarchical Score: 0.3183 | Exact Match: 0.0667 | Base-Primary Exact Match: 0.4917 | Primary-Secondary Exact Match: 0.1167
+[2025-12-29 05:40:42] [INFO] Epoch  52 | Train Loss: 3.5253 | Val Loss: 3.6846 | base_acc: 0.6833 | tol_base_acc (±1 for <=4): 0.8000 | primary_acc: 0.7500 | secondary_acc: 0.2083 | Hierarchical Score: 0.3208 | Exact Match: 0.1000 | Base-Primary Exact Match: 0.5167 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 05:41:07] [INFO] Epoch  53 | Train Loss: 3.4527 | Val Loss: 3.5704 | base_acc: 0.7500 | tol_base_acc (±1 for <=4): 0.9000 | primary_acc: 0.7333 | secondary_acc: 0.2000 | Hierarchical Score: 0.3767 | Exact Match: 0.0917 | Base-Primary Exact Match: 0.5667 | Primary-Secondary Exact Match: 0.1167
+[2025-12-29 05:41:07] [INFO] Best model saved (val_loss: 3.5704)
+[2025-12-29 05:41:30] [INFO] Epoch  54 | Train Loss: 3.4026 | Val Loss: 3.7771 | base_acc: 0.6167 | tol_base_acc (±1 for <=4): 0.7833 | primary_acc: 0.7000 | secondary_acc: 0.2083 | Hierarchical Score: 0.2292 | Exact Match: 0.0750 | Base-Primary Exact Match: 0.4250 | Primary-Secondary Exact Match: 0.1167
+[2025-12-29 05:41:54] [INFO] Epoch  55 | Train Loss: 3.3331 | Val Loss: 3.5500 | base_acc: 0.7833 | tol_base_acc (±1 for <=4): 0.8833 | primary_acc: 0.7083 | secondary_acc: 0.2000 | Hierarchical Score: 0.3975 | Exact Match: 0.1000 | Base-Primary Exact Match: 0.5583 | Primary-Secondary Exact Match: 0.1250
+[2025-12-29 05:41:54] [INFO] Best model saved (val_loss: 3.5500)
+[2025-12-29 05:42:19] [INFO] Epoch  56 | Train Loss: 3.4721 | Val Loss: 3.5404 | base_acc: 0.7333 | tol_base_acc (±1 for <=4): 0.8167 | primary_acc: 0.7083 | secondary_acc: 0.1917 | Hierarchical Score: 0.3450 | Exact Match: 0.0833 | Base-Primary Exact Match: 0.5250 | Primary-Secondary Exact Match: 0.1333
+[2025-12-29 05:42:19] [INFO] Best model saved (val_loss: 3.5404)
+[2025-12-29 05:42:45] [INFO] Epoch  57 | Train Loss: 3.6085 | Val Loss: 3.7683 | base_acc: 0.6917 | tol_base_acc (±1 for <=4): 0.8250 | primary_acc: 0.7417 | secondary_acc: 0.1583 | Hierarchical Score: 0.3100 | Exact Match: 0.0750 | Base-Primary Exact Match: 0.5333 | Primary-Secondary Exact Match: 0.0917
+[2025-12-29 05:43:09] [INFO] Epoch  58 | Train Loss: 3.3613 | Val Loss: 3.6115 | base_acc: 0.7167 | tol_base_acc (±1 for <=4): 0.8667 | primary_acc: 0.7000 | secondary_acc: 0.2000 | Hierarchical Score: 0.3267 | Exact Match: 0.1167 | Base-Primary Exact Match: 0.5333 | Primary-Secondary Exact Match: 0.1417
+[2025-12-29 05:43:32] [INFO] Epoch  59 | Train Loss: 3.3073 | Val Loss: 3.5031 | base_acc: 0.7917 | tol_base_acc (±1 for <=4): 0.8750 | primary_acc: 0.7333 | secondary_acc: 0.2250 | Hierarchical Score: 0.4258 | Exact Match: 0.1167 | Base-Primary Exact Match: 0.6167 | Primary-Secondary Exact Match: 0.1333
+[2025-12-29 05:43:32] [INFO] Best model saved (val_loss: 3.5031)
+[2025-12-29 05:43:57] [INFO] Epoch  60 | Train Loss: 3.4204 | Val Loss: 3.5621 | base_acc: 0.7667 | tol_base_acc (±1 for <=4): 0.8500 | primary_acc: 0.7000 | secondary_acc: 0.2083 | Hierarchical Score: 0.3792 | Exact Match: 0.1167 | Base-Primary Exact Match: 0.5583 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 05:44:25] [INFO] Epoch  61 | Train Loss: 3.5704 | Val Loss: 3.6690 | base_acc: 0.6917 | tol_base_acc (±1 for <=4): 0.8667 | primary_acc: 0.7000 | secondary_acc: 0.1917 | Hierarchical Score: 0.2992 | Exact Match: 0.0833 | Base-Primary Exact Match: 0.4750 | Primary-Secondary Exact Match: 0.1083
+[2025-12-29 05:44:50] [INFO] Epoch  62 | Train Loss: 3.3811 | Val Loss: 3.6486 | base_acc: 0.6667 | tol_base_acc (±1 for <=4): 0.8083 | primary_acc: 0.7250 | secondary_acc: 0.2250 | Hierarchical Score: 0.2967 | Exact Match: 0.1083 | Base-Primary Exact Match: 0.5000 | Primary-Secondary Exact Match: 0.1417
+[2025-12-29 05:45:18] [INFO] Epoch  63 | Train Loss: 3.3563 | Val Loss: 3.5858 | base_acc: 0.6917 | tol_base_acc (±1 for <=4): 0.8250 | primary_acc: 0.7500 | secondary_acc: 0.2417 | Hierarchical Score: 0.3392 | Exact Match: 0.1000 | Base-Primary Exact Match: 0.5083 | Primary-Secondary Exact Match: 0.1750
+[2025-12-29 05:45:44] [INFO] Epoch  64 | Train Loss: 3.3651 | Val Loss: 3.6400 | base_acc: 0.7417 | tol_base_acc (±1 for <=4): 0.8500 | primary_acc: 0.7167 | secondary_acc: 0.2083 | Hierarchical Score: 0.3625 | Exact Match: 0.1083 | Base-Primary Exact Match: 0.5417 | Primary-Secondary Exact Match: 0.1250
+[2025-12-29 05:46:13] [INFO] Epoch  65 | Train Loss: 3.2621 | Val Loss: 3.5619 | base_acc: 0.7500 | tol_base_acc (±1 for <=4): 0.8750 | primary_acc: 0.7250 | secondary_acc: 0.2000 | Hierarchical Score: 0.3725 | Exact Match: 0.0917 | Base-Primary Exact Match: 0.5250 | Primary-Secondary Exact Match: 0.1167
+[2025-12-29 05:59:12] [INFO] Epoch  66 | Train Loss: 3.1306 | Val Loss: 3.6202 | base_acc: 0.6833 | tol_base_acc (±1 for <=4): 0.8417 | primary_acc: 0.7250 | secondary_acc: 0.2417 | Hierarchical Score: 0.3183 | Exact Match: 0.0833 | Base-Primary Exact Match: 0.5083 | Primary-Secondary Exact Match: 0.1417
+[2025-12-29 05:59:41] [INFO] Epoch  67 | Train Loss: 3.3090 | Val Loss: 3.5271 | base_acc: 0.7500 | tol_base_acc (±1 for <=4): 0.8333 | primary_acc: 0.7167 | secondary_acc: 0.2167 | Hierarchical Score: 0.3733 | Exact Match: 0.1083 | Base-Primary Exact Match: 0.5333 | Primary-Secondary Exact Match: 0.1583
+[2025-12-29 06:12:58] [INFO] Epoch  68 | Train Loss: 3.1657 | Val Loss: 3.6263 | base_acc: 0.6583 | tol_base_acc (±1 for <=4): 0.8333 | primary_acc: 0.7000 | secondary_acc: 0.1750 | Hierarchical Score: 0.2608 | Exact Match: 0.0750 | Base-Primary Exact Match: 0.4583 | Primary-Secondary Exact Match: 0.1250
+[2025-12-29 06:13:25] [INFO] Epoch  69 | Train Loss: 3.2026 | Val Loss: 3.5518 | base_acc: 0.7667 | tol_base_acc (±1 for <=4): 0.8750 | primary_acc: 0.7250 | secondary_acc: 0.2083 | Hierarchical Score: 0.3917 | Exact Match: 0.1167 | Base-Primary Exact Match: 0.5667 | Primary-Secondary Exact Match: 0.1417
+[2025-12-29 06:13:48] [INFO] Epoch  70 | Train Loss: 3.2732 | Val Loss: 3.5142 | base_acc: 0.7583 | tol_base_acc (±1 for <=4): 0.8917 | primary_acc: 0.7167 | secondary_acc: 0.2000 | Hierarchical Score: 0.3767 | Exact Match: 0.1083 | Base-Primary Exact Match: 0.5583 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 06:14:18] [INFO] Epoch  71 | Train Loss: 3.1991 | Val Loss: 3.5610 | base_acc: 0.7083 | tol_base_acc (±1 for <=4): 0.8500 | primary_acc: 0.7333 | secondary_acc: 0.2083 | Hierarchical Score: 0.3375 | Exact Match: 0.1000 | Base-Primary Exact Match: 0.5250 | Primary-Secondary Exact Match: 0.1417
+[2025-12-29 06:14:45] [INFO] Epoch  72 | Train Loss: 3.1509 | Val Loss: 3.5063 | base_acc: 0.7583 | tol_base_acc (±1 for <=4): 0.8750 | primary_acc: 0.7333 | secondary_acc: 0.2000 | Hierarchical Score: 0.3850 | Exact Match: 0.1083 | Base-Primary Exact Match: 0.5750 | Primary-Secondary Exact Match: 0.1417
+[2025-12-29 06:15:12] [INFO] Epoch  73 | Train Loss: 3.0935 | Val Loss: 3.4782 | base_acc: 0.7583 | tol_base_acc (±1 for <=4): 0.8667 | primary_acc: 0.7333 | secondary_acc: 0.2083 | Hierarchical Score: 0.3875 | Exact Match: 0.1000 | Base-Primary Exact Match: 0.5750 | Primary-Secondary Exact Match: 0.1417
+[2025-12-29 06:15:12] [INFO] Best model saved (val_loss: 3.4782)
+[2025-12-29 06:15:35] [INFO] Epoch  74 | Train Loss: 3.1658 | Val Loss: 3.4966 | base_acc: 0.7667 | tol_base_acc (±1 for <=4): 0.8833 | primary_acc: 0.7417 | secondary_acc: 0.2000 | Hierarchical Score: 0.3975 | Exact Match: 0.1167 | Base-Primary Exact Match: 0.5750 | Primary-Secondary Exact Match: 0.1417
+[2025-12-29 06:16:00] [INFO] Epoch  75 | Train Loss: 3.1280 | Val Loss: 3.5638 | base_acc: 0.7417 | tol_base_acc (±1 for <=4): 0.8833 | primary_acc: 0.7250 | secondary_acc: 0.2000 | Hierarchical Score: 0.3642 | Exact Match: 0.1167 | Base-Primary Exact Match: 0.5417 | Primary-Secondary Exact Match: 0.1417
+[2025-12-29 06:16:26] [INFO] Epoch  76 | Train Loss: 3.0041 | Val Loss: 3.4837 | base_acc: 0.7500 | tol_base_acc (±1 for <=4): 0.8667 | primary_acc: 0.7250 | secondary_acc: 0.2167 | Hierarchical Score: 0.3775 | Exact Match: 0.1167 | Base-Primary Exact Match: 0.5667 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 06:16:51] [INFO] Epoch  77 | Train Loss: 3.0088 | Val Loss: 3.4919 | base_acc: 0.7500 | tol_base_acc (±1 for <=4): 0.8667 | primary_acc: 0.7333 | secondary_acc: 0.2167 | Hierarchical Score: 0.3817 | Exact Match: 0.1083 | Base-Primary Exact Match: 0.5667 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 06:17:17] [INFO] Epoch  78 | Train Loss: 3.1225 | Val Loss: 3.5029 | base_acc: 0.7750 | tol_base_acc (±1 for <=4): 0.8917 | primary_acc: 0.7417 | secondary_acc: 0.2083 | Hierarchical Score: 0.4083 | Exact Match: 0.1250 | Base-Primary Exact Match: 0.5750 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 06:17:44] [INFO] Epoch  79 | Train Loss: 3.1817 | Val Loss: 3.5133 | base_acc: 0.7750 | tol_base_acc (±1 for <=4): 0.8833 | primary_acc: 0.7500 | secondary_acc: 0.2167 | Hierarchical Score: 0.4150 | Exact Match: 0.1250 | Base-Primary Exact Match: 0.5917 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 06:18:09] [INFO] Epoch  80 | Train Loss: 3.0869 | Val Loss: 3.4808 | base_acc: 0.7750 | tol_base_acc (±1 for <=4): 0.8833 | primary_acc: 0.7583 | secondary_acc: 0.2000 | Hierarchical Score: 0.4142 | Exact Match: 0.1167 | Base-Primary Exact Match: 0.6000 | Primary-Secondary Exact Match: 0.1333
+[2025-12-29 06:18:30] [INFO] Epoch  81 | Train Loss: 3.0759 | Val Loss: 3.5005 | base_acc: 0.7667 | tol_base_acc (±1 for <=4): 0.8833 | primary_acc: 0.7500 | secondary_acc: 0.2167 | Hierarchical Score: 0.4067 | Exact Match: 0.1167 | Base-Primary Exact Match: 0.5833 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 06:26:40] [INFO] Epoch  82 | Train Loss: 3.1300 | Val Loss: 3.4805 | base_acc: 0.7667 | tol_base_acc (±1 for <=4): 0.8833 | primary_acc: 0.7500 | secondary_acc: 0.2167 | Hierarchical Score: 0.4067 | Exact Match: 0.1250 | Base-Primary Exact Match: 0.5833 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 06:27:07] [INFO] Epoch  83 | Train Loss: 3.0228 | Val Loss: 3.4779 | base_acc: 0.7667 | tol_base_acc (±1 for <=4): 0.8833 | primary_acc: 0.7417 | secondary_acc: 0.2167 | Hierarchical Score: 0.4025 | Exact Match: 0.1250 | Base-Primary Exact Match: 0.5833 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 06:27:07] [INFO] Best model saved (val_loss: 3.4779)
+[2025-12-29 06:40:22] [INFO] Epoch  84 | Train Loss: 3.0879 | Val Loss: 3.4943 | base_acc: 0.7667 | tol_base_acc (±1 for <=4): 0.8833 | primary_acc: 0.7417 | secondary_acc: 0.2000 | Hierarchical Score: 0.3975 | Exact Match: 0.1250 | Base-Primary Exact Match: 0.5750 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 06:40:57] [INFO] Epoch  85 | Train Loss: 3.0645 | Val Loss: 3.5081 | base_acc: 0.7667 | tol_base_acc (±1 for <=4): 0.8833 | primary_acc: 0.7417 | secondary_acc: 0.1917 | Hierarchical Score: 0.3950 | Exact Match: 0.1167 | Base-Primary Exact Match: 0.5750 | Primary-Secondary Exact Match: 0.1417
+[2025-12-29 06:41:21] [INFO] Epoch  86 | Train Loss: 3.0945 | Val Loss: 3.4875 | base_acc: 0.7750 | tol_base_acc (±1 for <=4): 0.8833 | primary_acc: 0.7417 | secondary_acc: 0.2167 | Hierarchical Score: 0.4108 | Exact Match: 0.1250 | Base-Primary Exact Match: 0.5833 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 06:41:47] [INFO] Epoch  87 | Train Loss: 3.0244 | Val Loss: 3.4790 | base_acc: 0.7750 | tol_base_acc (±1 for <=4): 0.8833 | primary_acc: 0.7500 | secondary_acc: 0.2083 | Hierarchical Score: 0.4125 | Exact Match: 0.1250 | Base-Primary Exact Match: 0.6000 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 06:42:09] [INFO] Epoch  88 | Train Loss: 3.0789 | Val Loss: 3.5042 | base_acc: 0.7917 | tol_base_acc (±1 for <=4): 0.9000 | primary_acc: 0.7417 | secondary_acc: 0.2083 | Hierarchical Score: 0.4250 | Exact Match: 0.1250 | Base-Primary Exact Match: 0.5833 | Primary-Secondary Exact Match: 0.1417
+[2025-12-29 06:42:33] [INFO] Epoch  89 | Train Loss: 3.0948 | Val Loss: 3.5037 | base_acc: 0.7333 | tol_base_acc (±1 for <=4): 0.8750 | primary_acc: 0.7417 | secondary_acc: 0.2167 | Hierarchical Score: 0.3692 | Exact Match: 0.1000 | Base-Primary Exact Match: 0.5583 | Primary-Secondary Exact Match: 0.1417
+[2025-12-29 06:42:59] [INFO] Epoch  90 | Train Loss: 2.9075 | Val Loss: 3.4782 | base_acc: 0.7750 | tol_base_acc (±1 for <=4): 0.8750 | primary_acc: 0.7500 | secondary_acc: 0.2167 | Hierarchical Score: 0.4150 | Exact Match: 0.1083 | Base-Primary Exact Match: 0.5750 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 06:43:21] [INFO] Epoch  91 | Train Loss: 3.1032 | Val Loss: 3.5073 | base_acc: 0.7917 | tol_base_acc (±1 for <=4): 0.8917 | primary_acc: 0.7500 | secondary_acc: 0.2083 | Hierarchical Score: 0.4292 | Exact Match: 0.1250 | Base-Primary Exact Match: 0.5917 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 06:54:24] [INFO] Epoch  92 | Train Loss: 3.0607 | Val Loss: 3.5190 | base_acc: 0.7750 | tol_base_acc (±1 for <=4): 0.8833 | primary_acc: 0.7333 | secondary_acc: 0.2083 | Hierarchical Score: 0.4042 | Exact Match: 0.1250 | Base-Primary Exact Match: 0.5667 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 06:54:48] [INFO] Epoch  93 | Train Loss: 2.9335 | Val Loss: 3.4970 | base_acc: 0.7917 | tol_base_acc (±1 for <=4): 0.8917 | primary_acc: 0.7333 | secondary_acc: 0.2000 | Hierarchical Score: 0.4183 | Exact Match: 0.1250 | Base-Primary Exact Match: 0.5750 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 06:55:10] [INFO] Epoch  94 | Train Loss: 2.9790 | Val Loss: 3.4815 | base_acc: 0.7917 | tol_base_acc (±1 for <=4): 0.8917 | primary_acc: 0.7500 | secondary_acc: 0.2083 | Hierarchical Score: 0.4292 | Exact Match: 0.1333 | Base-Primary Exact Match: 0.5917 | Primary-Secondary Exact Match: 0.1583
+[2025-12-29 06:55:40] [INFO] Epoch  95 | Train Loss: 2.9458 | Val Loss: 3.4653 | base_acc: 0.7667 | tol_base_acc (±1 for <=4): 0.8667 | primary_acc: 0.7417 | secondary_acc: 0.2000 | Hierarchical Score: 0.3975 | Exact Match: 0.1167 | Base-Primary Exact Match: 0.5833 | Primary-Secondary Exact Match: 0.1417
+[2025-12-29 06:55:40] [INFO] Best model saved (val_loss: 3.4653)
+[2025-12-29 06:56:04] [INFO] Epoch  96 | Train Loss: 2.9482 | Val Loss: 3.4559 | base_acc: 0.7583 | tol_base_acc (±1 for <=4): 0.8667 | primary_acc: 0.7583 | secondary_acc: 0.2000 | Hierarchical Score: 0.3975 | Exact Match: 0.1083 | Base-Primary Exact Match: 0.5833 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 06:56:04] [INFO] Best model saved (val_loss: 3.4559)
+[2025-12-29 06:56:30] [INFO] Epoch  97 | Train Loss: 2.9022 | Val Loss: 3.4456 | base_acc: 0.7583 | tol_base_acc (±1 for <=4): 0.8667 | primary_acc: 0.7583 | secondary_acc: 0.2083 | Hierarchical Score: 0.4000 | Exact Match: 0.1083 | Base-Primary Exact Match: 0.5833 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 06:56:30] [INFO] Best model saved (val_loss: 3.4456)
+[2025-12-29 06:56:51] [INFO] Epoch  98 | Train Loss: 3.0359 | Val Loss: 3.4515 | base_acc: 0.7583 | tol_base_acc (±1 for <=4): 0.8667 | primary_acc: 0.7417 | secondary_acc: 0.2083 | Hierarchical Score: 0.3917 | Exact Match: 0.1167 | Base-Primary Exact Match: 0.5750 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 06:57:13] [INFO] Epoch  99 | Train Loss: 3.0027 | Val Loss: 3.4647 | base_acc: 0.7667 | tol_base_acc (±1 for <=4): 0.8667 | primary_acc: 0.7500 | secondary_acc: 0.2000 | Hierarchical Score: 0.4017 | Exact Match: 0.1083 | Base-Primary Exact Match: 0.5750 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 06:57:34] [INFO] Epoch 100 | Train Loss: 2.9979 | Val Loss: 3.4622 | base_acc: 0.7667 | tol_base_acc (±1 for <=4): 0.8667 | primary_acc: 0.7583 | secondary_acc: 0.2000 | Hierarchical Score: 0.4058 | Exact Match: 0.1083 | Base-Primary Exact Match: 0.5833 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 06:57:58] [INFO] Epoch 101 | Train Loss: 3.1401 | Val Loss: 3.4862 | base_acc: 0.7833 | tol_base_acc (±1 for <=4): 0.8917 | primary_acc: 0.7500 | secondary_acc: 0.2250 | Hierarchical Score: 0.4258 | Exact Match: 0.1333 | Base-Primary Exact Match: 0.5917 | Primary-Secondary Exact Match: 0.1667
+[2025-12-29 06:58:20] [INFO] Epoch 102 | Train Loss: 3.0427 | Val Loss: 3.4716 | base_acc: 0.7667 | tol_base_acc (±1 for <=4): 0.8667 | primary_acc: 0.7500 | secondary_acc: 0.2083 | Hierarchical Score: 0.4042 | Exact Match: 0.1167 | Base-Primary Exact Match: 0.5667 | Primary-Secondary Exact Match: 0.1583
+[2025-12-29 07:08:17] [INFO] Epoch 103 | Train Loss: 2.9455 | Val Loss: 3.4809 | base_acc: 0.7917 | tol_base_acc (±1 for <=4): 0.8917 | primary_acc: 0.7500 | secondary_acc: 0.2083 | Hierarchical Score: 0.4292 | Exact Match: 0.1333 | Base-Primary Exact Match: 0.5917 | Primary-Secondary Exact Match: 0.1583
+[2025-12-29 07:08:42] [INFO] Epoch 104 | Train Loss: 3.0100 | Val Loss: 3.4749 | base_acc: 0.7750 | tol_base_acc (±1 for <=4): 0.8833 | primary_acc: 0.7500 | secondary_acc: 0.2000 | Hierarchical Score: 0.4100 | Exact Match: 0.1250 | Base-Primary Exact Match: 0.5917 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 07:09:07] [INFO] Epoch 105 | Train Loss: 3.0663 | Val Loss: 3.4570 | base_acc: 0.7750 | tol_base_acc (±1 for <=4): 0.8833 | primary_acc: 0.7500 | secondary_acc: 0.2167 | Hierarchical Score: 0.4150 | Exact Match: 0.1333 | Base-Primary Exact Match: 0.6000 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 07:09:27] [INFO] Epoch 106 | Train Loss: 3.0406 | Val Loss: 3.4898 | base_acc: 0.7667 | tol_base_acc (±1 for <=4): 0.8667 | primary_acc: 0.7500 | secondary_acc: 0.2000 | Hierarchical Score: 0.4017 | Exact Match: 0.1000 | Base-Primary Exact Match: 0.5750 | Primary-Secondary Exact Match: 0.1417
+[2025-12-29 07:09:54] [INFO] Epoch 107 | Train Loss: 3.0292 | Val Loss: 3.4710 | base_acc: 0.7750 | tol_base_acc (±1 for <=4): 0.8833 | primary_acc: 0.7583 | secondary_acc: 0.2167 | Hierarchical Score: 0.4192 | Exact Match: 0.1333 | Base-Primary Exact Match: 0.5917 | Primary-Secondary Exact Match: 0.1583
+[2025-12-29 07:21:52] [INFO] Epoch 108 | Train Loss: 2.9887 | Val Loss: 3.4718 | base_acc: 0.7917 | tol_base_acc (±1 for <=4): 0.8917 | primary_acc: 0.7500 | secondary_acc: 0.2167 | Hierarchical Score: 0.4317 | Exact Match: 0.1333 | Base-Primary Exact Match: 0.5917 | Primary-Secondary Exact Match: 0.1583
+[2025-12-29 07:22:27] [INFO] Epoch 109 | Train Loss: 3.1581 | Val Loss: 3.4821 | base_acc: 0.7833 | tol_base_acc (±1 for <=4): 0.8917 | primary_acc: 0.7583 | secondary_acc: 0.2000 | Hierarchical Score: 0.4225 | Exact Match: 0.1250 | Base-Primary Exact Match: 0.6000 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 07:22:53] [INFO] Epoch 110 | Train Loss: 3.1442 | Val Loss: 3.4870 | base_acc: 0.8000 | tol_base_acc (±1 for <=4): 0.8917 | primary_acc: 0.7417 | secondary_acc: 0.2000 | Hierarchical Score: 0.4308 | Exact Match: 0.1250 | Base-Primary Exact Match: 0.5833 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 07:23:17] [INFO] Epoch 111 | Train Loss: 3.1081 | Val Loss: 3.4637 | base_acc: 0.8000 | tol_base_acc (±1 for <=4): 0.8917 | primary_acc: 0.7417 | secondary_acc: 0.2000 | Hierarchical Score: 0.4308 | Exact Match: 0.1250 | Base-Primary Exact Match: 0.5833 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 07:23:41] [INFO] Epoch 112 | Train Loss: 2.9835 | Val Loss: 3.4762 | base_acc: 0.7833 | tol_base_acc (±1 for <=4): 0.8833 | primary_acc: 0.7500 | secondary_acc: 0.2000 | Hierarchical Score: 0.4183 | Exact Match: 0.1250 | Base-Primary Exact Match: 0.5917 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 07:24:02] [INFO] Epoch 113 | Train Loss: 3.1150 | Val Loss: 3.4647 | base_acc: 0.7833 | tol_base_acc (±1 for <=4): 0.8917 | primary_acc: 0.7583 | secondary_acc: 0.2083 | Hierarchical Score: 0.4250 | Exact Match: 0.1333 | Base-Primary Exact Match: 0.6000 | Primary-Secondary Exact Match: 0.1583
+[2025-12-29 07:24:24] [INFO] Epoch 114 | Train Loss: 2.9608 | Val Loss: 3.4673 | base_acc: 0.7833 | tol_base_acc (±1 for <=4): 0.8917 | primary_acc: 0.7583 | secondary_acc: 0.2250 | Hierarchical Score: 0.4300 | Exact Match: 0.1333 | Base-Primary Exact Match: 0.6000 | Primary-Secondary Exact Match: 0.1583
+[2025-12-29 07:35:56] [INFO] Epoch 115 | Train Loss: 2.8782 | Val Loss: 3.4471 | base_acc: 0.7583 | tol_base_acc (±1 for <=4): 0.8667 | primary_acc: 0.7500 | secondary_acc: 0.2167 | Hierarchical Score: 0.3983 | Exact Match: 0.1250 | Base-Primary Exact Match: 0.5833 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 07:47:33] [INFO] Epoch 116 | Train Loss: 2.9673 | Val Loss: 3.4687 | base_acc: 0.7833 | tol_base_acc (±1 for <=4): 0.8917 | primary_acc: 0.7500 | secondary_acc: 0.2083 | Hierarchical Score: 0.4208 | Exact Match: 0.1333 | Base-Primary Exact Match: 0.5917 | Primary-Secondary Exact Match: 0.1583
+[2025-12-29 07:48:05] [INFO] Epoch 117 | Train Loss: 2.9766 | Val Loss: 3.4790 | base_acc: 0.7667 | tol_base_acc (±1 for <=4): 0.8667 | primary_acc: 0.7500 | secondary_acc: 0.2083 | Hierarchical Score: 0.4042 | Exact Match: 0.1083 | Base-Primary Exact Match: 0.5750 | Primary-Secondary Exact Match: 0.1500
+[2025-12-29 07:48:05] [INFO] Early stopping triggered after 117 epochs
+[2025-12-29 07:48:05] [INFO] Loaded best model for final evaluation
+[2025-12-29 07:48:07] [INFO] Saved val predictions to experiments/20251229_025326_statnet_v1_test/val_predictions.csv
+[2025-12-29 07:48:09] [INFO] 
+FINAL_VAL Metrics:
+[2025-12-29 07:48:09] [INFO]   base_acc: 0.7583
+[2025-12-29 07:48:09] [INFO]   tol_base_acc (±1 for <=4): 0.8667
+[2025-12-29 07:48:09] [INFO]   primary_acc: 0.7583
+[2025-12-29 07:48:09] [INFO]   secondary_acc: 0.2083
+[2025-12-29 07:48:09] [INFO]   Hierarchical Score: 0.4000
+[2025-12-29 07:48:09] [INFO]   Exact Match: 0.1083
+[2025-12-29 07:48:09] [INFO]   Base-Primary Exact Match: 0.5833
+[2025-12-29 07:48:09] [INFO]   Primary-Secondary Exact Match: 0.1500
+[2025-12-29 07:48:09] [INFO] --------------------------------------------------------------------------------
+[2025-12-29 07:48:09] [INFO] ================================================================================
+[2025-12-29 07:48:09] [INFO] Experiment Completed
+[2025-12-29 07:48:09] [INFO] Ended at: 2025-12-29 07:48:09
+[2025-12-29 07:48:09] [INFO] 
+Final Test Metrics:
+[2025-12-29 07:48:09] [INFO]   base_acc: 0.7583
+[2025-12-29 07:48:09] [INFO]   tol_base_acc (±1 for <=4): 0.8667
+[2025-12-29 07:48:09] [INFO]   primary_acc: 0.7583
+[2025-12-29 07:48:09] [INFO]   secondary_acc: 0.2083
+[2025-12-29 07:48:09] [INFO]   Hierarchical Score: 0.4000
+[2025-12-29 07:48:09] [INFO]   Exact Match: 0.1083
+[2025-12-29 07:48:09] [INFO]   Base-Primary Exact Match: 0.5833
+[2025-12-29 07:48:09] [INFO]   Primary-Secondary Exact Match: 0.1500
+[2025-12-29 07:48:09] [INFO] ================================================================================

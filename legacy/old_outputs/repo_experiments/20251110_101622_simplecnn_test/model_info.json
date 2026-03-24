@@ -1,0 +1,13 @@
+{
+  "model_name": "simple_cnn",
+  "model_type": "pytorch",
+  "model_params": {
+    "num_classes": [
+      12,
+      11,
+      11
+    ]
+  },
+  "total_parameters": 25704290,
+  "trainable_parameters": 25704290
+}

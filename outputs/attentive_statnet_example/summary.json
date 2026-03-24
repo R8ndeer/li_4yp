@@ -1,0 +1,15 @@
+{
+  "experiment_name": "attentive_statnet",
+  "completed_at": "2025-12-31T00:23:41.540541",
+  "total_epochs": 98,
+  "final_metrics": {
+    "base_acc": 0.8083333333333333,
+    "tol_base_acc (\u00b11 for <=4)": 0.9083333611488342,
+    "primary_acc": 0.7916666666666666,
+    "secondary_acc": 0.25,
+    "Hierarchical Score": 0.47916666666666674,
+    "Exact Match": 0.09166666865348816,
+    "Base-Primary Exact Match": 0.6333333253860474,
+    "Primary-Secondary Exact Match": 0.17499999701976776
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "name": "cnn_weights_1.0_1.0_1.0",
+  "description": "CNN experiment with different loss weights. Weights: Base=1.0, Primary=1.0, Secondary=1.0",
+  "tags": [
+    "pytorch",
+    "cnn",
+    "test",
+    "weights"
+  ],
+  "model_type": "pytorch",
+  "model_name": "simple_cnn",
+  "model_params": {
+    "num_classes": [
+      12,
+      11,
+      11
+    ]
+  },
+  "dataset_name": "masterlist_v6",
+  "data_dir": "../data/masterlist_v6",
+  "csv_file": "masterlist_v6_full_features.csv",
+  "label_cols": [
+    "Base",
+    "Primary",
+    "Secondary"
+  ],
+  "train_split": 0.8,
+  "random_seed": 42,
+  "batch_size": 32,
+  "num_epochs": 500,
+  "learning_rate": 0.001,
+  "optimizer": "Adam",
+  "optimizer_params": {},
+  "scheduler": null,
+  "scheduler_params": {},
+  "early_stopping_patience": 10,
+  "loss_function": "CrossEntropyLoss",
+  "loss_weights": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "eval_metrics": [
+    "base_acc",
+    "tol_base_acc",
+    "primary_acc",
+    "secondary_acc",
+    "Hierarchical Score",
+    "Exact Match",
+    "Base-Primary Exact Match"
+  ],
+  "evaluator_params": {
+    "eos_token": -1,
+    "weights": [
+      0.3,
+      0.1
+    ],
+    "tol_base": 4
+  },
+  "save_dir": "../experiments",
+  "save_model": true,
+  "save_predictions": true,
+  "save_history": true,
+  "device": "auto",
+  "num_workers": 0
+}

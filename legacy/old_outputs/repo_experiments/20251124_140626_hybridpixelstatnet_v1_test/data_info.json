@@ -1,0 +1,31 @@
+{
+  "dataset_class": "HybridSwatchDataset",
+  "total_samples": 761,
+  "data_dir": "/Users/boting/li_4yp/data/masterlist_v6",
+  "csv_file": "masterlist_v6_full_features.csv",
+  "num_samples": 761,
+  "label_columns": [
+    "Base",
+    "Primary",
+    "Secondary"
+  ],
+  "sample_filename": "6.088.jpg",
+  "feature_columns": [
+    "mean_l",
+    "mean_a",
+    "mean_b",
+    "mean_chroma",
+    "median_l",
+    "median_a",
+    "median_b",
+    "median_chroma",
+    "percentile25_l",
+    "percentile25_a",
+    "percentile25_b",
+    "percentile25_chroma",
+    "percentile75_l",
+    "percentile75_a",
+    "percentile75_b",
+    "percentile75_chroma"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "model_name": "shade_cnn",
+  "model_type": "pytorch",
+  "model_params": {
+    "num_classes": [
+      12,
+      11,
+      11
+    ]
+  },
+  "total_parameters": 159394,
+  "trainable_parameters": 159394
+}

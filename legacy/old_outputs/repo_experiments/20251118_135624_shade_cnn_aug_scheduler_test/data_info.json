@@ -1,0 +1,13 @@
+{
+  "dataset_class": "DigitalSwatchDataset",
+  "total_samples": 761,
+  "data_dir": "/Users/boting/li_4yp/data/masterlist_v6",
+  "csv_file": "masterlist_v6_full_features.csv",
+  "num_samples": 761,
+  "label_columns": [
+    "Base",
+    "Primary",
+    "Secondary"
+  ],
+  "sample_filename": "6.088.jpg"
+}
