@@ -169,77 +169,6 @@ class Experiment:
         )
         return train_subset.indices, val_subset.indices
 
-    def _unpack_batch(self, batch):
-        """Move batch tensors to the current device and track batch size."""
-        if len(batch) == 3:
-            images, features, labels = batch
-            images = images.to(self.device)
-            features = features.to(self.device)
-            labels = labels.to(self.device)
-            return images, features, labels, images.size(0)
-
-        if len(batch) == 2:
-            images, labels = batch
-            images = images.to(self.device)
-            labels = labels.to(self.device)
-            return images, None, labels, images.size(0)
-
-        raise ValueError(
-            f"Expected batches of length 2 or 3, got batch of length {len(batch)}."
-        )
-
-    def _forward_batch(self, images, features):
-        """Dispatch the model call for image-only or hybrid batches."""
-        if features is not None:
-            return self.model(images, features)
-        return self.model(images)
-
-    def _validate_loss_weights(self) -> None:
-        """Validate loss weights for three-head multitask outputs."""
-        if len(self.config.loss_weights) != 3:
-            raise ValueError(
-                "loss_weights must contain exactly three values for "
-                f"base/primary/secondary tasks, got {self.config.loss_weights}"
-            )
-
-    def _compute_pytorch_loss(self, outputs, labels):
-        """Resolve the correct training loss for model outputs."""
-        if self.loss_fn is not None:
-            return self.loss_fn(outputs, labels)
-
-        if isinstance(outputs, dict):
-            from li_4yp.training import multitask_loss
-
-            self._validate_loss_weights()
-            return multitask_loss(outputs, labels, self.config.loss_weights)
-
-        from li_4yp.training import compute_loss
-
-        return compute_loss(outputs, labels)
-
-    def _build_eval_predictions_and_loss(self, outputs, labels):
-        """Build evaluation predictions while preserving the current loss behavior."""
-        if isinstance(outputs, dict):
-            torch, nn, _, _, _ = self._require_torch()
-            self._validate_loss_weights()
-            criterion = nn.CrossEntropyLoss()
-            loss = sum(
-                criterion(outputs[key], labels[:, i]) * self.config.loss_weights[i]
-                for i, key in enumerate(["base", "primary", "secondary"])
-                if key in outputs
-            )
-            preds = torch.stack(
-                [outputs[key].argmax(dim=1) for key in ["base", "primary", "secondary"]],
-                dim=1,
-            )
-            return loss, preds
-
-        from li_4yp.training import compute_loss
-
-        loss = compute_loss(outputs, labels)
-        preds = outputs.argmax(dim=-1)
-        return loss, preds
-
     def setup_data(
         self, dataset_class: Optional[type] = None, **dataset_kwargs
     ) -> None:
@@ -371,7 +300,6 @@ class Experiment:
         if self.config.model_type != "pytorch":
             return
 
-        self._require_torch()
         torch, _, _, _, _ = self._require_torch()
         self.logger.info("Setting up optimizer...")
 
@@ -429,9 +357,25 @@ class Experiment:
 
         for batch in self.train_loader:
             self.optimizer.zero_grad()
-            images, features, labels, batch_size = self._unpack_batch(batch)
-            outputs = self._forward_batch(images, features)
-            loss = self._compute_pytorch_loss(outputs, labels)
+            if len(batch) == 3:
+                images, features, labels = batch
+                images = images.to(self.device)
+                features = features.to(self.device)
+                labels = labels.to(self.device)
+                batch_size = images.size(0)
+                outputs = self.model(images, features)
+            elif len(batch) == 2:
+                images, labels = batch
+                images = images.to(self.device)
+                labels = labels.to(self.device)
+                batch_size = images.size(0)
+                outputs = self.model(images)
+            else:
+                raise ValueError(
+                    f"Expected batches of length 2 or 3, got batch of length {len(batch)}."
+                )
+
+            loss = self.loss_fn(outputs, labels)
 
             loss.backward()
             self.optimizer.step()
@@ -442,8 +386,8 @@ class Experiment:
         return avg_loss
 
     def evaluate_pytorch(
-        self, data_loader: DataLoader, return_preds: bool = False
-    ) -> Tuple[float, Dict[str, float]] | Tuple[torch.Tensor, torch.Tensor]:
+        self, data_loader: "DataLoader", return_preds: bool = False
+    ) -> Tuple[float, Dict[str, float]] | Tuple["torch.Tensor", "torch.Tensor"]:
         """Evaluate PyTorch model.
 
         Args:
@@ -454,6 +398,7 @@ class Experiment:
             Tuple of (average loss, metrics dictionary) or (all_preds, all_labels) if return_preds is True
         """
         torch, _, _, _, _ = self._require_torch()
+
         self.model.eval()
         total_loss = 0.0
         all_preds = []
@@ -461,9 +406,35 @@ class Experiment:
 
         with torch.no_grad():
             for batch in data_loader:
-                images, features, labels, batch_size = self._unpack_batch(batch)
-                outputs = self._forward_batch(images, features)
-                loss, preds = self._build_eval_predictions_and_loss(outputs, labels)
+                if len(batch) == 3:
+                    images, features, labels = batch
+                    images = images.to(self.device)
+                    features = features.to(self.device)
+                    labels = labels.to(self.device)
+                    batch_size = images.size(0)
+                    outputs = self.model(images, features)
+                elif len(batch) == 2:
+                    images, labels = batch
+                    images = images.to(self.device)
+                    labels = labels.to(self.device)
+                    batch_size = images.size(0)
+                    outputs = self.model(images)
+                else:
+                    raise ValueError(
+                        f"Expected batches of length 2 or 3, got batch of length {len(batch)}."
+                    )
+
+                loss = self.loss_fn(outputs, labels)
+                if isinstance(outputs, dict):
+                    preds = torch.stack(
+                        [
+                            outputs[key].argmax(dim=1)
+                            for key in ["base", "primary", "secondary"]
+                        ],
+                        dim=1,
+                    )
+                else:
+                    preds = outputs.argmax(dim=-1)
 
                 total_loss += loss.item() * batch_size
                 all_preds.append(preds.cpu())
@@ -602,8 +573,7 @@ class Experiment:
             Experiment.print_transform(self.val_transform, self.logger)
 
             self.setup_optimizer()
-            if self.config.loss_name:
-                self.setup_loss_fn()
+            self.setup_loss_fn()
             self.train_pytorch()
 
             val_loss, val_metrics = self.evaluate_pytorch(self.val_loader)
