@@ -152,9 +152,8 @@ def build_transform(
 
     if is_training:
         augmented_path = _build_augmentation_path(image_size, augmentation)
-        # `probability` currently controls how often the resize-only path is chosen.
         select_transform = v2.RandomChoice(
-            transforms=[resize_only_path, augmented_path],
+            transforms=[augmented_path, resize_only_path],
             p=[probability, 1 - probability],
         )
 
