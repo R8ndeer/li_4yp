@@ -8,9 +8,11 @@ model_params:
   num_classes: [12, 11, 11]
   dropout_rate: 0.2
 
+dataset_class: "DigitalSwatchDataset"
 dataset_name: "golden_dataset"
 data_dir: "data/masterlist_v7"  # <--- CHECK YOUR PATH
 csv_file: "golden_dataset_5fold.csv"
+train_split: 0.8
 
 # Image Config: NO NORMALIZATION FOR STATNET
 use_transform_preset: false
