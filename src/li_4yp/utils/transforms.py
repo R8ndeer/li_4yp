@@ -7,7 +7,7 @@ from torchvision.transforms import v2
 from .transform_presets import TRANSFORM_PRESETS
 
 
-SUPPORTED_AUGMENTATION_KEYS = {
+SUPPORTED_AUGMENTATION_KEYS = (
     "probability",
     "random_resized_crop",
     "resized_crop_scale",
@@ -26,7 +26,7 @@ SUPPORTED_AUGMENTATION_KEYS = {
     "gaussian_blur",
     "blur_kernel_size",
     "blur_sigma",
-}
+)
 
 
 def _validate_transform_inputs(
@@ -47,11 +47,11 @@ def _validate_transform_inputs(
             f"got {type(augmentation)}"
         )
 
-    unknown_keys = sorted(set(augmentation) - SUPPORTED_AUGMENTATION_KEYS)
+    unknown_keys = [key for key in augmentation if key not in SUPPORTED_AUGMENTATION_KEYS]
     if unknown_keys:
         raise ValueError(
             f"Unsupported augmentation keys: {unknown_keys}. "
-            f"Supported keys: {sorted(SUPPORTED_AUGMENTATION_KEYS)}"
+            f"Supported keys: {list(SUPPORTED_AUGMENTATION_KEYS)}"
         )
 
     normalized = dict(augmentation)

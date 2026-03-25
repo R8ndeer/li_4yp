@@ -79,11 +79,13 @@ def main():
     if not ModelRegistry.is_registered(config.model_name):
         raise ValueError(
             f"Model '{config.model_name}' is not registered in ModelRegistry. "
-            f"Available models: {sorted(ModelRegistry.list_models().keys())}"
+            f"Available models: {list(ModelRegistry.list_models().keys())}"
         )
 
     _validate_runtime_paths(config)
-    dataset_class = _resolve_dataset_class(config)
+    dataset_class = None
+    if config.model_type == "pytorch":
+        dataset_class = _resolve_dataset_class(config)
 
     from li_4yp.experiments import Experiment
 
