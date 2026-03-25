@@ -51,6 +51,30 @@ class ExperimentConfigValidationTests(unittest.TestCase):
                 CONFIG_DIR / "failure_missing_dataset_class.yaml"
             )
 
+    def test_missing_pytorch_loss_name_fails(self):
+        config = {
+            "name": "missing_loss_name",
+            "model_type": "pytorch",
+            "model_name": "attentive_pixel_stat_net",
+            "dataset_class": "DigitalSwatchDataset",
+            "data_dir": "data/masterlist_v7",
+            "csv_file": "golden_dataset_5fold.csv",
+            "train_split": 0.8,
+            "save_dir": "experiments",
+            "batch_size": 32,
+            "num_epochs": 100,
+            "learning_rate": 0.001,
+            "optimizer": "Adam",
+            "image_size": [224, 224],
+            "normalize": False,
+            "device": "auto",
+            "num_workers": 0,
+            "use_transform_preset": False,
+            "augmentation": {},
+        }
+        with self.assertRaisesRegex(ValueError, "PyTorch required fields: loss_name"):
+            ExperimentConfig.from_dict(config)
+
     def test_missing_sklearn_required_field_fails(self):
         with self.assertRaisesRegex(
             ValueError, "sklearn required fields: feature_cols"
