@@ -4,6 +4,8 @@ from typing import Optional, Dict, Any
 import torch
 from torchvision.transforms import v2
 
+from .transform_presets import TRANSFORM_PRESETS
+
 
 SUPPORTED_AUGMENTATION_KEYS = {
     "probability",
@@ -141,72 +143,24 @@ def build_transform(
     """
     augmentation = _validate_transform_inputs(image_size, augmentation)
     post_process = _build_post_process(normalize, normalize_mean, normalize_std)
-    p = augmentation.get("probability", 0.0)
-    if p < 0.0 or p > 1.0:
-        raise ValueError(f"Augmentation probability must be in [0.0, 1.0], got {p}")
-    orig_path = _build_resize_only_path(image_size)
+    probability = augmentation.get("probability", 0.0)
+    if probability < 0.0 or probability > 1.0:
+        raise ValueError(
+            f"Augmentation probability must be in [0.0, 1.0], got {probability}"
+        )
+    resize_only_path = _build_resize_only_path(image_size)
 
     if is_training:
         augmented_path = _build_augmentation_path(image_size, augmentation)
         # `probability` currently controls how often the resize-only path is chosen.
         select_transform = v2.RandomChoice(
-            transforms=[orig_path, augmented_path], p=[p, 1 - p]
+            transforms=[resize_only_path, augmented_path],
+            p=[probability, 1 - probability],
         )
 
         return v2.Compose([select_transform, post_process])
 
-    return v2.Compose([orig_path, post_process])
-
-
-def get_imagenet_transform(image_size: tuple = (224, 224)) -> v2.Compose:
-    """Get standard ImageNet preprocessing transform.
-
-    Args:
-        image_size: Target image size
-
-    Returns:
-        ImageNet-style transform
-    """
-    return v2.Compose(
-        [
-            v2.Resize(image_size),
-            v2.ToImage(),
-            v2.ToDtype(torch.float32, scale=True),
-            v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-        ]
-    )
-
-
-def get_basic_transform(image_size: tuple = (224, 224)) -> v2.Compose:
-    """Get basic transform without normalization.
-
-    Args:
-        image_size: Target image size
-
-    Returns:
-        Basic transform
-    """
-    return v2.Compose(
-        [v2.Resize(image_size), v2.ToImage(), v2.ToDtype(torch.float32, scale=True)]
-    )
-
-
-# Predefined transform presets
-TRANSFORM_PRESETS = {
-    "imagenet": lambda size: get_imagenet_transform(size),
-    "basic": lambda size: get_basic_transform(size),
-    "mobilenet": lambda size: v2.Compose(
-        [
-            v2.Resize(size),
-            v2.ToImage(),
-            v2.ToDtype(torch.float32, scale=True),
-            v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-        ]
-    ),
-    "none": lambda size: v2.Compose(
-        [v2.Resize(size), v2.ToImage(), v2.ToDtype(torch.float32, scale=True)]
-    ),
-}
+    return v2.Compose([resize_only_path, post_process])
 
 
 def get_transform_from_preset(

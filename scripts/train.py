@@ -49,10 +49,10 @@ def _resolve_dataset_class(config: ExperimentConfig) -> type:
     }
     dataset_class = supported_dataset_classes.get(config.dataset_class.lower())
     if dataset_class is None:
-        supported = ", ".join(sorted(supported_dataset_classes.values(), key=lambda cls: cls.__name__))
+        supported = ", ".join(d.__name__ for d in supported_dataset_classes.values())
         raise ValueError(
             f"Unsupported dataset_class '{config.dataset_class}'. "
-            "Supported classes: DigitalSwatchDataset, HybridSwatchDataset."
+            f"Supported classes: {supported}."
         )
     return dataset_class
 

@@ -6,8 +6,6 @@ __all__ = [
     "seed_all",
     "get_device",
     "build_transform",
-    "get_imagenet_transform",
-    "get_basic_transform",
     "get_transform_from_preset",
     "TRANSFORM_PRESETS",
 ]
@@ -17,13 +15,11 @@ _LAZY_EXPORTS = {
     "seed_all": ("li_4yp.utils.reproducibility", "seed_all"),
     "get_device": ("li_4yp.utils.reproducibility", "get_device"),
     "build_transform": ("li_4yp.utils.transforms", "build_transform"),
-    "get_imagenet_transform": ("li_4yp.utils.transforms", "get_imagenet_transform"),
-    "get_basic_transform": ("li_4yp.utils.transforms", "get_basic_transform"),
     "get_transform_from_preset": (
         "li_4yp.utils.transforms",
         "get_transform_from_preset",
     ),
-    "TRANSFORM_PRESETS": ("li_4yp.utils.transforms", "TRANSFORM_PRESETS"),
+    "TRANSFORM_PRESETS": ("li_4yp.utils.transform_presets", "TRANSFORM_PRESETS"),
 }
 
 
