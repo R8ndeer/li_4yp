@@ -103,7 +103,7 @@ class ExperimentConfig:
         "scheduler_params",
         "early_stopping_patience",
     }
-    _SKLEARN_FIELDS = {"feature_cols", "labels_cols"}
+    _SKLEARN_FIELDS = {"feature_cols", "label_cols"}
 
     def __post_init__(self):
         """Validate configuration after initialization."""
@@ -116,6 +116,43 @@ class ExperimentConfig:
             raise ValueError(
                 f"train_split must be between 0 and 1, got {self.train_split}"
             )
+
+        if not self.name:
+            raise ValueError("name must be a non-empty string.")
+
+        if not self.model_name:
+            raise ValueError("model_name must be a non-empty string.")
+
+        if not self.dataset_class:
+            raise ValueError("dataset_class must be a non-empty string.")
+
+        if len(self.image_size) != 2:
+            raise ValueError(
+                f"image_size must contain exactly two values, got {self.image_size}"
+            )
+
+        if self.val_fold_idx is not None and not isinstance(self.val_fold_idx, int):
+            raise TypeError(
+                f"val_fold_idx must be an integer when provided, got {type(self.val_fold_idx)}"
+            )
+
+        if self.model_type == "pytorch":
+            if self.batch_size <= 0:
+                raise ValueError(f"batch_size must be positive, got {self.batch_size}")
+            if self.num_epochs <= 0:
+                raise ValueError(f"num_epochs must be positive, got {self.num_epochs}")
+            if self.learning_rate <= 0:
+                raise ValueError(
+                    f"learning_rate must be positive, got {self.learning_rate}"
+                )
+            if self.early_stopping_patience <= 0:
+                raise ValueError(
+                    "early_stopping_patience must be positive, "
+                    f"got {self.early_stopping_patience}"
+                )
+
+        if self.num_workers < 0:
+            raise ValueError(f"num_workers cannot be negative, got {self.num_workers}")
 
     @classmethod
     def from_dict(cls, config_dict: Dict[str, Any]) -> "ExperimentConfig":

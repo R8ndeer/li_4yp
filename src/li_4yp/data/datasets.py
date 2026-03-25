@@ -2,10 +2,55 @@ import pandas as pd
 from typing import Tuple, Optional, Any
 from PIL import Image
 from pathlib import Path
+import warnings
 
 import torch
 from torch.utils.data import Dataset
 from torchvision import transforms
+
+
+def _load_labels_dataframe(data_dir: Path, csv_file: str | Path) -> tuple[Path, pd.DataFrame]:
+    """Load a labels CSV and ensure it contains rows."""
+    csv_path = data_dir / csv_file
+    if not csv_path.exists():
+        raise FileNotFoundError(f"CSV file not found: {csv_path}")
+
+    df = pd.read_csv(csv_path)
+    if df.empty:
+        raise ValueError(f"CSV file is empty: {csv_path}")
+    return csv_path, df
+
+
+def _validate_required_columns(df: pd.DataFrame, required_cols: list[str], csv_path: Path) -> None:
+    """Check that all required columns are present in the labels file."""
+    missing_cols = [col for col in required_cols if col not in df.columns]
+    if missing_cols:
+        raise ValueError(
+            f"Missing required columns in CSV {csv_path}: {missing_cols}"
+        )
+
+
+def _build_default_transform() -> transforms.Compose:
+    """Return the default resize-to-tensor pipeline used by the datasets."""
+    return transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor()])
+
+
+def _load_rgb_image(img_path: Path) -> Image.Image:
+    """Load an RGB image with a consistent runtime error."""
+    try:
+        return Image.open(img_path).convert("RGB")
+    except Exception as e:
+        raise RuntimeError(f"Failed to load image {img_path}: {e}") from e
+
+
+def _warn_on_missing_preview_images(image_paths: list[Path]) -> None:
+    """Warn early if the first few image files are missing."""
+    missing_images = [path for path in image_paths[:5] if not path.exists()]
+    if missing_images:
+        warnings.warn(
+            f"Some image files are missing. First missing path: {missing_images[0]}",
+            stacklevel=2,
+        )
 
 
 class HairSwatchDataset(Dataset):
@@ -23,43 +68,20 @@ class HairSwatchDataset(Dataset):
             transform: Image transforms to apply
         """
         self.data_dir = Path(data_dir)
-
-        # Load labels
-        csv_path = self.data_dir / csv_file
-        if not csv_path.exists():
-            raise FileNotFoundError(f"CSV file not found: {csv_path}")
-
-        self.df = pd.read_csv(csv_path)
-
-        # Validate required columns
+        csv_path, self.df = _load_labels_dataframe(self.data_dir, csv_file)
         required_cols = ["filename", "Base", "Primary", "Secondary", "Tertiary"]
-        missing_cols = [col for col in required_cols if col not in self.df.columns]
-        if missing_cols:
-            raise ValueError(f"Missing required columns in CSV: {missing_cols}")
+        _validate_required_columns(self.df, required_cols, csv_path)
 
-        # Store image paths and labels
         self.image_paths = [self.data_dir / fname for fname in self.df["filename"]]
-
-        # Convert labels to tensor
         labels_array = self.df[["Base", "Primary", "Secondary", "Tertiary"]].values
-
-        # Remap Base values from 1... to 0... for PyTorch compatibility
-        # Keep -1 as -1 (missing values)
         base_mask = labels_array[:, 0] != -1  # Find non-missing base values
         if base_mask.any():
             labels_array[base_mask, 0] = labels_array[base_mask, 0] - 1  # 1-12 -> 0-11
 
         self.labels = torch.tensor(labels_array, dtype=torch.long)
-
-        # Set up transforms
-        self.transform = transform or transforms.Compose(
-            [transforms.Resize((224, 224)), transforms.ToTensor()]
-        )
-
-        # Validate a few images exist
-        missing_images = [path for path in self.image_paths[:5] if not path.exists()]
-        if missing_images:
-            print(f"Warning: Some images missing. First: {missing_images[0]}")
+        self.transform = transform or _build_default_transform()
+        self.csv_path = csv_path
+        _warn_on_missing_preview_images(self.image_paths)
 
     def __len__(self) -> int:
         return len(self.image_paths)
@@ -67,17 +89,8 @@ class HairSwatchDataset(Dataset):
     def __getitem__(self, idx: int) -> Tuple[Any, torch.Tensor]:
         """Get image and label by index."""
         img_path = self.image_paths[idx]
-
-        # Load image
-        try:
-            image = Image.open(img_path).convert("RGB")
-        except Exception as e:
-            raise RuntimeError(f"Failed to load image {img_path}: {e}")
-
-        # Apply transforms (assumed to include ToTensor)
+        image = _load_rgb_image(img_path)
         transformed_image = self.transform(image)
-
-        # Get label
         label = self.labels[idx]
 
         return transformed_image, label
@@ -100,7 +113,7 @@ class HairSwatchDataset(Dataset):
         return {
             "num_samples": len(self),
             "data_dir": str(self.data_dir),
-            "csv_file": self.df.shape,
+            "csv_file": str(self.csv_path.name),
             "label_columns": ["Base", "Primary", "Secondary", "Tertiary"],
             "sample_filename": (
                 self.df["filename"].iloc[0] if not self.df.empty else None
@@ -124,46 +137,24 @@ class DigitalSwatchDataset(Dataset):
             transform: Image transforms to apply
         """
         self.data_dir = Path(data_dir)
-
-        # Load labels
-        csv_path = self.data_dir / csv_file
-        if not csv_path.exists():
-            raise FileNotFoundError(f"CSV file not found: {csv_path}")
-
-        self.df = pd.read_csv(csv_path)
-
-        # Validate required columns
+        csv_path, self.df = _load_labels_dataframe(self.data_dir, csv_file)
         required_cols = ["filename", "Base", "Primary", "Secondary"]
-        missing_cols = [col for col in required_cols if col not in self.df.columns]
-        if missing_cols:
-            raise ValueError(f"Missing required columns in CSV: {missing_cols}")
+        _validate_required_columns(self.df, required_cols, csv_path)
 
-        # Store image paths and labels
         self.image_paths = [self.data_dir / fname for fname in self.df["filename"]]
-
-        # Convert labels to tensor
         labels_array = self.df[["Base", "Primary", "Secondary"]].values
 
-        # Remap Base values from 1... to 0... for PyTorch compatibility
         base_mask = labels_array[:, 0] == -1  # Find missing base values
         if base_mask.any():
             raise ValueError("Base labels cannot be -1 in DigitalSwatchDataset.")
         labels_array[:, 0] = labels_array[:, 0] - 1  # 1-12 -> 0-11
 
-        # Replace -1 in Primary and Secondary with a valid class index (10)
         labels_array[labels_array == -1] = 10  # Assuming 10 is the index for 'no color'
 
         self.labels = torch.tensor(labels_array, dtype=torch.long)
-
-        # Set up transforms
-        self.transform = transform or transforms.Compose(
-            [transforms.Resize((224, 224)), transforms.ToTensor()]
-        )
-
-        # Validate a few images exist
-        missing_images = [path for path in self.image_paths[:5] if not path.exists()]
-        if missing_images:
-            print(f"Warning: Some images missing. First: {missing_images[0]}")
+        self.transform = transform or _build_default_transform()
+        self.csv_path = csv_path
+        _warn_on_missing_preview_images(self.image_paths)
 
     def __len__(self) -> int:
         return len(self.image_paths)
@@ -171,17 +162,8 @@ class DigitalSwatchDataset(Dataset):
     def __getitem__(self, idx: int) -> Tuple[Any, torch.Tensor]:
         """Get image and label by index."""
         img_path = self.image_paths[idx]
-
-        # Load image
-        try:
-            image = Image.open(img_path).convert("RGB")
-        except Exception as e:
-            raise RuntimeError(f"Failed to load image {img_path}: {e}")
-
-        # Apply transforms (assumed to include ToTensor)
+        image = _load_rgb_image(img_path)
         transformed_image = self.transform(image)
-
-        # Get label
         label = self.labels[idx]
 
         return transformed_image, label
@@ -204,6 +186,7 @@ class DigitalSwatchDataset(Dataset):
         return {
             "num_samples": len(self),
             "data_dir": str(self.data_dir.resolve()),
+            "csv_file": str(self.csv_path.name),
             "label_columns": ["Base", "Primary", "Secondary"],
             "sample_filename": (
                 self.df["filename"].iloc[0] if not self.df.empty else None
@@ -231,6 +214,8 @@ class HybridSwatchDataset(DigitalSwatchDataset):
 
         if feature_cols is None:
             raise ValueError("feature_cols must be provided for HybridSwatchDataset.")
+        if len(feature_cols) == 0:
+            raise ValueError("feature_cols must contain at least one column name.")
         self.feature_cols = feature_cols
 
         missing = [c for c in self.feature_cols if c not in self.df.columns]

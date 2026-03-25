@@ -69,21 +69,26 @@ class ExperimentLogger:
         """Log error message."""
         self._log(message, level="ERROR")
 
+    def _write_json(self, path: Path, payload: Dict[str, Any]) -> None:
+        """Write JSON payloads used by experiment artifacts."""
+        with open(path, "w") as f:
+            json.dump(payload, f, indent=2, default=str)
+
+    def _log_key_value_block(self, title: str, payload: Dict[str, Any]) -> None:
+        """Log a section of key-value pairs in a consistent format."""
+        self.info(title)
+        for key, value in payload.items():
+            self.info(f"  {key}: {value}")
+        self.info("-" * 80)
+
     def log_config(self, config: Dict[str, Any]) -> None:
         """Log experiment configuration.
 
         Args:
             config: Configuration dictionary
         """
-        self.info("Experiment Configuration:")
-        for key, value in config.items():
-            self.info(f"  {key}: {value}")
-        self.info("-" * 80)
-
-        # Save config as JSON
-        config_file = self.log_dir / "config.json"
-        with open(config_file, "w") as f:
-            json.dump(config, f, indent=2, default=str)
+        self._log_key_value_block("Experiment Configuration:", config)
+        self._write_json(self.log_dir / "config.json", config)
 
     def log_epoch(
         self,
@@ -131,7 +136,6 @@ class ExperimentLogger:
 
         self.info(log_msg)
 
-        # Save history to CSV after each epoch
         self._save_history()
 
     def log_metrics(
@@ -152,7 +156,6 @@ class ExperimentLogger:
         metric_data.update(metrics)
         self.metrics_history.append(metric_data)
 
-        # Log summary
         self.info("")
         self.info(f"{phase.upper()} Metrics:")
         for key, value in metrics.items():
@@ -162,7 +165,6 @@ class ExperimentLogger:
                 self.info(f"  {key}: {value}")
         self.info("-" * 80)
 
-        # Save metrics
         self._save_metrics()
 
     def _save_history(self) -> None:
@@ -183,15 +185,8 @@ class ExperimentLogger:
         Args:
             model_info: Dictionary containing model information
         """
-        self.info("Model Information:")
-        for key, value in model_info.items():
-            self.info(f"  {key}: {value}")
-        self.info("-" * 80)
-
-        # Save model info as JSON
-        model_info_file = self.log_dir / "model_info.json"
-        with open(model_info_file, "w") as f:
-            json.dump(model_info, f, indent=2, default=str)
+        self._log_key_value_block("Model Information:", model_info)
+        self._write_json(self.log_dir / "model_info.json", model_info)
 
     def log_data_info(self, data_info: Dict[str, Any]) -> None:
         """Log dataset information.
@@ -199,15 +194,8 @@ class ExperimentLogger:
         Args:
             data_info: Dictionary containing dataset information
         """
-        self.info("Dataset Information:")
-        for key, value in data_info.items():
-            self.info(f"  {key}: {value}")
-        self.info("-" * 80)
-
-        # Save data info as JSON
-        data_info_file = self.log_dir / "data_info.json"
-        with open(data_info_file, "w") as f:
-            json.dump(data_info, f, indent=2, default=str)
+        self._log_key_value_block("Dataset Information:", data_info)
+        self._write_json(self.log_dir / "data_info.json", data_info)
 
     def save_predictions(
         self, predictions: Any, targets: Any, phase: str = "test"
@@ -220,13 +208,17 @@ class ExperimentLogger:
             phase: Phase name (train, val, test)
         """
 
-        # Convert to numpy if needed
         if hasattr(predictions, "cpu"):
             predictions = predictions.cpu().numpy()
         if hasattr(targets, "cpu"):
             targets = targets.cpu().numpy()
 
-        # Save as CSV
+        if len(predictions) != len(targets):
+            raise ValueError(
+                "predictions and targets must have the same number of rows before "
+                f"saving, got {len(predictions)} and {len(targets)}."
+            )
+
         pred_file = self.log_dir / f"{phase}_predictions.csv"
         df = pd.DataFrame(
             {
@@ -261,17 +253,13 @@ class ExperimentLogger:
 
         self.info("=" * 80)
 
-        # Create summary file
         summary = {
             "experiment_name": self.experiment_name,
             "completed_at": datetime.now().isoformat(),
             "total_epochs": len(self.epoch_history),
             "final_metrics": final_metrics or {},
         }
-
-        summary_file = self.log_dir / "summary.json"
-        with open(summary_file, "w") as f:
-            json.dump(summary, f, indent=2, default=str)
+        self._write_json(self.log_dir / "summary.json", summary)
 
     def get_best_epoch(
         self, metric: str = "val_loss", mode: str = "min"

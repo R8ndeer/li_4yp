@@ -3,6 +3,14 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
+def _flatten_attention_inputs(feats, attn_logits):
+    """Flatten spatial maps so attention can operate over pixel sets."""
+    b, c, _, _ = feats.shape
+    feats_flat = feats.view(b, c, -1)
+    attn_flat = attn_logits.view(b, 1, -1)
+    return feats_flat, attn_flat
+
+
 class AttentivePixelStatNet(nn.Module):
     """
     Improved Deep Sets implementation for Hair Swatches.
@@ -48,7 +56,7 @@ class AttentivePixelStatNet(nn.Module):
         self.primary_head = self._make_head(256, num_classes[1], dropout_rate)
         self.secondary_head = self._make_head(256, num_classes[2], dropout_rate)
 
-    def _make_head(self, in_dim, out_dim, dropout):
+    def _make_head(self, in_dim, out_dim, dropout) -> nn.Sequential:
         return nn.Sequential(
             nn.Linear(in_dim, 128),
             nn.BatchNorm1d(128),
@@ -57,35 +65,16 @@ class AttentivePixelStatNet(nn.Module):
             nn.Linear(128, out_dim),
         )
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> dict[str, torch.Tensor]:
         # x: [Batch, 3, H, W]
-
-        # --- 1. Feature Extraction (Permutation Invariant) ---
         feats = self.pixel_mlp(x)  # [B, 128, H, W]
-
-        # --- 2. Attention Masking ---
-        # Calculate attention scores
         attn_logits = self.attention_net(feats)  # [B, 1, H, W]
-
-        # Flatten spatial dimensions to treat as a set
-        b, c, h, w = feats.shape
-        feats_flat = feats.view(b, c, -1)  # [B, 128, N_pixels]
-        attn_flat = attn_logits.view(b, 1, -1)  # [B, 1, N_pixels]
-
-        # Softmax ensures weights sum to 1 over the set of pixels
+        feats_flat, attn_flat = _flatten_attention_inputs(feats, attn_logits)
         attn_weights = F.softmax(attn_flat, dim=2)
-
-        # --- 3. Weighted Statistical Aggregation ---
-        # Global Mean = Sum(Weight_i * Feat_i)
         global_mean = torch.sum(feats_flat * attn_weights, dim=2)  # [B, 128]
-
-        # Global Variance = Sum(Weight_i * (Feat_i - Mean)^2)
-        # We use the weighted mean we just calculated
         variance_term = (feats_flat - global_mean.unsqueeze(2)) ** 2
         global_var = torch.sum(variance_term * attn_weights, dim=2)
         global_std = torch.sqrt(global_var + 1e-6)  # [B, 128]
-
-        # Combine
         stats = torch.cat([global_mean, global_std], dim=1)  # [B, 256]
 
         return {
@@ -132,7 +121,7 @@ class AttentiveStatNetOneMoment(nn.Module):
         self.primary_head = self._make_head(128, num_classes[1], dropout_rate)
         self.secondary_head = self._make_head(128, num_classes[2], dropout_rate)
 
-    def _make_head(self, in_dim, out_dim, dropout):
+    def _make_head(self, in_dim, out_dim, dropout) -> nn.Sequential:
         return nn.Sequential(
             nn.Linear(in_dim, 128),
             nn.BatchNorm1d(128),
@@ -141,26 +130,12 @@ class AttentiveStatNetOneMoment(nn.Module):
             nn.Linear(128, out_dim),
         )
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> dict[str, torch.Tensor]:
         # x: [Batch, 3, H, W]
-
-        # --- 1. Feature Extraction (Permutation Invariant) ---
         feats = self.pixel_mlp(x)  # [B, 128, H, W]
-
-        # --- 2. Attention Masking ---
-        # Calculate attention scores
         attn_logits = self.attention_net(feats)  # [B, 1, H, W]
-
-        # Flatten spatial dimensions to treat as a set
-        b, c, h, w = feats.shape
-        feats_flat = feats.view(b, c, -1)  # [B, 128, N_pixels]
-        attn_flat = attn_logits.view(b, 1, -1)  # [B, 1, N_pixels]
-
-        # Softmax ensures weights sum to 1 over the set of pixels
+        feats_flat, attn_flat = _flatten_attention_inputs(feats, attn_logits)
         attn_weights = F.softmax(attn_flat, dim=2)
-
-        # --- 3. Weighted Statistical Aggregation ---
-        # Global Mean = Sum(Weight_i * Feat_i)
         global_mean = torch.sum(feats_flat * attn_weights, dim=2)  # [B, 128]
 
         return {

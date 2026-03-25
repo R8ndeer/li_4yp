@@ -2,8 +2,6 @@
 
 from typing import Any, Callable, Dict, Optional
 
-from li_4yp.models import AttentivePixelStatNet, AttentiveStatNetOneMoment
-
 
 class ModelRegistry:
     """Registry for managing model constructors."""
@@ -109,6 +107,10 @@ class ModelRegistry:
 
 def register_pytorch_models():
     """Register the PyTorch models kept in the presentation slice."""
+    from li_4yp.models import AttentivePixelStatNet, AttentiveStatNetOneMoment
+
+    if ModelRegistry.is_registered("attentive_pixel_stat_net"):
+        return
 
     ModelRegistry.register(
         name="attentive_pixel_stat_net",
@@ -118,6 +120,9 @@ def register_pytorch_models():
         ),
         description="AttentivePixelStatNet: An attention-based Deep Sets model for hair color classification.",
     )
+
+    if ModelRegistry.is_registered("attentive_stat_net_one_moment"):
+        return
 
     ModelRegistry.register(
         name="attentive_stat_net_one_moment",
@@ -135,6 +140,9 @@ def register_sklearn_models():
     from sklearn.ensemble import ExtraTreesClassifier, RandomForestClassifier
     from sklearn.multioutput import MultiOutputClassifier
     from sklearn.neural_network import MLPClassifier
+
+    if ModelRegistry.is_registered("multi_output_random_forest"):
+        return
 
     ModelRegistry.register(
         name="multi_output_random_forest",
@@ -222,8 +230,3 @@ def register_custom_model(
         return model_class(**params)
 
     ModelRegistry.register(name, constructor, description)
-
-
-# Auto-register built-in models
-register_pytorch_models()
-register_sklearn_models()
