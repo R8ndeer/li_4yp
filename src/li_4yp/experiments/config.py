@@ -24,6 +24,7 @@ PYTORCH_REQUIRED_FIELDS = (
     "num_epochs",
     "learning_rate",
     "optimizer",
+    "loss_name",
     "image_size",
     "normalize",
     "device",
@@ -207,6 +208,8 @@ class ExperimentConfig:
                 raise ValueError("learning_rate must be provided for PyTorch configs.")
             if _is_missing(self.optimizer):
                 raise ValueError("optimizer must be provided for PyTorch configs.")
+            if _is_missing(self.loss_name):
+                raise ValueError("loss_name must be provided for PyTorch configs.")
             if self.image_size is None:
                 raise ValueError("image_size must be provided for PyTorch configs.")
             if len(self.image_size) != 2:
