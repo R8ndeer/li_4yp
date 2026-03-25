@@ -19,7 +19,7 @@ class LossRegistry:
             constructor: Callable that returns a loss function instance
             description: Description of the loss function
         """
-        if name in cls._registry:
+        if cls.is_registered(name):
             raise ValueError(f"Loss function '{name}' is already registered")
 
         cls._registry[name] = constructor
@@ -36,7 +36,7 @@ class LossRegistry:
         Returns:
             Loss function instance
         """
-        if name not in cls._registry:
+        if not cls.is_registered(name):
             raise ValueError(
                 f"Loss function '{name}' not found. Available losses: {list(cls._registry.keys())}"
             )
@@ -71,7 +71,7 @@ class LossRegistry:
         Args:
             name (str): Loss function name
         """
-        if name not in cls._registry:
+        if not cls.is_registered(name):
             raise ValueError(f"Loss function '{name}' not found")
 
         del cls._registry[name]
@@ -94,7 +94,7 @@ class LossRegistry:
             constructor (Callable): New constructor for the loss function
             description (str): New description for the loss function
         """
-        if name not in cls._registry:
+        if cls.is_registered(name):
             cls.unregister(name)
         cls.register(name, constructor, description)
 

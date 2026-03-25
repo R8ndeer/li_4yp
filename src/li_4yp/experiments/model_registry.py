@@ -18,7 +18,7 @@ class ModelRegistry:
             constructor: Callable that returns a model instance
             description: Description of the model
         """
-        if name in cls._registry:
+        if cls.is_registered(name):
             raise ValueError(f"Model '{name}' is already registered")
 
         cls._registry[name] = constructor
@@ -35,7 +35,7 @@ class ModelRegistry:
         Returns:
             Model instance
         """
-        if name not in cls._registry:
+        if not cls.is_registered(name):
             raise ValueError(
                 f"Model '{name}' not found. Available models: {list(cls._registry.keys())}"
             )
@@ -73,7 +73,7 @@ class ModelRegistry:
         Raises:
             ValueError: If model is not registered
         """
-        if name not in cls._registry:
+        if not cls.is_registered(name):
             raise ValueError(f"Model '{name}' is not registered")
 
         del cls._registry[name]
@@ -100,7 +100,7 @@ class ModelRegistry:
             constructor: New constructor function
             description: New description
         """
-        if name in cls._registry:
+        if cls.is_registered(name):
             cls.unregister(name)
         cls.register(name, constructor, description)
 
