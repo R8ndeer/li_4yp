@@ -8,7 +8,6 @@ import li_4yp.experiments as experiments_pkg
 from li_4yp.experiments.config import ExperimentConfig
 import scripts.train as train_script
 
-
 REPO_ROOT = Path(__file__).resolve().parents[1]
 CONFIG_DIR = REPO_ROOT / "config" / "experiments"
 
@@ -126,9 +125,13 @@ class TrainEntrypointContractTests(unittest.TestCase):
             )
 
             FakeExperiment.last_instance = None
-            with patch.object(train_script, "register_sklearn_models"), patch.object(
-                train_script.ModelRegistry, "is_registered", return_value=True
-            ), patch.dict(experiments_pkg.__dict__, {"Experiment": FakeExperiment}):
+            with (
+                patch.object(train_script, "register_sklearn_models"),
+                patch.object(
+                    train_script.ModelRegistry, "is_registered", return_value=True
+                ),
+                patch.dict(experiments_pkg.__dict__, {"Experiment": FakeExperiment}),
+            ):
                 with patch.object(
                     sys,
                     "argv",
