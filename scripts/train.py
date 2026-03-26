@@ -28,10 +28,13 @@ def _load_config(config_path: Path) -> ExperimentConfig:
 
 def _validate_runtime_paths(config: ExperimentConfig) -> None:
     """Ensure the config references files and directories that exist."""
+    save_dir = Path(config.save_dir)
+    if not save_dir.exists():
+        save_dir.mkdir(parents=True, exist_ok=True)
+
     required_paths = {
         "data_dir": Path(config.data_dir),
         "csv_file": Path(config.data_dir) / config.csv_file,
-        "save_dir": Path(config.save_dir),
     }
 
     for name, path in required_paths.items():
