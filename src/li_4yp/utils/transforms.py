@@ -6,7 +6,6 @@ from torchvision.transforms import v2
 
 from .transform_presets import TRANSFORM_PRESETS
 
-
 SUPPORTED_AUGMENTATION_KEYS = (
     "probability",
     "random_resized_crop",
@@ -47,7 +46,9 @@ def _validate_transform_inputs(
             f"got {type(augmentation)}"
         )
 
-    unknown_keys = [key for key in augmentation if key not in SUPPORTED_AUGMENTATION_KEYS]
+    unknown_keys = [
+        key for key in augmentation if key not in SUPPORTED_AUGMENTATION_KEYS
+    ]
     if unknown_keys:
         raise ValueError(
             f"Unsupported augmentation keys: {unknown_keys}. "
@@ -75,7 +76,9 @@ def _build_resize_only_path(image_size: tuple) -> v2.Compose:
     return v2.Compose([v2.Resize(image_size)])
 
 
-def _build_augmentation_path(image_size: tuple, augmentation: Dict[str, Any]) -> v2.Compose:
+def _build_augmentation_path(
+    image_size: tuple, augmentation: Dict[str, Any]
+) -> v2.Compose:
     """Build the optional augmentation path for training."""
     aug_path = []
 

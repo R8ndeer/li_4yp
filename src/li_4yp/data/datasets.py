@@ -9,7 +9,9 @@ from torch.utils.data import Dataset
 from torchvision import transforms
 
 
-def _load_labels_dataframe(data_dir: Path, csv_file: str | Path) -> tuple[Path, pd.DataFrame]:
+def _load_labels_dataframe(
+    data_dir: Path, csv_file: str | Path
+) -> tuple[Path, pd.DataFrame]:
     """Load a labels CSV and ensure it contains rows."""
     csv_path = data_dir / csv_file
     if not csv_path.exists():
@@ -21,13 +23,13 @@ def _load_labels_dataframe(data_dir: Path, csv_file: str | Path) -> tuple[Path, 
     return csv_path, df
 
 
-def _validate_required_columns(df: pd.DataFrame, required_cols: list[str], csv_path: Path) -> None:
+def _validate_required_columns(
+    df: pd.DataFrame, required_cols: list[str], csv_path: Path
+) -> None:
     """Check that all required columns are present in the labels file."""
     missing_cols = [col for col in required_cols if col not in df.columns]
     if missing_cols:
-        raise ValueError(
-            f"Missing required columns in CSV {csv_path}: {missing_cols}"
-        )
+        raise ValueError(f"Missing required columns in CSV {csv_path}: {missing_cols}")
 
 
 def _build_default_transform() -> transforms.Compose:

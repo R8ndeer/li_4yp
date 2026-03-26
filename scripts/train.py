@@ -59,14 +59,14 @@ def _resolve_dataset_class(config: ExperimentConfig) -> type:
 
 def main():
     """Main training script."""
-    ap = argparse.ArgumentParser()
-    ap.add_argument(
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
         "--config_path",
         type=str,
         required=True,
         help="Path to experiment config JSON/YAML file",
     )
-    args = ap.parse_args()
+    args = parser.parse_args()
 
     config_path = Path(args.config_path)
     config = _load_config(config_path)

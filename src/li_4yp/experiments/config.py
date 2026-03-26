@@ -7,7 +7,6 @@ import yaml
 import json
 from datetime import datetime
 
-
 ALLOWED_MODEL_TYPES = ("pytorch", "sklearn")
 SHARED_REQUIRED_FIELDS = (
     "name",
@@ -329,11 +328,11 @@ class ExperimentConfig:
         """Convert config to dictionary."""
         config_dict = asdict(self)
         if self.model_type == "pytorch":
-            for field in self._SKLEARN_FIELDS:
-                config_dict.pop(field, None)
+            for f in self._SKLEARN_FIELDS:
+                config_dict.pop(f, None)
         elif self.model_type == "sklearn":
-            for field in self._PYTORCH_FIELDS:
-                config_dict.pop(field, None)
+            for f in self._PYTORCH_FIELDS:
+                config_dict.pop(f, None)
         return config_dict
 
     def to_yaml(self, yaml_path: str | Path) -> None:
@@ -350,7 +349,7 @@ class ExperimentConfig:
 
     def get_experiment_dir(self) -> Path:
         """Get the experiment directory path."""
-        # Create timestamp-based directory
+        # timestamp-based directory
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         exp_name = f"{timestamp}_{self.name}"
         return Path(self.save_dir) / exp_name
