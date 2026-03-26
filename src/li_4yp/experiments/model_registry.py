@@ -107,7 +107,11 @@ class ModelRegistry:
 
 def register_pytorch_models():
     """Register the PyTorch models kept in the presentation slice."""
-    from li_4yp.models import AttentivePixelStatNet, AttentiveStatNetOneMoment
+    from li_4yp.models import (
+        AttentivePixelStatNet,
+        AttentiveStatNetOneMoment,
+        ShadeResNet,
+    )
 
     if ModelRegistry.is_registered("attentive_pixel_stat_net"):
         return
@@ -131,6 +135,20 @@ def register_pytorch_models():
             dropout_rate=kwargs.get("dropout_rate", 0.2),
         ),
         description="AttentiveStatNetOneMoment: Simplified attention-based model using only weighted mean.",
+    )
+
+    if ModelRegistry.is_registered("shade_resnet"):
+        return
+
+    ModelRegistry.register(
+        name="shade_resnet",
+        constructor=lambda **kwargs: ShadeResNet(
+            backbone=kwargs.get("backbone", None),
+            pretrained=kwargs.get("pretrained", None),
+            num_classes=kwargs.get("num_classes", None),
+            dropout_rate=kwargs.get("dropout_rate", None),
+        ),
+        description="ShadeResNet: ResNet-based model with separate classifier heads for each shade level.",
     )
 
 

@@ -69,7 +69,9 @@ class AttentivePixelStatNet(nn.Module):
         # x: [Batch, 3, H, W]
         feats = self.pixel_mlp(x)  # [B, 128, H, W]
         attn_logits = self.attention_net(feats)  # [B, 1, H, W]
-        feats_flat, attn_flat = _flatten_attention_inputs(feats, attn_logits)
+        feats_flat, attn_flat = _flatten_attention_inputs(
+            feats, attn_logits
+        )  # [B, 128, H*W], [B, 1, H*W]
         attn_weights = F.softmax(attn_flat, dim=2)
         global_mean = torch.sum(feats_flat * attn_weights, dim=2)  # [B, 128]
         variance_term = (feats_flat - global_mean.unsqueeze(2)) ** 2

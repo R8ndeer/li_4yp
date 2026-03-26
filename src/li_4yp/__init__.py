@@ -8,6 +8,7 @@ __author__ = "Boting Li"
 __all__ = [
     "AttentivePixelStatNet",
     "AttentiveStatNetOneMoment",
+    "ShadeResNet",
     "HairSwatchDataset",
     "DigitalSwatchDataset",
     "HybridSwatchDataset",
@@ -26,6 +27,7 @@ __all__ = [
 _LAZY_EXPORTS = {
     "AttentivePixelStatNet": ("li_4yp.models", "AttentivePixelStatNet"),
     "AttentiveStatNetOneMoment": ("li_4yp.models", "AttentiveStatNetOneMoment"),
+    "ShadeResNet": ("li_4yp.models", "ShadeResNet"),
     "HairSwatchDataset": ("li_4yp.data", "HairSwatchDataset"),
     "DigitalSwatchDataset": ("li_4yp.data", "DigitalSwatchDataset"),
     "HybridSwatchDataset": ("li_4yp.data", "HybridSwatchDataset"),
