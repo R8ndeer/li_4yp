@@ -1,0 +1,17 @@
+name: li_4yp
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - pytorch
+  - torchvision
+  - numpy
+  - pandas
+  - pillow
+  - pyyaml
+  - scikit-learn
+  - ipykernel
+  - pip:
+      - -e .

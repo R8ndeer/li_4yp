@@ -1,16 +1,27 @@
 [project]
 name = "li_4yp"
 version = "0.1.1"
-description = "A Python project"
+description = "Hair shade prediction experiments"
 authors = [
-    { name="Boting Li", email="your.email@example.com" }
+    { name = "Boting Li" }
 ]
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = []
+dependencies = [
+    "numpy",
+    "pandas",
+    "Pillow",
+    "PyYAML",
+    "scikit-learn",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ipykernel",
+]
 
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
