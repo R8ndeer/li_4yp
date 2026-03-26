@@ -1,59 +1,59 @@
 # Scripts
 
-This directory contains entry point scripts for various tasks in the hair swatch prediction project.
+This directory contains the active command-line entry points for the presentation slice.
 
-## Available Scripts
-
-### `preprocess_data.py`
-Preprocesses the hair swatch dataset by extracting shade codes from image filenames.
-
-```bash
-python scripts/preprocess_data.py
-```
-
-Features:
-- Parses shade codes from image filenames 
-- Handles various filename formats (X.XXX, base-only, etc.)
-- Filters out "half" bases (containing "1_2")
-- Generates CSV with shade code labels
+## Available Script
 
 ### `train.py`
-Main training script for hair swatch shade prediction models.
+
+Runs a config-driven experiment from the active presentation pipeline.
+
+Example:
 
 ```bash
-# Train CNN-RNN model (default)
-python scripts/train.py --model cnn_rnn
-
-# Train Multi-Output CNN model
-python scripts/train.py --model multi_output_cnn
-
-# Use custom config file
-python scripts/train.py --model cnn_rnn --config config/custom.yaml
+python scripts/train.py --config_path config/experiments/attentive_statnet.yaml
 ```
 
-Features:
-- Supports multiple model architectures
-- Automatic best model saving
-- Configurable training parameters
-- Progress tracking and metrics
+What it does:
 
-## Usage Examples
+- loads and validates the experiment config
+- registers models for the selected model family
+- resolves the dataset class for PyTorch runs
+- creates and runs `Experiment`
+
+## Common Configs
+
+- Main PyTorch presentation run:
 
 ```bash
-# Full pipeline
-python scripts/preprocess_data.py
-python scripts/train.py --model cnn_rnn
-
-# Custom training
-python scripts/train.py --model multi_output_cnn --config config/experiment.yaml
+python scripts/train.py --config_path config/experiments/attentive_statnet.yaml
 ```
+
+- Example sklearn run:
+
+```bash
+python scripts/train.py --config_path config/experiments/example_sklearn.yaml
+```
+
+- Validation-demo configs:
+
+```bash
+python scripts/train.py --config_path config/experiments/failure_missing_train_split.yaml
+python scripts/train.py --config_path config/experiments/failure_missing_dataset_class.yaml
+```
+
+These failure configs are intentionally invalid and are useful for checking user-facing validation errors.
 
 ## Requirements
 
-Make sure you have installed the package in development mode:
+Run scripts from the repository root. The package should be available either through:
 
 ```bash
 pip install -e .
 ```
 
-Or add the project to your Python path by running scripts from the project root.
+or:
+
+```bash
+PYTHONPATH=src python scripts/train.py --config_path ...
+```
