@@ -42,24 +42,6 @@ def _validate_runtime_paths(config: ExperimentConfig) -> None:
             raise FileNotFoundError(f"Required path '{name}' does not exist: {path}")
 
 
-def _resolve_dataset_class(config: ExperimentConfig) -> type:
-    """Map the config dataset name to the supported dataset classes."""
-    from li_4yp.data import DigitalSwatchDataset, HybridSwatchDataset
-
-    supported_dataset_classes = {
-        "digitalswatchdataset": DigitalSwatchDataset,
-        "hybridswatchdataset": HybridSwatchDataset,
-    }
-    dataset_class = supported_dataset_classes.get(config.dataset_class.lower())
-    if dataset_class is None:
-        supported = ", ".join(d.__name__ for d in supported_dataset_classes.values())
-        raise ValueError(
-            f"Unsupported dataset_class '{config.dataset_class}'. "
-            f"Supported classes: {supported}."
-        )
-    return dataset_class
-
-
 def main():
     """Main training script."""
     parser = argparse.ArgumentParser()
@@ -86,14 +68,11 @@ def main():
         )
 
     _validate_runtime_paths(config)
-    dataset_class = None
-    if config.model_type == "pytorch":
-        dataset_class = _resolve_dataset_class(config)
 
     from li_4yp.experiments import Experiment
 
     experiment = Experiment(config)
-    experiment.run(dataset_class=dataset_class, **config.dataset_params)
+    experiment.run()
 
 
 if __name__ == "__main__":

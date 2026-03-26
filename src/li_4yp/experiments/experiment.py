@@ -169,16 +169,30 @@ class Experiment:
         )
         return train_subset.indices, val_subset.indices
 
-    def setup_data(
-        self, dataset_class: Optional[type] = None, **dataset_kwargs
-    ) -> None:
+    def _resolve_dataset_class(self) -> type:
+        """Map the configured dataset name to a supported dataset class."""
+        from li_4yp.data import DigitalSwatchDataset, HybridSwatchDataset
+
+        supported_dataset_classes = {
+            "digitalswatchdataset": DigitalSwatchDataset,
+            "hybridswatchdataset": HybridSwatchDataset,
+        }
+        dataset_class = supported_dataset_classes.get(self.config.dataset_class.lower())
+        if dataset_class is None:
+            supported = ", ".join(d.__name__ for d in supported_dataset_classes.values())
+            raise ValueError(
+                f"Unsupported dataset_class '{self.config.dataset_class}'. "
+                f"Supported classes: {supported}."
+            )
+        return dataset_class
+
+    def setup_data(self) -> None:
         """Setup data. Supports both random split and fixed-fold split."""
         self.logger.info("Setting up data loaders...")
 
         if self.config.model_type == "pytorch":
             _, _, DataLoader, Subset, _ = self._require_torch()
-            if dataset_class is None:
-                raise ValueError("dataset_class must be provided for PyTorch models.")
+            dataset_class = self._resolve_dataset_class()
 
             self.train_transform = self._build_train_transform()
             self.val_transform = self._build_val_transform()
@@ -186,7 +200,7 @@ class Experiment:
             metadata_dataset = dataset_class(
                 data_dir=self.config.data_dir,
                 csv_file=self.config.csv_file,
-                **dataset_kwargs,
+                **self.config.dataset_params,
             )
 
             data_info = {
@@ -205,7 +219,7 @@ class Experiment:
                 data_dir=self.config.data_dir,
                 csv_file=self.config.csv_file,
                 transform=self.train_transform,
-                **dataset_kwargs,
+                **self.config.dataset_params,
             )
             train_dataset = Subset(train_dataset_full, train_indices)
 
@@ -213,7 +227,7 @@ class Experiment:
                 data_dir=self.config.data_dir,
                 csv_file=self.config.csv_file,
                 transform=self.val_transform,
-                **dataset_kwargs,
+                **self.config.dataset_params,
             )
             val_dataset = Subset(val_dataset_full, val_indices)
             self.train_loader = DataLoader(
@@ -548,15 +562,8 @@ class Experiment:
             if ln:
                 logger.info(f"  {ln}")
 
-    def run(
-        self, dataset_class: Optional[type] = None, **dataset_kwargs
-    ) -> Dict[str, Any]:
+    def run(self) -> Dict[str, Any]:
         """Run the complete experiment.
-
-        Args:
-            dataset_class: Dataset class to use
-            transform: Optional transform
-            **dataset_kwargs: Additional dataset arguments
 
         Returns:
             Dictionary with final metrics
@@ -565,7 +572,7 @@ class Experiment:
         self.setup_evaluator()
 
         if self.config.model_type == "pytorch":
-            self.setup_data(dataset_class, **dataset_kwargs)
+            self.setup_data()
 
             self.logger.info("Using train transform:")
             Experiment.print_transform(self.train_transform, self.logger)
@@ -580,7 +587,7 @@ class Experiment:
             self.logger.log_metrics("final_val", val_metrics)
 
         elif self.config.model_type == "sklearn":
-            self.setup_data(**dataset_kwargs)
+            self.setup_data()
             self.train_sklearn()
             val_metrics = self.evaluator.summary()
 
