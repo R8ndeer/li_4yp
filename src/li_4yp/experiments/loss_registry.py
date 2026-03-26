@@ -101,23 +101,34 @@ class LossRegistry:
 
 def register_default_losses() -> None:
     """Register default loss functions."""
+    if LossRegistry.is_registered("CrossEntropyLoss"):
+        return
+
     LossRegistry.register(
         "CrossEntropyLoss",
         lambda **kwargs: nn.CrossEntropyLoss(**kwargs),
         "Standard Cross Entropy Loss",
     )
+
+    if LossRegistry.is_registered("MSELoss"):
+        return
+
     LossRegistry.register(
         "MSELoss", lambda **kwargs: nn.MSELoss(**kwargs), "Mean Squared Error Loss"
     )
+
+    if LossRegistry.is_registered("L1Loss"):
+        return
+
     LossRegistry.register(
         "L1Loss", lambda **kwargs: nn.L1Loss(**kwargs), "Mean Absolute Error Loss"
     )
+
+    if LossRegistry.is_registered("HierarchicalShadeLoss"):
+        return
+
     LossRegistry.register(
         "HierarchicalShadeLoss",
         lambda **kwargs: HierarchicalShadeLoss(**kwargs),
         "Custom Hierarchical Shade Loss with class weights for color shade prediction",
     )
-
-
-# Auto-register default losses on module load
-register_default_losses()

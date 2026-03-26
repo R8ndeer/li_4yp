@@ -8,6 +8,7 @@ from li_4yp.experiments.model_registry import (
     register_pytorch_models,
     register_sklearn_models,
 )
+from li_4yp.experiments.loss_registry import LossRegistry, register_default_losses
 
 
 def _load_config(config_path: Path) -> ExperimentConfig:
@@ -58,6 +59,7 @@ def main():
 
     if config.model_type == "pytorch":
         register_pytorch_models()
+        register_default_losses()
     elif config.model_type == "sklearn":
         register_sklearn_models()
 
@@ -65,6 +67,11 @@ def main():
         raise ValueError(
             f"Model '{config.model_name}' is not registered in ModelRegistry. "
             f"Available models: {list(ModelRegistry.list_models().keys())}"
+        )
+    if not LossRegistry.is_registered(config.loss_name):
+        raise ValueError(
+            f"Loss '{config.loss_name}' is not registered in LossRegistry. "
+            f"Available losses: {list(LossRegistry.list_losses().keys())}"
         )
 
     _validate_runtime_paths(config)

@@ -179,7 +179,9 @@ class Experiment:
         }
         dataset_class = supported_dataset_classes.get(self.config.dataset_class.lower())
         if dataset_class is None:
-            supported = ", ".join(d.__name__ for d in supported_dataset_classes.values())
+            supported = ", ".join(
+                d.__name__ for d in supported_dataset_classes.values()
+            )
             raise ValueError(
                 f"Unsupported dataset_class '{self.config.dataset_class}'. "
                 f"Supported classes: {supported}."

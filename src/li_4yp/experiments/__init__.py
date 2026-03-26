@@ -2,7 +2,13 @@
 
 from importlib import import_module
 
-__all__ = ["Experiment", "ExperimentLogger", "ExperimentConfig", "ModelRegistry"]
+__all__ = [
+    "Experiment",
+    "ExperimentLogger",
+    "ExperimentConfig",
+    "ModelRegistry",
+    "LossRegistry",
+]
 
 
 _LAZY_EXPORTS = {
@@ -10,6 +16,7 @@ _LAZY_EXPORTS = {
     "ExperimentLogger": ("li_4yp.experiments.logger", "ExperimentLogger"),
     "ExperimentConfig": ("li_4yp.experiments.config", "ExperimentConfig"),
     "ModelRegistry": ("li_4yp.experiments.model_registry", "ModelRegistry"),
+    "LossRegistry": ("li_4yp.experiments.loss_registry", "LossRegistry"),
 }
 
 
